@@ -1,231 +1,210 @@
 -- FPCourse/Unit5/Week11_AbstractTypes.lean
+import Mathlib.Data.List.Basic
+import Mathlib.Data.Option.Basic
 
-/- @@@
-# Unit 5 — Abstract Types and Module Specifications
+/-! @@@
+# Week 11: Abstract Types
 
-## Week 11: Signatures, Structures, and Abstraction Barriers
+## Abstraction via type classes
 
-### Overview
+An *abstract type* presents an interface — a collection of operations
+with specified types — while hiding the implementation.  Callers program
+against the interface; the implementation can change without affecting
+callers.
 
-The type system does not, by itself, enforce data structure invariants.
-Consider our BST type from Week 6: any value of type `BTree Nat` can be
-constructed directly by a client, even one that violates the BST invariant.
-The type does not stop you from writing `.node .leaf 5 (.node .leaf 3 .leaf)`
-even though 3 < 5 should mean 3 is in the *left* subtree, not the right.
+In Lean, type classes express abstract types.  A class declaration is an
+interface.  An instance declaration is an implementation.  Laws stated in
+the class are the *specification*: propositions that every implementation
+must satisfy.
 
-The solution is **abstraction**: hide the representation, expose only
-operations that maintain the invariant.
-
-In Lean 4, we use **type classes** as *signatures* (interfaces) and
-**instances** as *implementations* (structures).  The `opaque` keyword
-hides implementation details.
-
-Key ideas:
-- A **signature** declares what operations a type supports, with their
-  types and semantic specifications.
-- An **implementation** provides concrete definitions satisfying the
-  signature.
-- **Opaque ascription** makes the representation invisible to clients.
-- **Representation independence**: any two implementations satisfying
-  the same signature are interchangeable.
+The connection to Week 10: the specification for `Dict` is relational.
+A dictionary is a partial function — a relation where each key maps to
+at most one value.  The laws of `Dict` are laws of partial functions.
 @@@ -/
 
 namespace Week11
 
-/- @@@
-### 11.1  Type classes as signatures
+/-! @@@
+## 11.1  The Dict interface
 
-A **type class** in Lean 4 declares a collection of operations on a type,
-together with their type signatures.  Think of it as an *interface* or
-*signature* in the module-system sense.
-
-The semantic specification (what the operations *mean*) is expressed as
-additional propositions, separate from the type class definition itself.
+A dictionary maps keys to values.  Operations: empty dict, insert,
+lookup, and delete.
 @@@ -/
 
--- Signature for a finite dictionary from keys to values
-class Dict (κ : Type) (α : Type) where
-  empty  : Dict κ α
-  insert : κ → α → Dict κ α → Dict κ α
-  lookup : κ → Dict κ α → Option α
-  delete : κ → Dict κ α → Dict κ α
+class Dict (d : Type → Type → Type) where
+  empty  : d k v
+  insert : k → v → d k v → d k v
+  lookup : [DecidableEq k] → k → d k v → Option v
+  delete : [DecidableEq k] → k → d k v → d k v
 
--- Semantic specification for Dict (stated separately as propositions)
--- These are the *laws* any correct implementation must satisfy.
-structure DictLaws (κ : Type) (α : Type) [DecidableEq κ] [Dict κ α] : Prop where
-  -- Looking up a key just inserted returns the inserted value
-  lookup_insert_same :
-    ∀ (k : κ) (v : α) (d : Dict κ α),
-      Dict.lookup k (Dict.insert k v d) = some v
-  -- Looking up a different key after insert is unchanged
-  lookup_insert_diff :
-    ∀ (k k' : κ) (v : α) (d : Dict κ α),
-      k ≠ k' →
-      Dict.lookup k (Dict.insert k' v d) = Dict.lookup k d
-  -- Empty has no bindings
-  lookup_empty :
-    ∀ (k : κ), Dict.lookup k (Dict.empty (κ := κ) (α := α)) = none
+/-! @@@
+## 11.2  Laws: the specification for Dict
 
-/- @@@
-### 11.2  Association list implementation
+The laws below are propositions that every `Dict` implementation must
+satisfy.  They define what it MEANS to be a dictionary.
 
-The simplest implementation of `Dict`: a list of key-value pairs.
-Lookup scans the list; insert prepends; delete filters.
-
-This implementation is O(n) for all operations.
+These are relational specifications in the sense of Week 10: they
+describe how the abstract state (a partial function from keys to values)
+changes under each operation.
 @@@ -/
 
--- Association list backed dictionary
-def AList (κ : Type) (α : Type) := List (κ × α)
+class LawfulDict (d : Type → Type → Type) [DecidableEq k] extends Dict d where
+  lookup_empty  : ∀ (key : k), lookup key (empty : d k v) = none
+  lookup_insert_same : ∀ (key : k) (val : v) (m : d k v),
+      lookup key (insert key val m) = some val
+  lookup_insert_diff : ∀ (k1 k2 : k) (val : v) (m : d k v),
+      k1 ≠ k2 → lookup k1 (insert k2 val m) = lookup k1 m
+  lookup_delete_same : ∀ (key : k) (m : d k v),
+      lookup key (delete key m) = none
+  lookup_delete_diff : ∀ (k1 k2 : k) (m : d k v),
+      k1 ≠ k2 → lookup k1 (delete k2 m) = lookup k1 m
 
-namespace AListDict
+/-! @@@
+## 11.3  Association list implementation
 
-def empty' : AList κ α := []
-
-def insert' [DecidableEq κ] (k : κ) (v : α) (d : AList κ α) : AList κ α :=
-  (k, v) :: d.filter (fun p => p.1 ≠ k)
-
-def lookup' [DecidableEq κ] (k : κ) (d : AList κ α) : Option α :=
-  (d.find? (fun p => p.1 == k)).map (·.2)
-
-def delete' [DecidableEq κ] (k : κ) (d : AList κ α) : AList κ α :=
-  d.filter (fun p => p.1 ≠ k)
-
--- Verify the lookup_insert_same law
-theorem lookup_insert_same' [DecidableEq κ] (k : κ) (v : α) (d : AList κ α) :
-    lookup' k (insert' k v d) = some v := by
-  simp [lookup', insert', List.find?_cons]
-  simp [beq_iff_eq]
-
--- Verify the lookup_empty law
-theorem lookup_empty' [DecidableEq κ] (k : κ) :
-    lookup' k (empty' (κ := κ) (α := α)) = none := by
-  simp [lookup', empty']
-
-end AListDict
-
-/- @@@
-### 11.3  The opaque keyword: hiding representation
-
-The `opaque` keyword declares a function or definition whose implementation
-is hidden from other modules.  Clients can use the type and the operations,
-but cannot access the underlying representation.
-
-This is the Lean 4 equivalent of ML's opaque ascription.
+An association list stores key-value pairs in a list.
 @@@ -/
 
--- An abstract counter type with a hidden implementation
-namespace Counter
+def AList (k v : Type) := List (k × v)
 
-private def CounterImpl := Nat
+def AList.empty : AList k v := []
 
-opaque Counter : Type := CounterImpl
+def AList.insert (key : k) (val : v) (m : AList k v) : AList k v :=
+  (key, val) :: m
 
-opaque Counter.zero : Counter := (0 : CounterImpl)
-opaque Counter.inc  : Counter → Counter := Nat.succ
-opaque Counter.get  : Counter → Nat     := id
+def AList.lookup [DecidableEq k] (key : k) : AList k v → Option v
+  | []            => none
+  | (k, v) :: t  => if key == k then some v else AList.lookup key t
 
--- The client cannot see that Counter = Nat.
--- They can only use zero, inc, and get.
--- This enforces that Counter values are always non-negative (which Nat
--- guarantees) and created only through the public interface.
+def AList.delete [DecidableEq k] (key : k) : AList k v → AList k v
+  | []            => []
+  | (k, v) :: t  => if key == k then AList.delete key t
+                    else (k, v) :: AList.delete key t
 
--- Laws the counter satisfies (proved once, used by all clients)
-theorem Counter.get_zero : Counter.get Counter.zero = 0 := rfl
-theorem Counter.get_inc (c : Counter) : Counter.get (Counter.inc c) =
-    Counter.get c + 1 := rfl
+instance : Dict AList where
+  empty  := AList.empty
+  insert := AList.insert
+  lookup := AList.lookup
+  delete := AList.delete
 
-end Counter
+-- Verify the laws hold.  Provided as term-mode proofs:
+theorem alist_lookup_empty [DecidableEq k] (key : k) :
+    AList.lookup key (AList.empty : AList k v) = none :=
+  rfl
 
-/- @@@
-### 11.4  Invariant protection
+theorem alist_lookup_insert_same [DecidableEq k] (key : k) (val : v) (m : AList k v) :
+    AList.lookup key (AList.insert key val m) = some val := by
+  simp [AList.lookup, AList.insert]
 
-The key benefit of hiding the representation: clients *cannot* construct
-an invalid value.  The only way to obtain a value of the abstract type is
-through the constructors the module provides — and those constructors
-maintain the invariant.
+theorem alist_lookup_insert_diff [DecidableEq k] {k1 k2 : k} (val : v)
+    (m : AList k v) (hne : k1 ≠ k2) :
+    AList.lookup k1 (AList.insert k2 val m) = AList.lookup k1 m := by
+  simp [AList.lookup, AList.insert, hne]
 
-For a BST, exposing only `empty`, `insert`, and `lookup` (not the
-`BTree` constructors) ensures that every BST value in client code was
-built by operations that maintain the BST invariant.
+/-! @@@
+## 11.4  Opaque types: hiding implementation details
+
+The `opaque` keyword makes an identifier's definition irreducible to
+the elaborator.  Proofs about an `opaque` value must work through the
+interface, not by unfolding the definition.
+
+This is abstraction enforced by the type system: callers cannot depend
+on the implementation details even if they tried.
 @@@ -/
 
--- Abstract ordered set backed by a BST
-namespace OrderedSet
+-- A counter type with an opaque implementation
+opaque Counter : Type := Nat
 
--- We re-use the BTree type from Week 6 but hide it
-private abbrev Impl := Week06.BTree Nat
+@[instance] axiom Counter.instNonempty : Nonempty Counter
 
-opaque OSet : Type := Impl
+noncomputable opaque Counter.zero  : Counter
+noncomputable opaque Counter.incr  : Counter → Counter
+noncomputable opaque Counter.value : Counter → Nat
 
-opaque OSet.empty  : OSet := .leaf
-opaque OSet.insert : Nat → OSet → OSet := Week06.BTree.bstInsert
-opaque OSet.member : Nat → OSet → Bool := Week06.BTree.bstLookup
+-- The specification is stated separately as axioms about the interface:
+axiom Counter.value_zero : Counter.value Counter.zero = 0
+axiom Counter.value_incr : ∀ c, Counter.value (Counter.incr c) =
+                                Counter.value c + 1
 
--- These operations maintain IsBST by construction.
--- A client cannot produce an OSet that violates BST order.
+-- Note: in a production library, these axioms would be proved as theorems
+-- using the concrete implementation.  The opaque/axiom pattern separates
+-- the interface (what callers see) from the implementation.
 
--- The specification laws:
--- member x (insert x s) = true
--- member y (insert x s) = member y s  when y ≠ x
+/-! @@@
+## 11.5  Stack: another abstract type
 
-end OrderedSet
-
-/- @@@
-### 11.5  Representation independence
-
-Two implementations satisfying the same specification produce the same
-observable results for any client program.
-
-The formal statement: if `impl₁` and `impl₂` both satisfy `DictLaws`,
-then for any client function `f` that uses only the `Dict` operations
-(and not the internal representation), `f impl₁ = f impl₂`.
-
-We demonstrate this with a small example: counting elements.
+A stack supports push, pop, and peek, with a size operation.
+The specification: push then pop returns the original element and stack.
 @@@ -/
 
--- Count of elements is the same for any two correct dicts
--- (here, elements we inserted but did not delete)
--- This holds because the specification uniquely determines the
--- observable behaviour; implementations can differ only in
--- non-observable ways (e.g., order of internal storage).
+class Stack (s : Type → Type) where
+  empty : s α
+  push  : α → s α → s α
+  pop   : s α → Option (α × s α)
+  size  : s α → Nat
 
-/- @@@
-### Exercises
+class LawfulStack (s : Type → Type) extends Stack s where
+  pop_empty  : pop (empty : s α) = none
+  pop_push   : ∀ (x : α) (st : s α),
+      pop (push x st) = some (x, st)
+  size_empty : size (empty : s α) = 0
+  size_push  : ∀ (x : α) (st : s α),
+      size (push x st) = size st + 1
 
-1. Implement `DictLaws` proofs for the `AListDict` implementation.
-   Specifically, prove `lookup_insert_diff`.
-
-2. Implement a second `Dict` instance backed by a sorted association list
-   (insertion maintains sorted order).  Verify the `DictLaws`.
-
-3. Write a `Stack` type class with `push`, `pop`, and `peek`.
-   State the specification laws: `peek (push x s) = some x`,
-   `pop (push x s) = s`.  Provide an instance backed by `List`.
-
-4. Use `opaque` to hide the representation of your `Stack` instance
-   and verify that the laws still hold after hiding.
-@@@ -/
-
--- Exercise stubs
-class Stack (α : Type) where
-  empty : Stack α
-  push  : α → Stack α → Stack α
-  pop   : Stack α → Stack α
-  peek  : Stack α → Option α
-
-structure StackLaws (α : Type) [Stack α] : Prop where
-  peek_push : ∀ (x : α) (s : Stack α), Stack.peek (Stack.push x s) = some x
-  pop_push  : ∀ (x : α) (s : Stack α), Stack.pop  (Stack.push x s) = s
-
-instance : Stack α where
+-- List implementation of Stack:
+instance : Stack List where
   empty := []
   push  := List.cons
-  pop   := List.tail
-  peek  := List.head?
+  pop   := fun
+    | []      => none
+    | h :: t  => some (h, t)
+  size  := List.length
 
-theorem listStackLaws (α : Type) : StackLaws α :=
-  { peek_push := fun _ _ => rfl
-    pop_push  := fun _ _ => rfl }
+instance : LawfulStack List where
+  pop_empty  := rfl
+  pop_push   := fun _ _ => rfl
+  size_empty := rfl
+  size_push  := fun _ _ => rfl
+
+/-! @@@
+## 11.6  Representation independence
+
+The key property of abstract types: any two implementations satisfying
+the laws are *observationally equivalent* from the caller's perspective.
+
+This is not just informal.  Given two `LawfulDict` instances `D1` and `D2`,
+any sequence of `empty`, `insert`, `lookup`, `delete` operations produces
+the same `lookup` results in both.
+
+This can be stated as a theorem schema — for each sequence of operations,
+the `lookup` results agree.  We will not prove this in full generality;
+stating it precisely is the skill being practiced.
+
+## Exercises
+
+1. Add a `size : d k v → Nat` operation to `Dict` and extend `LawfulDict`
+   with laws relating `size` to `insert` and `delete`.
+
+2. Implement `Dict` using a sorted association list.  The `lookup`
+   function can binary search (well, linear search in the sorted order).
+   Verify the first two laws.
+
+3. Write the `LawfulStack` instance for a new implementation:
+   ```lean
+   structure TwoListStack (α : Type) where
+     front : List α
+     back  : List α
+   ```
+   where `push` appends to `back` and `pop` takes from `front` (rebalancing
+   by reversing `back` when `front` is empty).
+
+4. State the *representation independence* theorem for `Stack`:
+   "for any two `LawfulStack` instances `S1` and `S2`, any program that
+   only uses `push`, `pop`, `size`, and `empty` produces the same
+   observable results in both."  Write this as precisely as you can in Lean.
+
+5. Define a `Queue` type class with enqueue/dequeue operations and
+   state its laws.
+@@@ -/
 
 end Week11

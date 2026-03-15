@@ -1,253 +1,167 @@
 -- FPCourse/Unit2/Week05_Lists.lean
+import Mathlib.Data.List.Basic
+import Mathlib.Data.List.Lemmas
 
-/- @@@
-## Week 5: Inductive Types — Lists and Structural Induction
+/-! @@@
+# Week 5: Lists
 
-### Overview
+## Lists as the canonical inductive type
 
-The list is the canonical inductive type.  It is defined by exactly two
-constructors:
-- `nil`  — the empty list
-- `cons` — a head element prepended to a tail list
+`List α` is defined inductively:
+- `[]` (nil) — the empty list
+- `h :: t` (cons) — a head element `h : α` followed by a tail `t : List α`
 
-This recursive definition (a `cons` cell contains a *smaller* list) is
-why functions over lists are naturally recursive and why proofs about lists
-naturally proceed by induction.
+Every function on lists follows this structure: one clause for `[]`, one
+clause for `h :: t` (which may recurse on `t`).
 
-**Structural recursion**: a function over a list recurs on the *tail*,
-which is structurally smaller.  Termination is guaranteed automatically.
-
-**Structural induction**: a proof about all lists proceeds by:
-1. Proving the property for `[]` (the base case).
-2. Proving that if the property holds for `xs` (IH), it holds for `x :: xs`.
-
-The IH corresponds *exactly* to the recursive call in the program.
-Citing the IH in a proof is the same act as trusting the recursive call
-in the program.
+The specifications for list functions are propositions that quantify over
+all lists.  Some of these propositions are decidable — when the element
+type has `DecidableEq` and the list is finite, we can check them with
+`decide`.
 @@@ -/
 
 namespace Week05
 
-/- @@@
-### 5.1  Defining lists
+/-! @@@
+## 5.1  Standard list functions and their specifications
 
-Lean 4 has a built-in `List α` type.  For exposition, here is its
-definition written out explicitly:
-
-```lean
-inductive MyList (α : Type) where
-  | nil  : MyList α
-  | cons : α → MyList α → MyList α
-```
-
-We use the built-in `List α` (with notation `[]` and `x :: xs`) throughout.
+The specifications below are ALL provided as term-mode proofs.
+Read them; understand the proposition being stated; observe how the
+proof term mirrors the function definition.
 @@@ -/
 
--- The template for a function over List α:
--- one case for nil, one case for cons.
-def myLength : List α → Nat
-  | []      => 0
-  | _ :: xs => 1 + myLength xs
+-- Length
+theorem length_nil : ([] : List α).length = 0 := rfl
+theorem length_cons (h : α) (t : List α) :
+    (h :: t).length = t.length + 1 := rfl
 
-#eval myLength [1, 2, 3, 4]   -- 4
-#eval myLength ([] : List Nat) -- 0
+-- Append
+theorem append_nil (xs : List α) : xs ++ [] = xs :=
+  List.append_nil xs
 
--- Append: join two lists
-def myAppend : List α → List α → List α
-  | [],      ys => ys
-  | x :: xs, ys => x :: myAppend xs ys
+theorem nil_append (xs : List α) : [] ++ xs = xs :=
+  List.nil_append xs
 
-#eval myAppend [1, 2] [3, 4]   -- [1, 2, 3, 4]
+theorem append_assoc (xs ys zs : List α) :
+    (xs ++ ys) ++ zs = xs ++ (ys ++ zs) :=
+  List.append_assoc xs ys zs
 
--- Reverse: reverse a list
-def myReverse : List α → List α
-  | []      => []
-  | x :: xs => myReverse xs ++ [x]
+-- Length distributes over append
+theorem length_append (xs ys : List α) :
+    (xs ++ ys).length = xs.length + ys.length :=
+  List.length_append
 
-#eval myReverse [1, 2, 3]   -- [3, 2, 1]
+-- Membership and append: ∈ distributes over ++
+theorem mem_append_iff (a : α) (xs ys : List α) :
+    a ∈ xs ++ ys ↔ a ∈ xs ∨ a ∈ ys :=
+  List.mem_append
 
-/- @@@
-### 5.2  Algebraic specifications
+/-! @@@
+## 5.2  Decide on finite lists
 
-Before proving theorems, we write *algebraic specifications*:
-equations that must hold between functions.  These equations are
-simultaneously (a) part of the specification and (b) the code itself
-(for base cases).
-
-Key specification for `myAppend`:
-- `myAppend [] ys = ys`
-- `myAppend (x :: xs) ys = x :: myAppend xs ys`
-
-These hold by `rfl` — they are the *definition* of `myAppend`.
-The non-trivial algebraic property is the *length* equation.
+When the element type has `DecidableEq`, propositions of the form
+`∀ x ∈ xs, P x` are decidable for finite `xs` (when `P` is decidable).
+This means `decide` can verify them automatically.
 @@@ -/
 
--- Specification: length distributes over append
-theorem myLength_append (xs ys : List α) :
-    myLength (myAppend xs ys) = myLength xs + myLength ys := by
-  induction xs with
-  | nil        => simp [myLength, myAppend]
-  | cons x xs ih =>
-    -- myLength (x :: xs ++ ys)
-    -- = 1 + myLength (xs ++ ys)     by def of myLength
-    -- = 1 + (myLength xs + myLength ys)  by IH
-    -- = (1 + myLength xs) + myLength ys  by Nat arithmetic
-    -- = myLength (x :: xs) + myLength ys by def of myLength
-    simp [myLength, myAppend, ih]
-    omega
+-- All elements of a concrete list satisfy a concrete predicate:
+example : ∀ x ∈ ([2, 4, 6, 8] : List Nat), x % 2 = 0 := by decide
+example : ∀ x ∈ ([1, 3, 5, 7] : List Nat), x % 2 = 1 := by decide
+example : ∃ x ∈ ([10, 20, 30] : List Nat), x > 15    := by decide
 
-/- @@@
-### 5.3  A more challenging proof: reverse reverses
+-- Membership in a concrete list:
+example : 3 ∈ ([1, 2, 3, 4] : List Nat) := by decide
+example : ¬ (5 ∈ ([1, 2, 3, 4] : List Nat)) := by decide
 
-`myReverse (myReverse xs) = xs` for all `xs`.
+-- Equality of concrete lists:
+example : ([1, 2] ++ [3, 4] : List Nat) = [1, 2, 3, 4] := by decide
 
-The direct induction does not work easily because the inductive step
-has `myReverse (xs ++ [x])` which needs a *helper lemma* about how
-`myReverse` interacts with `myAppend`.
+/-! @@@
+## 5.3  Reverse and the auxiliary lemma pattern
 
-This pattern — proving a *stronger* or *more general* statement to make
-the induction go through — recurs throughout the course.
+`reverse` is defined recursively.  Its specification — that reversing
+twice returns the original list — requires a helper lemma about how
+`reverse` interacts with `++`.
+
+This illustrates a general pattern: when a direct proof gets stuck,
+look at what the inductive step requires and name it as a separate lemma.
+The provided proofs below demonstrate this pattern explicitly.
 @@@ -/
 
--- Helper lemma: reverse of an append
-theorem myReverse_append (xs ys : List α) :
-    myReverse (myAppend xs ys) = myAppend (myReverse ys) (myReverse xs) := by
-  induction xs with
-  | nil        => simp [myReverse, myAppend]
-  | cons x xs ih =>
-    simp [myAppend, myReverse, ih]
-    -- need: (reverse ys ++ reverse xs) ++ [x]
-    --     = reverse ys ++ (reverse xs ++ [x])
-    -- this is associativity of myAppend
-    induction myReverse ys with
-    | nil        => simp [myAppend]
-    | cons y ys' ih2 => simp [myAppend, ih2]
+theorem reverse_append (xs ys : List α) :
+    (xs ++ ys).reverse = ys.reverse ++ xs.reverse :=
+  List.reverse_append
 
--- Main theorem: reverse is an involution
-theorem myReverse_reverse (xs : List α) :
-    myReverse (myReverse xs) = xs := by
-  induction xs with
-  | nil        => rfl
-  | cons x xs ih =>
-    simp [myReverse, myReverse_append, ih, myAppend]
+theorem reverse_reverse (xs : List α) : xs.reverse.reverse = xs :=
+  List.reverse_reverse xs
 
-/- @@@
-### 5.4  More list operations
+-- The proof of reverse_reverse in Mathlib uses reverse_append.
+-- The dependency is: reverse_reverse requires reverse_append,
+-- which in turn requires nil_append and append_assoc.
+-- Each lemma is proved by structural recursion on the first list.
 
-The design recipe guides us to implement common list operations.
-Each comes with its algebraic specification.
+/-! @@@
+## 5.4  Map and its specification
+
+`List.map f` applies `f` to every element.  Its specification:
+1. Map preserves length.
+2. Map distributes over append.
+3. Mapping the identity function is the identity on lists.
+4. Mapping a composition equals composing two maps.
 @@@ -/
 
--- Take the first n elements
-def myTake : Nat → List α → List α
-  | 0,     _      => []
-  | _,     []     => []
-  | n + 1, x :: xs => x :: myTake n xs
+theorem map_length (f : α → β) (xs : List α) :
+    (xs.map f).length = xs.length :=
+  List.length_map f
 
--- Drop the first n elements
-def myDrop : Nat → List α → List α
-  | 0,     xs      => xs
-  | _,     []      => []
-  | n + 1, _ :: xs => myDrop n xs
+theorem map_append (f : α → β) (xs ys : List α) :
+    (xs ++ ys).map f = xs.map f ++ ys.map f :=
+  List.map_append
 
-#eval myTake 3 [1, 2, 3, 4, 5]   -- [1, 2, 3]
-#eval myDrop 3 [1, 2, 3, 4, 5]   -- [4, 5]
+theorem map_id_eq (xs : List α) : xs.map id = xs :=
+  List.map_id xs
 
--- Specification: take and drop partition the list
-theorem take_drop_append (n : Nat) (xs : List α) :
-    myAppend (myTake n xs) (myDrop n xs) = xs := by
-  induction n generalizing xs with
-  | zero      => simp [myTake, myDrop, myAppend]
-  | succ n ih =>
-    cases xs with
-    | nil        => simp [myTake, myDrop, myAppend]
-    | cons x xs  => simp [myTake, myDrop, myAppend, ih]
+theorem map_comp (f : β → γ) (g : α → β) (xs : List α) :
+    xs.map (f ∘ g) = (xs.map g).map f := by
+  simp [← List.map_map]
 
--- Membership predicate
-def myMem (a : α) [DecidableEq α] : List α → Bool
-  | []      => false
-  | x :: xs => x == a || myMem a xs
+/-! @@@
+## 5.5  Specifications students should practice writing
 
-#eval myMem 3 [1, 2, 3, 4]   -- true
-#eval myMem 5 [1, 2, 3, 4]   -- false
+Reading a specification is easier than writing one.  The following are
+propositions about list functions.  Practice writing them yourself,
+then check against these.
 
-/- @@@
-### 5.5  Lengths and sizes
-
-Several properties connect the length of a list to operations on it.
-These make good induction exercises because the proofs closely mirror
-the definitions.
+"filter keeps exactly the elements satisfying the predicate":
 @@@ -/
 
-@[simp]
-theorem myLength_nil : myLength ([] : List α) = 0 := rfl
+-- ∀ x, x ∈ filter p xs ↔ x ∈ xs ∧ p x = true
+theorem mem_filter_iff (p : α → Bool) (xs : List α) (x : α) :
+    x ∈ xs.filter p ↔ x ∈ xs ∧ p x = true :=
+  List.mem_filter
 
-@[simp]
-theorem myLength_cons (x : α) (xs : List α) :
-    myLength (x :: xs) = 1 + myLength xs := rfl
+-- "length of filter is at most length of input"
+theorem filter_length_le (p : α → Bool) (xs : List α) :
+    (xs.filter p).length ≤ xs.length :=
+  List.length_filter_le p xs
 
-theorem myLength_reverse (xs : List α) :
-    myLength (myReverse xs) = myLength xs := by
-  induction xs with
-  | nil       => rfl
-  | cons x xs ih =>
-    simp [myReverse, myLength_append, ih, myLength]
-    omega
+/-! @@@
+## Exercises
 
-/- @@@
-### Exercises
+1. State (as a Prop) the specification: "if n ∈ xs, then n ∈ xs ++ ys."
+   Prove it using `List.mem_append`.
 
-1. Implement `myZip : List α → List β → List (α × β)` that pairs
-   corresponding elements.  When the lists have different lengths,
-   stop at the shorter one.  Verify `myZip [1,2,3] ["a","b"] = [(1,"a"),(2,"b")]`.
+2. Use `decide` to verify: every element of `[2, 4, 6, 8, 10]` is even.
 
-2. Prove `myLength (myTake n xs) ≤ n` for all `n` and `xs`.
+3. Use `decide` to verify: there exists an element in `[3, 7, 12, 5]`
+   that is greater than 10.
 
-3. Implement tail-recursive reverse using an accumulator and prove
-   it equal to `myReverse`.
+4. State the specification: "map f (reverse xs) = reverse (map f xs)."
+   This is `List.map_reverse`.  Look it up and read the type.
 
-4. Prove `myMem x (myAppend xs ys) = (myMem x xs || myMem x ys)`
-   for all `xs`, `ys`, and `x`.
+5. Write a function `myZip : List α → List β → List (α × β)` that
+   pairs corresponding elements.  State its length specification:
+   `(myZip xs ys).length = min xs.length ys.length`.
 @@@ -/
-
--- Exercise stubs
-def myZip : List α → List β → List (α × β)
-  | [],      _       => []
-  | _,       []      => []
-  | x :: xs, y :: ys => (x, y) :: myZip xs ys
-
-example : myZip [1, 2, 3] ["a", "b"] = [(1, "a"), (2, "b")] := rfl
-
-theorem myLength_take_le (n : Nat) (xs : List α) :
-    myLength (myTake n xs) ≤ n := by
-  induction n generalizing xs with
-  | zero      => simp [myTake, myLength]
-  | succ n ih =>
-    cases xs with
-    | nil       => simp [myTake, myLength]
-    | cons x xs => simp [myTake, myLength, ih]; omega
-
-def myReverseAcc : List α → List α → List α
-  | [],      acc => acc
-  | x :: xs, acc => myReverseAcc xs (x :: acc)
-
-def myReverseTR (xs : List α) : List α := myReverseAcc xs []
-
-theorem myReverseAcc_spec (xs acc : List α) :
-    myReverseAcc xs acc = myAppend (myReverse xs) acc := by
-  induction xs generalizing acc with
-  | nil       => simp [myReverseAcc, myReverse, myAppend]
-  | cons x xs ih =>
-    simp [myReverseAcc, myReverse, ih]
-    induction myReverse xs with
-    | nil        => simp [myAppend]
-    | cons y ys' ih2 => simp [myAppend, ih2]
-
-theorem myReverseTR_correct (xs : List α) :
-    myReverseTR xs = myReverse xs := by
-  simp [myReverseTR, myReverseAcc_spec, myAppend]
-  induction myReverse xs with
-  | nil       => rfl
-  | cons _ _ _ => simp [myAppend]
 
 end Week05

@@ -1,240 +1,169 @@
 -- FPCourse/Unit2/Week04_AlgebraicDatatypes.lean
+import Mathlib.Data.Option.Basic
+import Mathlib.Logic.Basic
 
-/- @@@
-# Unit 2 — Inductive Datatypes and Structural Reasoning
+/-! @@@
+# Week 4: Algebraic Datatypes
 
-## Week 4: Algebraic Datatypes — Sums, Products, and the Option Type
+## Sum types and product types
 
-### Overview
+Lean's `inductive` keyword lets us define new types by listing their
+*constructors*.  The resulting type is either a *sum* (one of several
+alternatives) or a *product* (bundling several fields) — or both.
 
-So far we have worked only with built-in types: `Nat`, `Bool`, `String`.
-This week we learn to *define our own types* using the `inductive` keyword.
-
-An **inductive type** is defined by listing its *constructors* — the
-ways to build a value of that type.  Every value of the type is formed
-by exactly one constructor applied to zero or more arguments.
-
-Two fundamental patterns:
-
-- **Sum types** (also called *variant* or *union* types): a value is
-  *one of* several alternatives.  Example: a traffic light is Red, Yellow,
-  or Green.
-- **Product types** (also called *record* types): a value carries *all of*
-  several fields simultaneously.  Example: a point has an x-coordinate
-  and a y-coordinate.
-
-Lean's `inductive` keyword expresses both patterns (and their combinations).
+These are called *algebraic* datatypes because they obey the same
+algebraic laws as sums and products of numbers: a type with `n` values
+of type A and `m` values of type B as alternatives has `n + m` values.
 @@@ -/
 
 namespace Week04
 
-/- @@@
-### 4.1  Sum types
-
-A **sum type** lists mutually exclusive alternatives.  Each alternative is
-a *constructor* — a function that creates a value of the type.
-
-The key rule: to *use* a value of a sum type, you must handle every
-constructor.  Lean enforces this with **exhaustiveness checking**: a
-pattern match that omits a constructor is a compile error.
-@@@ -/
-
-inductive TrafficLight where
-  | red    : TrafficLight
-  | yellow : TrafficLight
-  | green  : TrafficLight
-
--- A function over TrafficLight MUST handle all three constructors
-def TrafficLight.nextLight : TrafficLight → TrafficLight
-  | .red    => .green
-  | .yellow => .red
-  | .green  => .yellow
-
-#eval TrafficLight.nextLight .red    -- TrafficLight.green
-#eval TrafficLight.nextLight .green  -- TrafficLight.yellow
-
-/- @@@
-### 4.2  The template principle
-
-A function over a sum type `T` has exactly one case for each constructor
-of `T`.  This is not a style guideline — it follows from the definition
-of the type.  The *shape of the program* is determined by the *shape of
-the data*.
-
-This is the central insight of the HtDP design methodology, now enforced
-by the type system:
-
-1. Declare the type.
-2. Count the constructors.
-3. Write one case per constructor.
-4. Fill in each case.
-
-Step 3 is *mechanical*.  You cannot forget a case because the compiler
-will tell you.
+/-! @@@
+## 4.1  Enumeration types (pure sums)
 @@@ -/
 
 inductive Direction where
-  | north | south | east | west
+  | North | South | East | West
+deriving Repr, DecidableEq
 
-def Direction.opposite : Direction → Direction
-  | .north => .south
-  | .south => .north
-  | .east  => .west
-  | .west  => .east
+#eval Direction.North      -- Direction.North
+example : Direction.North ≠ Direction.South := by decide
 
--- Proof by case analysis: opposite is an involution
-theorem Direction.opposite_involution (d : Direction) :
-    d.opposite.opposite = d := by
-  cases d <;> rfl
-
-/- @@@
-### 4.3  Constructors with data (tagged unions)
-
-Constructors can carry data.  A sum type whose constructors carry different
-kinds of data corresponds to a *tagged union* in other languages.
-
-The number of cases in the proof equals the number of constructors.
-Each case has access to the data carried by that constructor.
+/-! @@@
+## 4.2  Record types (pure products)
 @@@ -/
 
-inductive Shape where
-  | circle   : Float → Shape          -- radius
-  | rectangle : Float → Float → Shape -- width × height
-  | triangle  : Float → Float → Float → Shape  -- three sides
+structure Point where
+  x : Float
+  y : Float
+deriving Repr
 
-def Shape.perimeter : Shape → Float
-  | .circle r         => 2 * Float.pi * r
-  | .rectangle w h    => 2 * (w + h)
-  | .triangle a b c   => a + b + c
+def origin : Point := { x := 0.0, y := 0.0 }
 
-#eval Shape.perimeter (.circle 1.0)          -- 2π ≈ 6.283
-#eval Shape.perimeter (.rectangle 3.0 4.0)   -- 14.0
-#eval Shape.perimeter (.triangle 3.0 4.0 5.0) -- 12.0
+/-! @@@
+## 4.3  Option: the prototypical proof-carrying type
 
-/- @@@
-### 4.4  The Option type
+`Option α` is either `none` (no value) or `some a` (a value `a : α`).
+It is Lean's answer to null.
 
-The **option type** is one of the most important types in safe programming.
-It represents a value that may or may not be present:
+But notice: `Option.get` does not simply hope the value is present.
+Its type *requires* a proof:
 
-```
-Option A = | none        (no value)
-           | some (a : A)  (a value of type A)
+```lean
+def Option.get : (o : Option α) → o.isSome = true → α
 ```
 
-`Option A` is the type-safe alternative to null pointers and exceptions
-for partial functions.  A function that may fail to produce a result
-returns `Option A` instead of `A`.  The caller is *forced* by the type
-system to handle both `none` and `some`, preventing null-pointer errors.
+The caller must supply evidence before the function will run.
+This is the proof-carrying pattern from Week 1, now applied to a
+realistic data type.
 @@@ -/
 
--- Safe division: returns none when divisor is zero
-def safeDiv (m n : Nat) : Option Nat :=
-  if n = 0 then none else some (m / n)
+-- Option.get requires a proof.
+def safeHead (xs : List α) (h : xs ≠ []) : α :=
+  xs.head h
 
-#eval safeDiv 10 2   -- some 5
-#eval safeDiv 10 0   -- none
+-- For concrete lists, `decide` produces the proof.
+#eval safeHead [1, 2, 3] (by decide)    -- 1
 
--- Safe list head
-def safeHead : List α → Option α
-  | []     => none
-  | x :: _ => some x
+-- Option.map: lift a function into an optional context
+-- Specification: ∀ f o, (Option.map f o).isSome = o.isSome
+theorem option_map_isSome (f : α → β) :
+    ∀ o : Option α, (Option.map f o).isSome = o.isSome :=
+  fun o => Option.recOn o rfl (fun _ => rfl)
 
-#eval safeHead [1, 2, 3]   -- some 1
-#eval safeHead ([] : List Nat)  -- none
+/-! @@@
+## 4.4  ∀ and ∃ in datatype specifications
 
-/- @@@
-### 4.5  Chaining with Option: the monad pattern
+When we define a new type, its specifications typically quantify over
+all values of that type.  Here is the vocabulary:
 
-When several operations can each fail, we want to chain them and propagate
-failure automatically.  Lean 4 allows `do` notation for `Option`, which
-handles this:
+| Symbol | Reading | Introduction form |
+|--------|---------|-------------------|
+| `∀ x : T, P x` | "for all x of type T, P holds of x" | supply a function `fun x => proof_of_P_x` |
+| `∃ x : T, P x` | "there exists x of type T such that P holds" | `⟨witness, proof⟩` |
 
-- If any step returns `none`, the whole chain returns `none`.
-- Otherwise the chain proceeds with the unwrapped values.
 @@@ -/
 
-def safeDivTwice (m n p : Nat) : Option Nat := do
-  let q ← safeDiv m n   -- fails if n = 0
-  let r ← safeDiv q p   -- fails if p = 0
-  return r
+-- ∀ example: a property of all options
+theorem none_map_always_none (f : α → β) :
+    Option.map f none = none :=
+  rfl
 
-#eval safeDivTwice 100 5 4   -- some 5
-#eval safeDivTwice 100 0 4   -- none
-#eval safeDivTwice 100 5 0   -- none
+-- ∃ example: witness a specific value satisfying a property
+example : ∃ n : Nat, n > 100 := ⟨101, by decide⟩
 
-/- @@@
-### 4.6  Proof by case analysis on a sum type
+private def factorial' : Nat → Nat
+  | 0 => 1
+  | n + 1 => (n + 1) * factorial' n
 
-To prove a property `P x` for all `x : T` where `T` is a sum type, give
-one sub-proof per constructor.  This is **case analysis** — the proof
-analogue of pattern matching.
+example : ∃ n : Nat, factorial' n > 1000 :=
+  ⟨7, by decide⟩
 
-The number of cases in the proof equals the number of constructors in
-the type.  This is no coincidence: it is the first glimpse of the
-Curry–Howard correspondence.
+/-! @@@
+## 4.5  Recursive types: expressions
+
+A *recursive* inductive type refers to itself in its constructor
+arguments.  This is how we build trees, lists, and other inductively
+structured data.
 @@@ -/
-
--- Every traffic light eventually returns to green after enough steps
--- (We prove the simpler statement: nextLight ∘ nextLight ∘ nextLight = id)
-theorem trafficLight_cycle (l : TrafficLight) :
-    l.nextLight.nextLight.nextLight = l := by
-  cases l <;> rfl
-
--- Option map: applying a function inside an option
-def Option.map' (f : α → β) : Option α → Option β
-  | none   => none
-  | some x => some (f x)
-
--- map' preserves identity
-theorem Option.map'_id (o : Option α) :
-    Option.map' id o = o := by
-  cases o <;> rfl
-
--- map' distributes over composition
-theorem Option.map'_comp (f : β → γ) (g : α → β) (o : Option α) :
-    Option.map' (f ∘ g) o = Option.map' f (Option.map' g o) := by
-  cases o <;> rfl
-
-/- @@@
-### Exercises
-
-1. Define an inductive type `Suit` for the four card suits (Clubs,
-   Diamonds, Hearts, Spades) and a function `isRed : Suit → Bool`.
-
-2. Define a type `Expr` for arithmetic expressions:
-   - A literal natural number
-   - The sum of two expressions
-   - The product of two expressions
-   Then define `eval : Expr → Nat`.
-
-3. Extend `safeDiv` to `Option Int` and prove that
-   `safeDiv m n = some q → n * q = m` when `n ≠ 0` and division is exact.
-
-4. Prove that `Option.map' f none = none` and
-   `Option.map' f (some x) = some (f x)` hold for any `f`.
-@@@ -/
-
-inductive Suit where
-  | clubs | diamonds | hearts | spades
-
-def Suit.isRed : Suit → Bool
-  | .diamonds | .hearts => true
-  | _                   => false
-
-example : Suit.isRed .hearts = true  := rfl
-example : Suit.isRed .clubs  = false := rfl
 
 inductive Expr where
-  | lit  : Nat → Expr
+  | num  : Int → Expr
   | add  : Expr → Expr → Expr
   | mul  : Expr → Expr → Expr
+  | neg  : Expr → Expr
+deriving Repr
 
-def Expr.eval : Expr → Nat
-  | .lit n   => n
-  | .add l r => l.eval + r.eval
-  | .mul l r => l.eval * r.eval
+-- Evaluation by structural recursion on Expr
+def Expr.eval : Expr → Int
+  | .num n    => n
+  | .add e₁ e₂ => e₁.eval + e₂.eval
+  | .mul e₁ e₂ => e₁.eval * e₂.eval
+  | .neg e    => -e.eval
 
-example : Expr.eval (.add (.lit 2) (.mul (.lit 3) (.lit 4))) = 14 := rfl
+#eval Expr.eval (.add (.num 3) (.mul (.num 4) (.num 5)))  -- 23
+
+-- Specification: eval distributes over add
+-- This is a ∀ proposition about all Expr values.
+theorem eval_add (e₁ e₂ : Expr) :
+    (Expr.add e₁ e₂).eval = e₁.eval + e₂.eval :=
+  rfl
+
+/-! @@@
+## 4.6  The template principle
+
+Every inductive type `T` has a corresponding *elimination principle*:
+to define a function from `T`, provide one clause per constructor.
+The types of the clauses are determined by the constructor signatures.
+
+For `Expr`:
+- A clause for `num n` — has access to `n : Int`
+- A clause for `add e₁ e₂` — has access to both subexpressions and
+  their recursively computed results
+- A clause for `mul e₁ e₂` — same
+- A clause for `neg e` — access to `e` and its result
+
+This is the *template principle*: the type tells you the shape of the
+function.
+
+## Exercises
+
+1. Define an inductive type `Shape` with constructors for
+   `Circle` (radius : Float), `Rectangle` (width height : Float),
+   and `Triangle` (base height : Float).
+
+2. Define a function `area : Shape → Float`.
+
+3. State (as a Prop) the specification: "the area of any circle with
+   radius r equals π * r * r."  You may use `Float.pi` from Lean.
+   (We will not prove this — Float lacks decidable equality.  But we
+   can state it.)
+
+4. Add a `sub : Expr → Expr → Expr` constructor and extend `eval`.
+   State its specification as a ∀ proposition.
+
+5. Use `∃` to state: "there exists an Expr that evaluates to 42."
+   Prove it by providing a witness.
+@@@ -/
 
 end Week04

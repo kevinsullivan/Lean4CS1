@@ -1,238 +1,207 @@
 -- FPCourse/Unit6/Week13_Streams.lean
+import Mathlib.Data.List.Basic
+import Mathlib.Data.Nat.Basic
 
-/- @@@
-# Unit 6 — Lazy Evaluation, Streams, and Synthesis
+/-! @@@
+# Week 13: Streams and Lazy Types
 
-## Week 13: Infinite Structures and Coinductive Reasoning
+## Infinite data and lazy evaluation
 
-### Overview
+Every data type we have defined so far is *finite*: you can always
+reach a leaf.  But some computations naturally produce infinite
+sequences: the natural numbers, the Fibonacci sequence, an infinite
+stream of sensor readings.
 
-Every type we have defined so far has been **inductive**: its values are
-*built up* from constructors applied to strictly smaller pieces.  An
-inductive type is always *finite*.
+Lean's reduction strategy is *strict* (call-by-value): arguments are
+evaluated before being passed.  To build infinite structures, we must
+*delay* evaluation explicitly using `Thunk`.
 
-This week introduces **coinductive** types: types defined by their
-*observable behaviour* rather than their construction.  A coinductive value
-is characterised by what you see when you *take it apart* — not by how
-it was put together.  A coinductive value can be **infinite**.
-
-The running example is the **stream**: a potentially infinite sequence.
-A stream of `α` values is not built from the empty stream the way a list is;
-instead, it is characterised by:
-- `head : α` — the first element
-- `tail : Stream' α` — the rest of the stream (another stream)
-
-Lean 4 allows productive corecursion on such types, using `Thunk` to
-delay evaluation.
-
-**The duality**:
-- Induction reasons about *finite* data by building up from the base case.
-- Coinduction reasons about *infinite* data by observing from the outside.
+A `Thunk α` is a suspended computation of type `α`.  It is not
+evaluated until forced.  By building infinite structures out of
+`Thunk`s, we can represent them finitely in memory and compute as many
+elements as needed.
 @@@ -/
 
 namespace Week13
 
-/- @@@
-### 13.1  Thunks: delaying evaluation
-
-Lean 4 is *strictly evaluated* (call-by-value): all arguments are evaluated
-before being passed to a function.  To build infinite structures, we need
-to *delay* evaluation of the tail.
-
-A **thunk** is a suspended computation: a function from `Unit` to `α` that
-produces a value of type `α` only when *forced* (called with `()`).
-
-Lean 4 has a built-in `Thunk α` type.  We use it directly.
+/-! @@@
+## 13.1  Thunk: explicit laziness
 @@@ -/
 
--- Force a thunk
-def Thunk.force (t : Thunk α) : α := t.get
+-- Thunk is defined in Lean's core library:
+-- structure Thunk (α : Type u) where mk ::
+--   fn : Unit → α
+-- A Thunk wraps a function from Unit → α.
+-- Calling .get on a Thunk forces evaluation.
 
--- Delay a value (wrap in a thunk)
-def Thunk.delay (x : α) : Thunk α := Thunk.mk (fun () => x)
-def Thunk.delay' (f : Unit → α) : Thunk α := Thunk.mk f
+#check @Thunk      -- Type u → Type u
+#check @Thunk.get  -- Thunk α → α
+#check @Thunk.mk   -- (Unit → α) → Thunk α
 
-/- @@@
-### 13.2  Streams via thunks
+-- Creating and forcing a Thunk:
+def lazyFive : Thunk Nat := Thunk.mk (fun _ => 2 + 3)
+#eval lazyFive.get   -- 5  (computed only when forced)
 
-We define a *lazy list* (stream) using a `Thunk` for the tail.
-The `Thunk` breaks the strict positivity requirement that would otherwise
-prevent the inductive definition — the tail is not evaluated eagerly.
+/-! @@@
+## 13.2  Lazy lists (streams)
+
+A lazy list is either empty or a head value paired with a *thunked*
+tail.  The tail is not computed until needed.
 @@@ -/
 
 inductive LList (α : Type) where
   | nil  : LList α
   | cons : α → Thunk (LList α) → LList α
 
--- Produce the first n elements as a regular List
+-- Take the first n elements as a strict list:
 def LList.take : Nat → LList α → List α
-  | 0,     _           => []
-  | _,     .nil        => []
-  | n + 1, .cons x xs  => x :: xs.get.take n
+  | 0,     _            => []
+  | _,     .nil         => []
+  | n + 1, .cons h t    => h :: LList.take n t.get
 
--- The infinite stream of ones: 1, 1, 1, ...
-def ones : LList Nat :=
-  .cons 1 (.mk fun () => ones)
-
-#eval ones.take 5    -- [1, 1, 1, 1, 1]
-
--- The natural numbers: 0, 1, 2, ...
-def natsFrom (n : Nat) : LList Nat :=
-  .cons n (.mk fun () => natsFrom (n + 1))
-
-def nats : LList Nat := natsFrom 0
-
-#eval nats.take 8    -- [0, 1, 2, 3, 4, 5, 6, 7]
-
-/- @@@
-### 13.3  Stream operations
-
-We can define `map`, `filter`, `zip`, and other operations on streams.
-Each operation preserves the lazy character: it does not force more of
-the stream than necessary.
-@@@ -/
-
-def LList.map (f : α → β) : LList α → LList β
-  | .nil        => .nil
-  | .cons x xs  => .cons (f x) (.mk fun () => xs.get.map f)
-
-def LList.zip : LList α → LList β → LList (α × β)
-  | .nil,       _            => .nil
-  | _,          .nil         => .nil
-  | .cons x xs, .cons y ys   =>
-    .cons (x, y) (.mk fun () => xs.get.zip ys.get)
-
--- zipWith: element-wise application
-def LList.zipWith (f : α → β → γ) : LList α → LList β → LList γ
-  | .nil,       _            => .nil
-  | _,          .nil         => .nil
-  | .cons x xs, .cons y ys   =>
-    .cons (f x y) (.mk fun () => xs.get.zipWith f ys.get)
-
--- Fibonacci as a stream: fib n = fib (n-1) + fib (n-2)
--- fibs = [0, 1, 1, 2, 3, 5, 8, 13, ...]
-def fibs : LList Nat :=
-  let rec go (a b : Nat) : LList Nat :=
-    .cons a (.mk fun () => go b (a + b))
-  go 0 1
-
-#eval fibs.take 10   -- [0, 1, 1, 2, 3, 5, 8, 13, 21, 34]
-
-/- @@@
-### 13.4  Memoisation
-
-A *memoised* function computes each result at most once, caching the
-value in a table for future use.
-
-The classic example: the naive recursive Fibonacci is O(2ⁿ) because
-it recomputes the same values repeatedly.  The stream-based Fibonacci
-above is O(n) because each value is computed once from the previous two.
-
-We can also build an explicit memo table:
-@@@ -/
-
--- Memoised Fibonacci using an Array as a cache
-def fibMemo (n : Nat) : Nat :=
-  let rec fill (arr : Array Nat) (i : Nat) : Array Nat :=
-    if i > n then arr
-    else
-      let v := if i ≤ 1 then i
-               else arr[i - 2]! + arr[i - 1]!
-      fill (arr.push v) (i + 1)
-  let arr := fill #[] 0
-  arr[n]!
-
-#eval fibMemo 40    -- 102334155 (computed in O(n))
-
-/- @@@
-### 13.5  Bisimulation: coinductive reasoning
-
-Two streams are **bisimilar** if they have the same head and their tails
-are bisimilar.  Bisimilarity is the coinductive counterpart of equality.
-
-To prove that two stream definitions produce the same stream, we show
-they are bisimilar: at every position, they produce the same element.
-
-We express this using the standard equality on the result of `take`:
-if two streams agree on every finite prefix, they are equal.
-@@@ -/
-
--- Two streams are equivalent if they agree on every finite prefix
-def StreamEq (s₁ s₂ : LList α) : Prop :=
-  ∀ n, s₁.take n = s₂.take n
-
--- Prove that two definitions of nats are equivalent
-def natsAlt : LList Nat :=
-  LList.zipWith (· + ·)
-    (LList.map (2 * ·) nats)
-    (LList.map (2 * · + 1) nats) |>.map (· / 2)
-
--- (This is a contrived example; in practice bisimulation proofs are
---  more subtle and may require coinduction principles.)
-
-/- @@@
-### 13.6  The sieve of Eratosthenes
-
-A classic stream program: generate all prime numbers using the sieve.
-The stream is infinite but each element is computed on demand.
-@@@ -/
-
-def sieve : LList Nat → LList Nat
-  | .nil        => .nil
-  | .cons p xs  =>
-    .cons p (.mk fun () =>
-      sieve (LList.filter (fun n => n % p != 0) xs.get))
-
--- Filter for lazy lists
-def LList.filter (p : α → Bool) : LList α → LList α
-  | .nil        => .nil
-  | .cons x xs  =>
-    if p x then .cons x (.mk fun () => xs.get.filter p)
-    else xs.get.filter p
-
-def primes : LList Nat := sieve (natsFrom 2)
-
--- Note: sieve can be slow due to repeated filtering;
--- this is the pedagogically clear version, not the optimised one.
-#eval primes.take 10   -- [2, 3, 5, 7, 11, 13, 17, 19, 23, 29]
-
-/- @@@
-### Exercises
-
-1. Implement `LList.drop : Nat → LList α → LList α` and
-   `LList.nth : Nat → LList α → Option α`.
-   Verify `(nats.nth n) = some n` for small `n`.
-
-2. Implement a lazy `LList.merge` that interleaves two streams,
-   alternating elements.  Apply it to create a stream of all
-   non-negative integers in the order 0, 1, -1, 2, -2, … (as Int).
-
-3. Prove that `(LList.map f s).take n = (s.take n).map f`
-   for all streams `s`, functions `f`, and natural numbers `n`.
-
-4. Implement a memoised version of the function that counts the number
-   of ways to make change for `n` cents using 1, 5, 10, and 25 cent coins.
-   Compare the running time of the memoised and naive versions for `n = 200`.
-@@@ -/
-
--- Exercise stubs
+-- Drop the first n elements:
 def LList.drop : Nat → LList α → LList α
   | 0,     s            => s
   | _,     .nil         => .nil
-  | n + 1, .cons _ xs   => xs.get.drop n
+  | n + 1, .cons _ t    => LList.drop n t.get
 
-def LList.nth (n : Nat) (s : LList α) : Option α :=
-  match s.drop n with
-  | .nil       => none
-  | .cons x _  => some x
+/-! @@@
+## 13.3  Canonical infinite streams
+@@@ -/
 
-theorem map_take (f : α → β) (s : LList α) (n : Nat) :
-    (s.map f).take n = (s.take n).map f := by
-  induction n generalizing s with
-  | zero      => rfl
+-- LList is always nonempty (it has a constructor)
+instance : Nonempty (LList α) := ⟨.nil⟩
+
+-- The infinite stream of a constant value:
+partial def LList.repeat (x : α) : LList α :=
+  .cons x (Thunk.mk (fun _ => LList.repeat x))
+
+-- The natural numbers: 0, 1, 2, 3, ...
+private partial def natsFrom (n : Nat) : LList Nat :=
+  .cons n (Thunk.mk (fun _ => natsFrom (n + 1)))
+
+def nats : LList Nat := natsFrom 0
+
+-- Fibonacci numbers: 1, 1, 2, 3, 5, 8, ...
+private partial def fibsFrom (a b : Nat) : LList Nat :=
+  .cons a (Thunk.mk (fun _ => fibsFrom b (a + b)))
+
+def fibs : LList Nat := fibsFrom 0 1
+
+-- Test:
+#eval LList.take 10 nats    -- [0,1,2,3,4,5,6,7,8,9]
+#eval LList.take 10 fibs    -- [0,1,1,2,3,5,8,13,21,34]
+
+/-! @@@
+## 13.4  Map on streams
+@@@ -/
+
+def LList.map (f : α → β) : LList α → LList β
+  | .nil       => .nil
+  | .cons h t  => .cons (f h) (Thunk.mk (fun _ => LList.map f t.get))
+
+-- Specification: map f on the first n elements equals
+-- mapping f on the taken list.
+-- This is a provided term-mode proof.
+theorem map_take (f : α → β) (n : Nat) :
+    ∀ xs : LList α, (xs.map f).take n = (xs.take n).map f := by
+  induction n with
+  | zero => intro xs; rfl
   | succ n ih =>
-    cases s with
-    | nil        => rfl
-    | cons x xs  => simp [LList.map, LList.take, ih]
+    intro xs
+    cases xs with
+    | nil  => simp [LList.take, LList.map]
+    | cons h t =>
+        simp only [LList.map, LList.take]
+        exact congrArg (f h :: ·) (ih t.get)
+
+/-! @@@
+## 13.5  Filter on streams
+
+Filter on an infinite stream is partial: if the predicate is always
+false, filter never terminates.  We cannot define a total filter on
+streams in Lean without restricting the predicate or using `partial`.
+
+This is a fundamental difference from lists.  On a finite list,
+filter always terminates.  On an infinite stream, it may not.
+
+This connects back to Week 3: Lean's type system only accepts total
+functions.  A stream filter would require `partial`, losing the
+ability to prove properties about it.
+
+We CAN define filter on a `take`n prefix:
+@@@ -/
+
+def LList.takeWhile (p : α → Bool) : LList α → List α
+  | .nil       => []
+  | .cons h t  => if p h then h :: LList.takeWhile p t.get else []
+
+#eval LList.takeWhile (· < 5) nats    -- [0,1,2,3,4]
+
+/-! @@@
+## 13.6  Coinduction: specifications about infinite streams
+
+For finite data, we use induction to prove properties: "for all finite
+inputs, the property holds."
+
+For infinite data (streams), we use *coinduction*: "the property holds
+at every finite prefix."
+
+The specification of `nats` is a good example:
+@@@ -/
+
+-- Specification: the nth element of nats is n.
+-- Note: with partial definitions, we state the property but defer the proof.
+theorem nats_take_eq : ∀ n : Nat, LList.take n nats = List.range n := by
+  intro n
+  induction n with
+  | zero => rfl
+  | succ n _ =>
+    simp only [LList.take, nats, natsFrom, List.range_succ]
+    sorry
+
+/-! @@@
+## 13.7  Non-termination and the Thunk boundary
+
+The `Thunk` type makes explicit what is delayed.  Every time you see
+`Thunk α` in a type, you know: "this computation has not run yet."
+
+The boundary between finite and infinite structures is the boundary
+between:
+- Lean's total function world (Week 3: structural recursion, well-founded recursion)
+- The `partial` world (where termination is not guaranteed)
+
+Thunks do not cross this boundary.  A `Thunk` value IS a term — it is
+just a function waiting to be called.  The infinite structure exists
+as a *description* of how to produce any finite prefix; it does not
+actually exist as an infinite object in memory.
+
+This is computationally honest: real programs do not hold infinite
+structures; they hold descriptions and lazily demand pieces.
+
+## Exercises
+
+1. Define `LList.zip : LList α → LList β → LList (α × β)` that pairs
+   corresponding elements.  State its specification:
+   `(zip xs ys).take n = (xs.take n).zip (ys.take n)`.
+
+2. Define `LList.interleave : LList α → LList α → LList α` that
+   alternates between two streams.  State its specification.
+
+3. Define the stream of squares: 0, 1, 4, 9, 16, ...  using `LList.map`
+   on `nats`.  Check with `#eval` that the first 10 elements are correct.
+
+4. Explain why we cannot define:
+   ```lean
+   def LList.filter (p : α → Bool) : LList α → LList α
+   ```
+   as a total function in Lean.  What would happen to the termination
+   checker?
+
+5. State the specification for `LList.map` in terms of take:
+   "`map f xs` is the stream where the nth element is `f` applied to
+   the nth element of `xs`."  This is exactly `map_take`; read it and
+   explain each part.
+@@@ -/
 
 end Week13
