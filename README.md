@@ -1,22 +1,23 @@
-# FP Lean 4 Curriculum — Revised Edition
+# A First Course in Typed Functional Programming — Lean 4 Edition
 
-A 14-week literate Lean 4 curriculum for a first course in typed
-functional programming.  Every file in this project compiles cleanly:
-no `sorry`, no `by`.  All proofs are in term mode.
+A 14-week literate Lean 4 curriculum introducing typed functional programming
+through the lens of the Curry-Howard correspondence.  Every file compiles
+cleanly against Lean 4 / Mathlib v4.28.0: no `sorry`, no `by`.
 
 ## Design commitments
 
-**Students are expected to emerge fluent in computational and logical
-types, but not in proof construction.**
+**Students emerge fluent in computational and logical types, but proof
+construction is not an assessment target.**
 
 - Propositions are types from Week 1.
-- `decide` is a term-mode proof producer for decidable propositions.
-- All provided proofs are term-mode: `by` never appears.
+- `decide` is the primary proof producer for decidable propositions.
+- All provided proofs are in term mode — `by` never appears.
 - `sorry` never appears.
 - Full Mathlib notations are used throughout.
-- The logic progression (Bool/Prop → propositional → predicate →
-  set/relation) is distributed across all 14 weeks.
-- The `Float`/`DecidableEq` lesson appears in Week 7 as a central topic.
+- The logic progression (Bool/Prop → propositional → predicate → set/relation)
+  is distributed across all 14 weeks.
+- `Float`/`DecidableEq` and the IEEE 754 boundary appear in Week 7 as
+  central course content.
 
 ## Course structure
 
@@ -29,55 +30,101 @@ types, but not in proof construction.**
 | 5 | 11–12 | Abstract Types, Type Classes |
 | 6 | 13–14 | Streams, Curry-Howard |
 
-## Building
+## Repository layout
 
-Requires Lean 4 and Lake.  Run `lake build` in this directory.
-First build downloads Mathlib (several GB) and may take 30–60 minutes.
+```text
+FPCourse/          Lean 4 source files (literate, /-! @@@ ... @@@ -/ blocks)
+  Unit1/           Weeks 1–3
+  Unit2/           Weeks 4–7
+  Unit3/           Weeks 8–9
+  Unit4/           Week 10
+  Unit5/           Weeks 11–12
+  Unit6/           Weeks 13–14
+scripts/
+  convert.hs       Literate Lean → Markdown (Haskell, primary)
+  convert.py       Literate Lean → Markdown (Python, fallback)
+src/
+  SUMMARY.md       mdBook table of contents
+  introduction.md  Course overview page
+  FPCourse/        Generated Markdown (one .md per .lean file)
+book.toml          mdBook configuration
+Makefile           Build automation: make → convert + mdbook build
+.github/workflows/
+  mdbook.yml       CI/CD: convert, build, deploy to GitHub Pages
+```
+
+## Building the Lean sources
+
+Requires Lean 4 and Lake.  The first build downloads Mathlib (~several GB)
+and may take 30–60 minutes.
 
 ```bash
 lake build
 ```
 
-If you see only `Build completed successfully`, every proof in the
-curriculum compiles.
+`Build completed successfully` means every proof in the curriculum compiles.
 
-## File naming convention
+## Building the web book
 
-Each file is named `Week{NN}_{Title}.lean`.  Prose appears in
-`/-! @@@ ... @@@ -/` blocks for rendering by the course's HTML pipeline.
+Requires [mdBook](https://rust-lang.github.io/mdBook/) and its preprocessors
+(`mdbook-toc`, `mdbook-mermaid`, `mdbook-image-size`).
+
+**Convert Lean sources to Markdown** (uses `runhaskell` if available,
+otherwise Python 3):
+
+```bash
+make convert        # FPCourse/**/*.lean → src/FPCourse/**/*.md
+```
+
+**Build and serve locally:**
+
+```bash
+make serve          # builds and serves at http://localhost:3000
+```
+
+**Full pipeline** (convert + build):
+
+```bash
+make                # or: make all
+```
+
+## Continuous deployment
+
+Pushing to `main` triggers `.github/workflows/mdbook.yml`, which:
+
+1. Installs GHC, mdBook, and preprocessors.
+2. Runs `scripts/convert.hs` on every `.lean` file.
+3. Builds the book with `mdbook build`.
+4. Deploys the result to GitHub Pages.
+
+## Literate format
+
+Prose lives inside `/-! @@@ ... @@@ -/` comment blocks; everything else
+is treated as Lean code.  The converter emits prose as-is and wraps code
+in ` ```lean ``` ` fences.
+
+```lean
+/-! @@@
+## Section heading
+
+Explanation in **Markdown**.
+@@@ -/
+
+-- This becomes a ```lean code block.
+def example : Nat := 42
+```
 
 ## Assessment forms
 
 Students are assessed on five competencies (no proof production required):
 
-1. **Specification writing**: given a function and English description,
+1. **Specification writing** — given a function and English description,
    write the correct Lean type expressing its specification.
-
-2. **Specification reading**: given a Lean proposition, state in English
-   what it asserts; give a satisfying and falsifying example.
-
-3. **Type inhabitation**: write a term the compiler accepts at a given type.
+2. **Specification reading** — given a Lean proposition, state in English
+   what it asserts; give a satisfying and a falsifying example.
+3. **Type inhabitation** — write a term the compiler accepts at a given type.
    The compiler is the primary grader.
-
-4. **Counterexample finding**: given a function and an incorrect
+4. **Counterexample finding** — given a function and an incorrect
    specification, find a concrete input that witnesses the mismatch.
-
-5. **Decidability identification**: given a proposition, state whether
+5. **Decidability identification** — given a proposition, state whether
    `decide` closes it, which other term if not, and why.
-
-Exams are written by hand.
-
-## What changed from v1
-
-- **No `by` anywhere.** Every proof is a term.
-- **No `sorry` anywhere.** Every theorem statement is backed by a
-  complete term-mode proof.
-- Week 10 replaces Cost Semantics with **Sets and Relations**, completing
-  the stated logic progression.
-- Logic track distributed across all weeks; Bool/Prop distinction
-  appears in Week 1.
-- Week 7 develops `DecidableEq` and the `Float`/IEEE 754 lesson as
-  primary content.
-- Week 3 renamed "Recursion and Termination" (not "Induction").
-- Week 14 reframed as *recognition* of Curry-Howard, not introduction.
-- Assessment section added to README.
