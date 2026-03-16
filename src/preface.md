@@ -6,7 +6,7 @@ The cost of constructing formal proofs even in specialized and deeply
 mathematical and sofware domains is collapsing, driven by advances in
 proof automation and AI-assisted verification.  As these costs drop, the
 impracticality barrier that has historically confined certified software
-to research and high-criticality settings crumbles. 
+to research and high-criticality settings crumbles.
 
 As costs drop, demand soars.  Software that carries a machine-checked
 correctness proof — certified software — is on the verge of becoming a
@@ -101,9 +101,9 @@ more graduated approach.
 *Structure and Interpretation of Computer Programs*, 2nd ed.
 MIT Press, 1996. [mitpress.mit.edu](https://mitpress.mit.edu/9780262510875/)
 
-## What Is Novel
+## What's Novel
 
-Novel features of this curriculum, no direct precedent in existing CS1 
+Novel features of this curriculum, no direct precedent in existing CS1
 course proposal, to our knowledge, include the following:
 
 1. **Machine-checked specifications at CS1 level.**  Courses in formal
@@ -144,3 +144,11 @@ introduced here in the realm of *programming* — algebraic data types,
 recursion, higher-order functions, specifications, sets, relations, type
 classes — ports intact to that setting.  CS2 is thus not a new subject but
 the same, reread from the logical side of the Curry-Howard correspondence.
+
+## What's Missing Here
+
+In its current form this book is fairly bare bones, not particularly warm
+and fuzzy, and lacking in examples of applications that are fun, linked to
+real work domains, graphical or interactive, etc. Further skinning of this
+kind would be helpful. For now its bare bones character makes discussing the
+core content easier, perhaps.
