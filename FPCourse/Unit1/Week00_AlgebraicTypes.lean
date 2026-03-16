@@ -8,7 +8,7 @@ import Mathlib.Data.Bool.Basic
 ## One language. Two readings.
 
 A *type* classifies values.  `Nat` classifies the natural numbers.
-`Bool` classifies `true` and `false`.  A type answers the question:
+`Bool` classifies `true` and `false`.  When you encounter a type, ask:
 *what values of this shape can exist?*
 
 This course is organized around six ways of building types — six *type
@@ -29,7 +29,7 @@ This is not an analogy.  It is the same language, read two ways.
 
 By the end of this week you will have seen all six in both readings.
 You will have one vocabulary — *types and their inhabitants* — that
-covers both.
+covers both.  You do not need two languages.  You are learning one.
 @@@ -/
 
 namespace Week00
@@ -37,8 +37,12 @@ namespace Week00
 /-! @@@
 ## 0.1  Basic Types: the atoms of computation and logic
 
-The simplest types are defined by listing their values.  These are the
-*atoms* — not built from other types; they just exist.
+**Why basic types?**  Before you can build anything, you need raw
+material — types that are not constructed from anything else.  Basic
+types are your atoms: given to you, not derived.
+
+You encounter them by name: `Nat`, `Bool`, `String`.  Their values
+are listed explicitly and cannot be broken down further.
 @@@ -/
 
 -- Nat: the type of natural numbers.  Values: 0, 1, 2, 3, ...
@@ -59,6 +63,19 @@ The simplest types are defined by listing their values.  These are the
 #eval "hello".length          -- 5
 
 /-! @@@
+**The Lean notional machine.**  Think of Lean as a machine with one job:
+given an expression, apply reduction rules one step at a time until no
+further reduction is possible.  The irreducible result is the *normal form*.
+
+```
+  expression  ──→  Lean kernel  ──→  normal form
+   (source)        (evaluates)       (irreducible value)
+```
+
+Every `#eval` you write invokes this machine.  Every `by decide` runs
+it on a decision procedure.  Every `rfl` succeeds because both sides
+of the equation reach the *same* normal form.
+
 **Evaluation.**  `#eval e` does not merely print a value — it *evaluates*
 `e` by applying *reduction rules* one step at a time until no further
 reduction is possible.  The irreducible result is called a *normal form*.
@@ -137,6 +154,22 @@ claims over all natural numbers are not.  We return to this in Week 7.
 
 /-! @@@
 ## 0.2  Function Types: `α → β`
+
+**Why function types?**  Every transformation in programming — mapping,
+filtering, converting, composing — is a function.  Functions are also
+how you prove implications: a proof of `P → Q` is literally a function
+from proofs of `P` to proofs of `Q`.  Mastering `→` unlocks both.
+
+```
+  α → β
+
+  ┌───┐           ┌───┐
+  │ α │  ──f──→   │ β │
+  └───┘  (apply)  └───┘
+
+  Build:  fun a => ...   (introduce a function)
+  Use:    f a            (apply it to an argument; β-reduction fires)
+```
 
 The arrow type `α → β` is the type of **functions** from `α` to `β`.
 A value of type `α → β` takes any input of type `α` and produces an
@@ -219,6 +252,23 @@ def compose (f : β → γ) (g : α → β) : α → γ := fun a => f (g a)
 /-! @@@
 ## 0.3  Product Types: `α × β`
 
+**Why product types?**  Real programs combine data: a point has an x
+coordinate AND a y coordinate; a database record has a name AND an age
+AND an address.  Whenever you need to carry multiple pieces of data
+simultaneously, you reach for a product.
+
+```
+  α × β
+
+  ┌──────────────┐
+  │  .1  :  α    │   ← first component
+  │  .2  :  β    │   ← second component
+  └──────────────┘
+
+  Build:  (a, b)   or   ⟨a, b⟩
+  Use:    p.1, p.2       (projections; ι-reduction fires)
+```
+
 A **product type** `α × β` bundles a value of type `α` with a value of
 type `β`.  To *build* a product you must supply BOTH components.  To
 *use* a product you project out whichever component you need.
@@ -290,6 +340,25 @@ example : 1 < 2 ∧ 2 < 3 ∧ 3 < 4 := by decide
 
 /-! @@@
 ## 0.4  Sum Types: `Sum α β` (written `α ⊕ β`)
+
+**Why sum types?**  Real programs handle alternatives: a network request
+either succeeds OR fails; a command is either add OR remove OR update;
+a shape is a circle OR a rectangle OR a triangle.  Sums capture this
+structure in the type — and pattern-matching forces you to handle every
+case.
+
+```
+  α ⊕ β
+
+  ┌──────────────────────────┐
+  │  Sum.inl (a : α)         │   ← "I have an α"
+  │    OR                    │
+  │  Sum.inr (b : β)         │   ← "I have a β"
+  └──────────────────────────┘
+
+  Build:  Sum.inl a   or   Sum.inr b
+  Use:    match s with | Sum.inl a => ... | Sum.inr b => ...
+```
 
 A **sum type** `α ⊕ β` carries either a value of type `α` **or** a
 value of type `β`.  It represents a *choice* or *variant*: you get one
@@ -369,6 +438,12 @@ theorem or_weaken (h : P) : P ∨ Q := Or.inl h
 /-! @@@
 ## 0.5  The Empty Type: `Empty` and `False`
 
+**Why an empty type?**  Sometimes a situation is genuinely impossible:
+a division by zero that your types have already ruled out; a branch of
+a proof that leads to contradiction.  When you can prove a situation is
+impossible, the empty type lets you discharge it cleanly — the type
+system certifies the branch is unreachable.
+
 The **empty type** has no constructors and no values.  It is impossible
 to produce a term of this type.
 
@@ -412,6 +487,13 @@ with no constructors: the match is exhaustive with zero branches.
 
 /-! @@@
 ## 0.6  Functions to Empty: `α → Empty` and `¬P`
+
+**Why functions to empty?**  Ruling out a case is as important as
+handling one.  When you write a precondition `h : n ≠ 0`, you are
+carrying a function `(n = 0) → False` — proof that passing in a
+zero is impossible.  Negation is not a primitive added to the language;
+it falls out of the function arrow and the empty type that you already
+have.
 
 The most surprising type constructor: **a function whose codomain is
 the empty type**.
@@ -485,7 +567,6 @@ the same way.  Sums tag data AND proofs the same way.  Functions
 transform data AND convert proofs the same way.  The empty type
 represents impossible data AND impossible proofs.
 
-You do not need two languages.  You are learning one.
 @@@ -/
 
 -- All six constructors demonstrated side by side:
@@ -542,11 +623,28 @@ they are your co-programmer.
 
 ## Exercises
 
-1. Write a function `classify : Nat → String ⊕ String` that returns
-   `Sum.inl "even"` if the input is even and `Sum.inr "odd"` if it is odd.
-   Use `if/then/else` and the `%` (mod) operator.
+1. Use `decide` to verify each claim.  For each, identify which type
+   constructor(s) from the six-constructor table the proposition uses:
+   (a) `2 < 3 ∧ 3 < 4`
+   (b) `2 < 3 ∨ 3 < 2`
+   (c) `¬ (2 = 3)`
+   (d) `¬ (2 < 3 ∧ 3 < 2)`
+   (e) `(2 < 3 ∧ ¬(3 < 2)) ∨ (3 < 2 ∧ ¬(2 < 3))`
 
-2. A `Result` type represents either success or failure:
+2. Explain in your own words why a function of type `α → Empty` certifies
+   that `α` has no values.  Then write a term of type `False → Nat × Bool × String`
+   and explain what it means in both the computational and logical readings.
+
+3. Write a function `classify : Nat → String ⊕ String` that returns
+   `Sum.inl "even"` if the input is even and `Sum.inr "odd"` if it is odd.
+   Use `if/then/else` and the `%` (mod) operator.  Test it with `#eval`.
+
+4. Write the type of a function `lookup` that takes a `Nat` key and a
+   `List (Nat × String)` (association list) and returns `Option String`.
+   Then implement it by recursion on the list.  Which of the six constructors
+   does the return type use, and why?
+
+5. A `Result` type represents either success or failure:
    ```lean
    inductive Result (α ε : Type) where
      | ok  : α → Result α ε
@@ -554,22 +652,7 @@ they are your co-programmer.
    ```
    Define it.  Then write a function `safeDiv : Nat → Nat → Result Nat String`
    that returns `ok (a / b)` when `b ≠ 0` and `err "division by zero"` otherwise.
-
-3. Write the type of a function `lookup` that takes a `Nat` key and a
-   `List (Nat × String)` (association list) and returns `Option String`.
-   Then implement it by recursion on the list.
-
-4. Explain in your own words why a function of type `α → Empty` certifies
-   that `α` has no values.  Then write a term of type `False → Nat × Bool × String`
-   and explain what it means in both the computational and logical readings.
-
-5. Use `decide` to verify each claim.  For each, identify which type
-   constructor(s) the proposition uses:
-   (a) `2 < 3 ∧ 3 < 4`
-   (b) `2 < 3 ∨ 3 < 2`
-   (c) `¬ (2 = 3)`
-   (d) `¬ (2 < 3 ∧ 3 < 2)`
-   (e) `(2 < 3 ∧ ¬(3 < 2)) ∨ (3 < 2 ∧ ¬(2 < 3))`
+   What type constructor does `Result α ε` correspond to in the six-constructor table?
 @@@ -/
 
 end Week00

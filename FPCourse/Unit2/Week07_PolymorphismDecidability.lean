@@ -160,6 +160,17 @@ The practical consequence:
 /-! @@@
 ## 7.5  Summary: the decidability boundary
 
+**Reading `∀` and `∃`.**  Two quantifiers appear throughout this table
+and the rest of the course.  Read them aloud as follows:
+
+- `∀ x : α, P x` — "for every `x` of type `α`, the proposition `P x` holds"
+- `∃ x : α, P x` — "there exists some `x` of type `α` such that `P x` holds"
+
+Both are types.  A proof of `∀ x : α, P x` is a *function* `(x : α) → P x` —
+given any `x`, produce a proof of `P x`.  A proof of `∃ x : α, P x` is a
+*dependent pair* `⟨witness, proof⟩` — a specific value together with a proof
+that the claim holds for that value.
+
 | Proposition form | Decidable? | Proof term |
 |-----------------|-----------|------------|
 | `a = b` for `Nat`, `Bool`, `List Nat`, etc. | Yes | `decide` |

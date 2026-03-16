@@ -66,6 +66,10 @@ propositional connective.
 | `s \ t` (difference) | `s x ∧ ¬ t x` | `\` |
 | `s ⊆ t` (subset) | `∀ x, s x → t x` | `⊆` |
 
+Read `s ⊆ t` aloud: "for every `x`, if `x` belongs to `s` then `x` belongs to `t`."
+Read `s ∩ t = s ∪ t` would mean: "for every `x`, `x ∈ s ∧ x ∈ t` iff `x ∈ s ∨ x ∈ t`" — which is false.
+
+Notice the pattern: **every set statement reduces to a statement about propositions, quantified over elements.**  When you prove something about sets, you are doing propositional logic with `∀` threading through.
 @@@ -/
 
 -- Intersection is ∧:

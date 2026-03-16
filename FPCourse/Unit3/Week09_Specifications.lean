@@ -71,6 +71,10 @@ This is the heart of the week: a single type that captures what it means
 for a function to be a correct sorting function.
 @@@ -/
 
+-- Read aloud: "for every list xs of Nat,
+--   (sort xs is sorted) AND (sort xs is a permutation of xs)"
+-- The ∀ quantifies over all possible inputs.
+-- The ∧ bundles the two conditions that must BOTH hold.
 def CorrectSort (sort : List Nat → List Nat) : Prop :=
   ∀ xs : List Nat,
     List.Sorted (· ≤ ·) (sort xs) ∧   -- output is sorted
