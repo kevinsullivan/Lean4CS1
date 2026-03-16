@@ -38,6 +38,19 @@ either:
 `Decidable p` does not just say "p is true or false" — it *provides*
 the proof of whichever is the case.
 
+**Evaluation.**  `decide` is not magic — it evaluates.  When you write
+`by decide` to prove `p`, Lean:
+1. Looks up the `Decidable p` instance (a value of type `Decidable p`).
+2. *Evaluates* that instance to its normal form.
+3. If the normal form is `isTrue h`, the proof `h : p` is extracted and
+   used.  The goal is closed.
+4. If the normal form is `isFalse h`, elaboration fails — the goal is
+   `p` but only a refutation exists.
+
+The whole operation is reduction: evaluate the `Decidable` term, inspect
+the constructor, extract the payload.  Every `by decide` in this course
+is exactly these four steps.
+
 `decide` used as a proof term extracts the `isTrue h` component and
 returns `h : p`.  If the instance is `isFalse _`, the file fails to
 compile.

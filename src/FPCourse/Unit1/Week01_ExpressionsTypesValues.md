@@ -36,7 +36,10 @@ namespace Week01
 #check Nat.succ          -- Nat → Nat
 #check Nat.add           -- Nat → Nat → Nat
 
--- #eval runs computation.
+-- #eval evaluates an expression to its normal form by reduction.
+-- Nat.succ 7   ↝ 8        (successor of 7, by definition of Nat.succ)
+-- Nat.add 3 4  ↝ 7        (addition, by recursive definition of Nat.add)
+-- true && false ↝ false   (β-reduction: true && b ↝ b)
 #eval Nat.succ 7         -- 8
 #eval Nat.add 3 4        -- 7
 #eval true && false      -- false  (Bool operations)
@@ -64,10 +67,11 @@ have no proof (they are false), some have many proofs.
 #check (∃ n : Nat, n > 100)     -- Prop
 
 -- A proof of a Prop is a term of that type.
--- `rfl` proves any claim of the form `a = a` when both sides
--- reduce to the same value by computation.
-example : 2 + 2 = 4 := rfl
-example : Nat.succ 7 = 8 := rfl
+-- `rfl` proves `a = b` when both sides evaluate to the same normal form.
+-- Evaluation: 2 + 2 ↝ 4, and the right side is already 4.  Same normal form.
+-- Evaluation: Nat.succ 7 ↝ 8, and the right side is already 8.
+example : 2 + 2 = 4 := rfl      -- both sides evaluate to 4
+example : Nat.succ 7 = 8 := rfl  -- both sides evaluate to 8
 ```
 
 ## 1.3  `decide`: mechanically proving decidable propositions
@@ -84,7 +88,10 @@ the file fails to compile.
 This is mechanical verification in its most direct form: the claim is
 part of the type, and the compiler certifies it.
 ```lean
--- decide proves concrete decidable propositions.
+-- Evaluation: `decide` evaluates the decision procedure for the proposition.
+-- For each claim, Lean evaluates both sides and checks the result.
+-- 2 + 2 ↝ 4, so 2 + 2 = 4 is confirmed.
+-- 3 ↝ 3 and 5 ↝ 5, they differ, so ¬(3 = 5) is confirmed.
 example : 2 + 2 = 4 := by decide
 example : ¬ (3 = 5) := by decide
 example : 2 < 100 := by decide

@@ -109,17 +109,26 @@ inductive Expr where
   | neg  : Expr → Expr
 deriving Repr
 
--- Evaluation by structural recursion on Expr
+-- Evaluation by structural recursion on Expr.
+-- The function is named `eval` deliberately: it IS evaluation —
+-- the process of reducing an expression tree to its integer value.
 def Expr.eval : Expr → Int
   | .num n    => n
   | .add e₁ e₂ => e₁.eval + e₂.eval
   | .mul e₁ e₂ => e₁.eval * e₂.eval
   | .neg e    => -e.eval
 
+-- Evaluation trace: Expr.eval (.add (.num 3) (.mul (.num 4) (.num 5)))
+--   ↝ (.num 3).eval + (.mul (.num 4) (.num 5)).eval    -- add clause
+--   ↝ 3 + (.mul (.num 4) (.num 5)).eval                -- num clause
+--   ↝ 3 + ((.num 4).eval * (.num 5).eval)              -- mul clause
+--   ↝ 3 + (4 * 5)                                      -- num clause ×2
+--   ↝ 3 + 20 ↝ 23                                      -- arithmetic
 #eval Expr.eval (.add (.num 3) (.mul (.num 4) (.num 5)))  -- 23
 
--- Specification: eval distributes over add
--- This is a ∀ proposition about all Expr values.
+-- Specification: eval distributes over add.
+-- Evaluation: (.add e₁ e₂).eval ↝ e₁.eval + e₂.eval by the add clause.
+-- Both sides are definitionally equal, so rfl applies.
 theorem eval_add (e₁ e₂ : Expr) :
     (Expr.add e₁ e₂).eval = e₁.eval + e₂.eval :=
   rfl

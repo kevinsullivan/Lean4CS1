@@ -62,7 +62,9 @@ When the element type has `DecidableEq`, propositions of the form
 `∀ x ∈ xs, P x` are decidable for finite `xs` (when `P` is decidable).
 This means `decide` can verify them automatically.
 ```lean
--- All elements of a concrete list satisfy a concrete predicate:
+-- Evaluation: `decide` checks finite-list claims by evaluating the predicate
+-- on each element in turn.  ∀ x ∈ [2,4,6,8], x%2=0 becomes:
+--   2%2=0 ↝ true,  4%2=0 ↝ true,  6%2=0 ↝ true,  8%2=0 ↝ true  ✓
 example : ∀ x ∈ ([2, 4, 6, 8] : List Nat), x % 2 = 0 := by decide
 example : ∀ x ∈ ([1, 3, 5, 7] : List Nat), x % 2 = 1 := by decide
 example : ∃ x ∈ ([10, 20, 30] : List Nat), x > 15    := by decide

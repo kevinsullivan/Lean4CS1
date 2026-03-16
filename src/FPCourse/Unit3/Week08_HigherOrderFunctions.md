@@ -40,7 +40,13 @@ computations.
 -- foldr: accumulate from the right
 #check @List.foldr    -- (α → β → β) → β → List α → β
 
--- Examples:
+-- Evaluation traces for the three canonical operations:
+-- map (·*2) [1,2,3]  ↝  [1*2, 2*2, 3*2]  ↝  [2, 4, 6]   (β-reduce per element)
+-- filter even [1,2,3,4] ↝ keep 2, keep 4 ↝ [2, 4]        (evaluate predicate per element)
+-- foldl (+) 0 [1,2,3]  ↝  foldl (+) 1 [2,3]              (0+1=1)
+--                       ↝  foldl (+) 3 [3]                (1+2=3)
+--                       ↝  foldl (+) 6 []                 (3+3=6)
+--                       ↝  6                               (base case)
 #eval [1,2,3,4,5].map (· * 2)              -- [2,4,6,8,10]
 #eval [1,2,3,4,5].filter (· % 2 == 0)      -- [2,4]
 #eval [1,2,3,4,5].foldl (· + ·) 0          -- 15

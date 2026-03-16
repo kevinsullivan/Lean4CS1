@@ -16,13 +16,11 @@ depend on which type the variable is instantiated to.  The type alone
 constrains what the function can do — a polymorphic `f : List α → List α`
 cannot inspect element values, so it can only permute, drop, or
 duplicate them.
-
 ```lean
 namespace Week07
 ```
 
 ## 7.1  Polymorphic functions and their types
-
 ```lean
 -- id works for any type
 #check @id        -- (α : Type u) → α → α
@@ -41,7 +39,6 @@ def myFlip (f : α → β → γ) : β → α → γ := fun b a => f a b
 Sometimes a polymorphic function needs *some* knowledge about the type.
 Type classes express this: `[DecidableEq α]` says "α must have a
 decidable equality test."  The constraint is explicit in the type.
-
 ```lean
 -- Without DecidableEq, we cannot compare elements
 def contains [DecidableEq α] (x : α) : List α → Bool
@@ -102,7 +99,6 @@ you define with `deriving DecidableEq`.
 
 Types WITHOUT `DecidableEq`: functions `α → β` in general (you cannot
 check `f = g` by running them), and — crucially — `Float`.
-
 ```lean
 -- Nat has DecidableEq:
 example : DecidableEq Nat := inferInstance
@@ -136,7 +132,6 @@ The practical consequence:
 - You CANNOT use `Float` values as keys in structures requiring `DecidableEq`.
 - Specifications about floating-point programs must use `Real` or `Rat`
   for the mathematical content, with a separate claim about approximation.
-
 ```lean
 -- Float DOES have BEq (Boolean equality), but that is NOT the same as =
 #check (inferInstance : BEq Float)   -- BEq Float is available
@@ -160,6 +155,17 @@ The practical consequence:
 ```
 
 ## 7.5  Summary: the decidability boundary
+
+**Reading `∀` and `∃`.**  Two quantifiers appear throughout this table
+and the rest of the course.  Read them aloud as follows:
+
+- `∀ x : α, P x` — "for every `x` of type `α`, the proposition `P x` holds"
+- `∃ x : α, P x` — "there exists some `x` of type `α` such that `P x` holds"
+
+Both are types.  A proof of `∀ x : α, P x` is a *function* `(x : α) → P x` —
+given any `x`, produce a proof of `P x`.  A proof of `∃ x : α, P x` is a
+*dependent pair* `⟨witness, proof⟩` — a specific value together with a proof
+that the claim holds for that value.
 
 | Proposition form | Decidable? | Proof term |
 |-----------------|-----------|------------|
@@ -195,7 +201,7 @@ This table is one of the most important things in the course.
    (b) `∀ c ∈ [Color.Red, Color.Green, Color.Blue], c = Color.Red ∨ c ≠ Color.Red`
    Explain why `decide` can handle this but could not handle the same
    claim over all `Nat` values.
-
 ```lean
 end Week07
 ```
+
