@@ -32,6 +32,30 @@ def factorial : Nat → Nat
 #eval factorial 10  -- 3628800
 
 /-! @@@
+**Evaluation.**  Recursive functions evaluate by *unfolding* the matching
+clause and substituting, then evaluating the result.  Here is `factorial 3`
+evaluated step by step.  Each step applies one *reduction rule*:
+
+```
+factorial 3
+  ↝  (3 + 1 - 1 + 1) * factorial 2       -- second clause: n = 2, so n+1 = 3
+  ↝  3 * factorial 2                       -- arithmetic
+  ↝  3 * (2 * factorial 1)                 -- second clause: n = 1
+  ↝  3 * (2 * (1 * factorial 0))           -- second clause: n = 0
+  ↝  3 * (2 * (1 * 1))                     -- first clause: factorial 0 = 1
+  ↝  3 * (2 * 1)                           -- arithmetic
+  ↝  3 * 2                                 -- arithmetic
+  ↝  6                                     -- arithmetic (normal form)
+```
+
+The first clause (`| 0 => 1`) is the *base case*: no recursive call, and
+evaluation terminates immediately.  The second clause reduces the problem
+to a strictly smaller one (`factorial n` where `n < n + 1`), guaranteeing
+that evaluation must eventually reach the base case.
+
+This is why Lean can verify termination automatically: each reduction step
+produces a structurally smaller argument.
+
 ## 3.2  Tail recursion and accumulators
 
 The direct definition rebuilds the product on the way *back* from the
@@ -49,6 +73,13 @@ def factorialAcc : Nat → Nat → Nat
 
 def factorialTR (n : Nat) : Nat := factorialAcc n 1
 
+-- Evaluation: factorialTR 3
+--   ↝ factorialAcc 3 1
+--   ↝ factorialAcc 2 (3 * 1)   ↝ factorialAcc 2 3
+--   ↝ factorialAcc 1 (2 * 3)   ↝ factorialAcc 1 6
+--   ↝ factorialAcc 0 (1 * 6)   ↝ factorialAcc 0 6
+--   ↝ 6                          (first clause: acc is returned)
+-- Notice: the accumulator grows on the way DOWN; no work on the way back up.
 #eval factorialTR 5   -- 120
 
 /-! @@@

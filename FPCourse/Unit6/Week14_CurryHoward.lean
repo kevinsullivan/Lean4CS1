@@ -188,6 +188,14 @@ Soundness follows immediately from the return type: any time `typecheck`
 returns `some ⟨τ, h⟩`, `h` IS the proof that the term has type `τ`.
 There is no gap between the checker and the proof.
 
+**Evaluation.**  The type-checker *is* an evaluator — it reduces the
+term `e` through the pattern-match clauses of `typecheck`, each step
+applying one rule of the typing relation, until it reaches a leaf
+(`natLit`, `boolLit`, `var`) or fails.  The proof `h` is not constructed
+separately; it is the *value produced by evaluation of `typecheck`*.
+This is Curry-Howard lived from the inside: type-checking IS proof
+construction, and proof construction IS evaluation.
+
 This is in contrast with conventional type-checkers, which return a
 type or an error, and whose *correctness* requires a separate proof
 (in a meta-theory) that the checker matches the typing relation.

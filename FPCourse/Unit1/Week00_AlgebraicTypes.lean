@@ -59,11 +59,29 @@ The simplest types are defined by listing their values.  These are the
 #eval "hello".length          -- 5
 
 /-! @@@
-The command `#eval e` *runs* expression `e` and prints its value.
-The command `#check e` inspects the *type* of `e` without running it.
+**Evaluation.**  `#eval e` does not merely print a value — it *evaluates*
+`e` by applying *reduction rules* one step at a time until no further
+reduction is possible.  The irreducible result is called a *normal form*.
 
-An *expression* is any piece of Lean text that has a type and reduces
-to a value.  `2 + 3` has type `Nat` and reduces to `5`.
+Each `#eval` above is a chain of named reductions:
+
+| Expression | Reduction steps | Normal form |
+|------------|----------------|-------------|
+| `2 + 3` | one arithmetic step | `5` |
+| `10 - 3` | one arithmetic step | `7` |
+| `true && false` | `true && b ↝ b` (definition of `&&`) | `false` |
+| `"hello" ++ ", world"` | string concat definition | `"hello, world"` |
+| `"hello".length` | list length definition | `5` |
+
+The symbol `↝` means *reduces to in one step*.  You will see it used
+throughout this course whenever a specific reduction rule is being named.
+
+`#check e` inspects the *type* of `e` without evaluating it.  Types are
+checked statically at elaboration time; values are produced dynamically
+at evaluation time.  Both happen before you see any output.
+
+An *expression* is any piece of Lean text that has a type and can be
+evaluated to a normal form.
 
 ### The same question, two registers
 
@@ -89,27 +107,32 @@ with no inhabitant is *false*.  In Lean, propositions ARE types.
 @@@ -/
 
 -- Proofs are terms.  `rfl` inhabits `1 + 1 = 2` the way `42` inhabits `Nat`.
-example : 1 + 1 = 2 := rfl
+example : 1 + 1 = 2 := rfl   -- Evaluation: 1+1 ↝ 2, same as the right side
 example : True      := True.intro
 
--- `decide` runs Lean's built-in decision procedure to produce proofs
--- of *decidable* propositions — ones for which an algorithm exists.
-example : 7 * 6 = 42       := by decide
-example : 2 + 2 ≠ 5        := by decide
-example : 100 < 200         := by decide
+-- `decide` evaluates a decision procedure to produce a proof automatically.
+example : 7 * 6 = 42       := by decide  -- Evaluation: 7*6 ↝ 42 ✓
+example : 2 + 2 ≠ 5        := by decide  -- Evaluation: 2+2 ↝ 4 ≠ 5 ✓
+example : 100 < 200         := by decide  -- Evaluation: comparison ↝ true ✓
 
 -- `#check` works on proofs too.
 #check (rfl : 1 + 1 = 2)    -- the type IS the proposition
 #check (True.intro : True)
 
 /-! @@@
-`rfl` is a term.  Its *type* is `1 + 1 = 2`.  The proposition is a type;
-the proof is a value of that type.  This is the central fact of the course.
+**Evaluation.**  `rfl` proves `a = b` when `a` and `b` *evaluate to the
+same normal form*.  `1 + 1 = 2` holds by `rfl` because both sides reduce
+to `2` — the equality is *definitional*, certified by computation.
 
-`decide` can only handle propositions for which computation terminates —
-*decidable* propositions.  Concrete arithmetic facts are decidable.
-Universal claims over all natural numbers (`∀ n : Nat, ...`) generally
-are not, and require a proof.  We return to this in Week 7.
+**Evaluation.**  `decide` works by evaluating the *decision procedure*
+for the proposition.  For `7 * 6 = 42`, Lean evaluates `7 * 6` to `42`,
+confirms both sides are the same, and constructs the proof automatically.
+If evaluation had produced `false`, the file would not compile — the
+proof term would be absent, and the type would be uninhabited.
+
+`decide` can only handle propositions for which evaluation terminates —
+*decidable* propositions.  Concrete arithmetic is decidable; universal
+claims over all natural numbers are not.  We return to this in Week 7.
 @@@ -/
 
 /-! @@@
@@ -130,6 +153,11 @@ def isZero  : Nat → Bool   := fun n => n == 0
 def negate  : Bool → Bool  := fun b => !b
 def greet   : String → String := fun name => "Hello, " ++ name
 
+-- Evaluation: applying a function substitutes the argument for the parameter.
+-- This substitution step is called β-reduction.
+-- double 7 ↝ 7 * 2 ↝ 14        (β-reduction, then arithmetic)
+-- isZero 0 ↝ 0 == 0 ↝ true      (β-reduction, then BEq)
+-- greet "Alice" ↝ "Hello, " ++ "Alice" ↝ "Hello, Alice"
 #eval double 7         -- 14
 #eval isZero 0         -- true
 #eval isZero 5         -- false
@@ -253,6 +281,7 @@ theorem use_right (h : P ∧ Q) : Q := h.right
 -- Commutativity: if P ∧ Q then Q ∧ P.
 -- Computation: swap the pair.
 -- Logic: swap the conjunction.
+-- Evaluation: ⟨h.right, h.left⟩ ↝ ⟨proof-of-Q, proof-of-P⟩  (projections reduce)
 theorem and_comm' (h : P ∧ Q) : Q ∧ P :=
   ⟨h.right, h.left⟩   -- this IS the swap function applied to proofs
 

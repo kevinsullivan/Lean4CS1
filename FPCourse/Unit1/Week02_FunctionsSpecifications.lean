@@ -41,8 +41,13 @@ def add3 (a b c : Nat) : Nat := a + b + c
 -- add3 has type Nat → Nat → Nat → Nat
 -- Applying one argument returns a function: Nat → Nat → Nat
 
+-- Evaluation (β-reduction): each application substitutes the argument.
+--   add3 1 2 3
+--   ↝ (fun a b c => a + b + c) 1 2 3
+--   ↝ 1 + 2 + 3                        (three β-reductions)
+--   ↝ 6
 #eval add3 1 2 3    -- 6
-#eval (add3 1) 2 3  -- same
+#eval (add3 1) 2 3  -- same: (add3 1) is a Nat → Nat → Nat waiting for two more args
 
 /-! @@@
 ## 2.2  → as implication: logical reading
@@ -97,6 +102,8 @@ def double'' (n : Nat) : Nat :=
   n + n
 
 -- Step 5 — Verify the specification holds (provided proof):
+-- Evaluation: double'' n ↝ n + n (by δ-reduction, unfolding the definition).
+-- Both sides of the equation reduce to the same expression, so rfl applies.
 theorem double''_spec : ∀ n : Nat, double'' n = n + n :=
   fun n => rfl
 
