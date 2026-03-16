@@ -22,14 +22,14 @@ Lean does not *implement* this correspondence.  Lean *is* a system in
 which the correspondence is the foundational design principle.  You
 have not been using an analogy; you have been using the real thing.
 
-Look back at every type introduced in this course:
+Look back at the core types introduced in this course:
 `→` is implication.  `×` is conjunction.  `⊕` is disjunction.
-`Unit` is truth.  `Empty` is falsehood.  `Option α` pairs a value
-with the possibility of absence — `α ∨ Unit`.  `∀` is the dependent
-function type; `∃` is the dependent pair type.  The induction
-principle for `Nat` and `List` is the logical induction schema for
-the corresponding type.  You have been working inside the
-Curry-Howard correspondence since Week 0.  This week names it.
+`Unit` is truth.  `Empty` is falsehood.  `∀` is the dependent
+function type; `∃` is the dependent pair type.  These are the
+constituents of the Curry-Howard correspondence.  Types such as
+`Option`, `List`, and `BTree` are useful programming types built
+on top of that foundation, but the correspondence itself lives here.
+You have been working inside it since Week 0.  This week names it.
 
 That is also why this course is the direct prerequisite for
 **CS2: Certified Proofs**.  CS2 does not introduce a new subject.
