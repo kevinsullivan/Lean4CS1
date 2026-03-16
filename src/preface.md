@@ -87,7 +87,7 @@ Programs (SICP)** by Harold Abelson, Gerald Jay Sussman, and Julie Sussman
 SICP's ambition — to reveal computation and language as a single unified
 subject, culminating in the metacircular evaluator — resonates here.
 Week 14's treatment of the Curry-Howard correspondence plays the same role:
-not a capstone curiosity, but the revelation that the entire course was
+not a capstone curiosity, but an explanation that the whole course was
 *already* doing logic.  SICP's influence on the sequencing of abstraction
 (higher-order functions introduced to eliminate duplication, not as a
 language feature) is also present, though this course follows HtDP's

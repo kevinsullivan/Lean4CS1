@@ -39,10 +39,10 @@ Types such as `Option`, `List`, and `BTree` are useful programming types
 built on top of that foundation, but the Curry-Howard correspondence itself
 lives in the core.  Week 14 does not introduce new material; it reveals that
 the course has established the entire foundation for proof constructions in
-the follow-on course, that simple flips the orientation from `Type` to `Prop`.  
-Every concept in this course — data definitions, specifications, recursion, 
-higher-order functions, sets, relations, type classes — ports directly to the
-setting of proof construction.
+the follow-on course. We just flip the orientation from `Type` to `Prop`.  Each  
+concept here  — data definitions, specifications, recursion, higher-order
+functions, sets, relations, type classes — ports directly to the setting of
+proof construction.
 
 ## Course Structure
 
