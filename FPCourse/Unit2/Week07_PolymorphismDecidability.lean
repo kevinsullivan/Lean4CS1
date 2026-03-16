@@ -135,6 +135,13 @@ The practical consequence:
 - You CANNOT use `Float` values as keys in structures requiring `DecidableEq`.
 - Specifications about floating-point programs must use `Real` or `Rat`
   for the mathematical content, with a separate claim about approximation.
+
+More importantly, this is a lesson that applies in *every* programming language:
+**never use `==` to compare floating-point values.**
+The same IEEE 754 semantics that breaks `DecidableEq` here — `NaN ≠ NaN`, and
+rounding means two computations of "the same" value may produce slightly different
+results — make floating-point equality unreliable in Python, Java, C, and everywhere
+else.  Always compare floats with a tolerance: `|x - y| < ε`.
 @@@ -/
 
 -- Float DOES have BEq (Boolean equality), but that is NOT the same as =

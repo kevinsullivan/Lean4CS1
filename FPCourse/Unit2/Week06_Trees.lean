@@ -147,7 +147,6 @@ The proof uses `forAll_bstInsert` twice per recursive case — once for the
 left bound and once for the right — along with the structurally recursive
 IsBST assumption.
 
-**This proof is complete: no `sorry`, no `by`.**
 @@@ -/
 
 theorem bstInsert_isBST (x : Nat) :

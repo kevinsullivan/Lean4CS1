@@ -184,11 +184,14 @@ A specification for a recursive function is almost always a ∀ proposition:
 Practice reading these:
 ```lean
 -- "For all n, factorial n is positive"
+-- You should be able to read and understand the proposition.
+-- The proof term is here for your curiosity; you are not expected to produce it.
 theorem factorial_pos : ∀ n : Nat, 0 < factorial n :=
   fun n => Nat.recOn n (Nat.lt.base 0) (fun n ih => Nat.mul_pos (Nat.succ_pos n) ih)
 
--- "factorial is monotone" (stated; proof omitted here for brevity,
--- but it has a complete term-mode proof in the companion notes)
+-- "factorial is monotone: each value is no greater than the next"
+-- You should be able to read and understand the proposition.
+-- The proof term is here for your curiosity; you are not expected to produce it.
 theorem factorial_mono : ∀ n : Nat, factorial n ≤ factorial (n + 1) :=
   fun n => Nat.le_mul_of_pos_left (factorial n) (Nat.succ_pos n)
 ```
