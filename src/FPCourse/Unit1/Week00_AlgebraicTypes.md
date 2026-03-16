@@ -446,7 +446,7 @@ cannot be proved is *false*.
 def fromEmpty (e : Empty) : α := nomatch e
 
 -- In logic: `False → P` (ex falso quodlibet — from absurdity, anything).
-theorem ex_falso (h : False) : P := False.elim h
+theorem ex_falso {P : Prop} (h : False) : P := False.elim h
 
 -- Why is this useful?  Because it discharges impossible cases.
 -- If a case leads to `False`, the rest of the goal becomes irrelevant.
@@ -510,7 +510,7 @@ example : ¬ (0 = 1)  := by decide
 theorem one_ne_two : ¬ (1 = 2) := fun h => nomatch h
 
 -- Contradiction: if P and ¬P both hold, everything follows.
-theorem contradiction (h : P) (hne : ¬P) : Q :=
+theorem contradiction {P Q : Prop} (h : P) (hne : ¬P) : Q :=
   False.elim (hne h)   -- hne h : False, then ex falso
 
 -- Double negation introduction (the direction that holds constructively):
