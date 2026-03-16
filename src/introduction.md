@@ -8,7 +8,7 @@ Draft For Comment
 
 ---
 
-A Certified Introduction to Programming
+CS1: Programming, Certified
 
 A 14-week literate Lean 4 curriculum for a first course in typed functional programming.
 Every file in this course compiles cleanly against Lean 4 / Mathlib v4.28.0.

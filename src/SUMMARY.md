@@ -1,4 +1,4 @@
-# A Certified Introduction to Programming
+# CS1: Programming, Certified
 
 [Introduction](./introduction.md)
 
