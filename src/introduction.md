@@ -77,6 +77,48 @@ make convert      # convert .lean → .md
 mdbook serve      # serve locally at http://localhost:3000
 ```
 
+## How to Study These Materials
+
+The recommended setup is to view this rendered book alongside the Lean 4
+source files in VS Code, with the Lean language server running so that
+you see type information and error feedback in real time.
+
+**Step 1 — Clone the repository and open it in VS Code.**
+
+```bash
+git clone https://github.com/kevinsullivan/Lean4CS1.git
+cd Lean4CS1
+code .
+```
+
+**Step 2 — Start the local book server.**  In the VS Code terminal
+(`Ctrl+\`` or Terminal → New Terminal):
+
+```bash
+mdbook serve
+```
+
+This builds the book and serves it at `http://localhost:3000`.
+The server watches for changes and refreshes automatically.
+
+**Step 3 — Open the browser panel inside VS Code.**
+
+1. Open the Command Palette (`Cmd+Shift+P` on macOS, `Ctrl+Shift+P` on Windows/Linux).
+2. Type **Simple Browser: Show** and press Enter.
+3. Enter `http://localhost:3000` as the URL.
+
+**Step 4 — Arrange the panels side by side.**  Drag the Simple Browser
+tab to the right half of the editor area.  Open the corresponding
+`.lean` source file (e.g., `FPCourse/Unit1/Week00_AlgebraicTypes.lean`)
+in the left panel.  You now have the rendered prose on the right and the
+live, type-checked Lean source on the left.
+
+**Step 5 — Experiment.**  The most effective way to study is to read
+a section in the book, then find the corresponding code in the `.lean`
+file, hover over terms to inspect their types, and modify examples to
+see what the Lean kernel accepts or rejects.  The exercises at the end
+of each chapter are meant to be worked directly in the `.lean` file.
+
 ---
 
 Copyright &copy; Kevin Sullivan. 2026.
