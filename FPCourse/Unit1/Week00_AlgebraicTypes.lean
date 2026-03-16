@@ -9,12 +9,11 @@ import Mathlib.Data.Bool.Basic
 
 A *type* classifies values.  `Nat` classifies the natural numbers.
 `Bool` classifies `true` and `false`.  When you encounter a type, ask:
-*what values of this shape can exist?*
+*what values of this type can exist?*
 
-This course is organized around six ways of building types — six *type
-constructors*.  Every data structure in computing is built from some
-combination of these six.  And every proposition in propositional logic
-is expressed by the same six constructors.
+This course is organized around six kinds of types.  Every data structure
+in computing is built from some combination of these six.  And every
+proposition in propositional logic is expressed by the same six constructors.
 
 This is not an analogy.  It is the same language, read two ways.
 

@@ -10,12 +10,11 @@ import Mathlib.Data.Bool.Basic
 
 A *type* classifies values.  `Nat` classifies the natural numbers.
 `Bool` classifies `true` and `false`.  When you encounter a type, ask:
-*what values of this shape can exist?*
+*what values of this type can exist?*
 
-This course is organized around six ways of building types — six *type
-constructors*.  Every data structure in computing is built from some
-combination of these six.  And every proposition in propositional logic
-is expressed by the same six constructors.
+This course is organized around six kinds of types.  Every data structure
+in computing is built from some combination of these six.  And every
+proposition in propositional logic is expressed by the same six constructors.
 
 This is not an analogy.  It is the same language, read two ways.
 
@@ -31,6 +30,7 @@ This is not an analogy.  It is the same language, read two ways.
 By the end of this week you will have seen all six in both readings.
 You will have one vocabulary — *types and their inhabitants* — that
 covers both.  You do not need two languages.  You are learning one.
+
 ```lean
 namespace Week00
 ```
@@ -43,6 +43,7 @@ types are your atoms: given to you, not derived.
 
 You encounter them by name: `Nat`, `Bool`, `String`.  Their values
 are listed explicitly and cannot be broken down further.
+
 ```lean
 -- Nat: the type of natural numbers.  Values: 0, 1, 2, 3, ...
 #check (0 : Nat)
@@ -116,6 +117,7 @@ We can ask the identical question of *propositions*:
 
 A proposition with at least one inhabitant is *true*.  A proposition
 with no inhabitant is *false*.  In Lean, propositions ARE types.
+
 ```lean
 -- Proofs are terms.  `rfl` inhabits `1 + 1 = 2` the way `42` inhabits `Nat`.
 example : 1 + 1 = 2 := rfl   -- Evaluation: 1+1 ↝ 2, same as the right side
@@ -144,6 +146,7 @@ proof term would be absent, and the type would be uninhabited.
 `decide` can only handle propositions for which evaluation terminates —
 *decidable* propositions.  Concrete arithmetic is decidable; universal
 claims over all natural numbers are not.  We return to this in Week 7.
+
 ## 0.2  Function Types: `α → β`
 
 **Why function types?**  Every transformation in programming — mapping,
@@ -169,6 +172,7 @@ output of type `β`.
 Functions are the most fundamental type constructor.  Every other
 construct — recursion, type classes, proofs — ultimately reduces to
 functions.
+
 ```lean
 -- Defining functions with `def`:
 def double  : Nat → Nat    := fun n => n * 2
@@ -214,6 +218,7 @@ literally IS a function.
 **The identity function is simultaneously**:
 - *Computational*: given any value, return it.
 - *Logical*: if P holds then P holds (reflexivity of implication).
+
 ```lean
 -- Computational: identity function for data.
 def myId (a : α) : α := a
@@ -264,6 +269,7 @@ type `β`.  To *build* a product you must supply BOTH components.  To
 
 Products are how data is *aggregated*: a 2D point is an x AND a y;
 a person record is a name AND an age AND a city.
+
 ```lean
 -- Building and projecting products:
 def myPair : Nat × Bool := (7, true)
@@ -304,6 +310,7 @@ type, specialized to the case where the components are proofs.
 | `(a, b) : α × β` | `⟨h₁, h₂⟩ : P ∧ Q` |
 | `p.1 : α` | `h.left : P` |
 | `p.2 : β` | `h.right : Q` |
+
 ```lean
 -- Proving a conjunction: supply both halves.
 example : 2 < 3 ∧ 3 < 4 := ⟨by decide, by decide⟩
@@ -354,6 +361,7 @@ kind of thing or the other, and the tag `inl`/`inr` tells you which.
 Sums are how programs handle **alternatives**: a result is either a
 successful value or an error; a shape is a circle or a rectangle or a
 triangle.
+
 ```lean
 -- Sum has two constructors: inl (left) and inr (right).
 def aNum  : Nat ⊕ String := Sum.inl 42
@@ -404,6 +412,7 @@ of `P ∨ Q` is either a proof of P (tagged `Or.inl`) or a proof of Q
 
 To *prove* a disjunction, pick one side and prove it.
 To *use* a disjunction, case-split on which side holds (just like `match`).
+
 ```lean
 -- Proving a disjunction: choose a side.
 example : 1 = 1 ∨ 1 = 2 := Or.inl rfl      -- left side
@@ -440,6 +449,7 @@ In logic: `False` is the proposition with no proof.  A proposition that
 cannot be proved is *false*.
 
 `Empty : Type` and `False : Prop` are the same idea in two universes.
+
 ```lean
 -- `Empty` has no constructors — you cannot produce a value of it.
 -- But you CAN write a function FROM Empty (with no cases to handle):
@@ -467,6 +477,7 @@ because the type system certified the branch is unreachable.
 
 `nomatch e` is Lean's syntax for pattern-matching on a value of a type
 with no constructors: the match is exhaustive with zero branches.
+
 ## 0.6  Functions to Empty: `α → Empty` and `¬P`
 
 **Why functions to empty?**  Ruling out a case is as important as
@@ -493,6 +504,7 @@ function: given any proof of `P`, produce a proof of `False`.  Since
 no proofs, i.e., P is false.
 
 Negation is not a primitive.  It IS the function arrow, aimed at `False`.
+
 ```lean
 -- ¬P unfolds to P → False:
 #print Not   -- def Not (a : Prop) : Prop := a → False
@@ -546,6 +558,7 @@ But the **constructors are shared**.  Products bundle data AND proofs
 the same way.  Sums tag data AND proofs the same way.  Functions
 transform data AND convert proofs the same way.  The empty type
 represents impossible data AND impossible proofs.
+
 
 ```lean
 -- All six constructors demonstrated side by side:
@@ -642,7 +655,7 @@ they are your co-programmer.
    (d) Evidence that `¬ (2 + 2 = 5)`
    (e) A value certifying that the type `Empty` is uninhabited
    Then use `decide` to verify (d).  What does Lean do to check it?
+
 ```lean
 end Week00
 ```
-
