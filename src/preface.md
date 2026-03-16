@@ -152,3 +152,8 @@ and fuzzy, and lacking in examples of applications that are fun, linked to
 real work domains, graphical or interactive, etc. Further skinning of this
 kind would be helpful. For now its bare bones character makes discussing the
 core content easier, perhaps.
+
+## Contact
+
+If you're interested in commenting on, evolving, revising, using these materials, 
+etc., please feel free to drop a line. My personal email, sullivan.kevinj@gmail.com.
