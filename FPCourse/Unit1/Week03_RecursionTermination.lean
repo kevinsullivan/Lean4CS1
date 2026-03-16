@@ -30,6 +30,9 @@ def factorial : Nat → Nat
 #eval factorial 0   -- 1
 #eval factorial 5   -- 120
 #eval factorial 10  -- 3628800
+-- rfl-based tests: both sides reduce to the same normal form
+example : factorial 0 = 1   := rfl
+example : factorial 5 = 120 := rfl
 
 /-! @@@
 **Evaluation.**  Recursive functions evaluate by *unfolding* the matching
@@ -81,6 +84,7 @@ def factorialTR (n : Nat) : Nat := factorialAcc n 1
 --   ↝ 6                          (first clause: acc is returned)
 -- Notice: the accumulator grows on the way DOWN; no work on the way back up.
 #eval factorialTR 5   -- 120
+example : factorialTR 5 = 120 := rfl
 
 /-! @@@
 ## 3.3  Specification: the two definitions agree
@@ -132,6 +136,12 @@ decreasing_by apply Nat.mod_lt; omega
 
 #eval gcd 48 18   -- 6
 #eval gcd 100 75  -- 25
+-- Note: rfl-based tests do NOT work for gcd.
+-- gcd uses well-founded (non-structural) recursion; the kernel cannot reduce it.
+-- Neither rfl nor decide can close goals about gcd on concrete values.
+-- #eval works because it uses the compiled code path, not the kernel.
+-- This distinction matters: rfl-based tests are available only for
+-- structurally recursive functions (like factorial above).
 
 -- Specification: gcd divides both arguments.
 -- This is a Prop.  The proof is provided for you to read.

@@ -83,7 +83,7 @@ in hover text.
 | 0. Description | Write a `/-- docstring -/` saying what the function does in plain English. |
 | 1. Signature | Write the name, argument types, and return type. |
 | 2. Specification | Write a `∀` proposition over the signature expressing what the output must satisfy. |
-| 3. Examples | Write concrete `#eval` checks with expected outputs. |
+| 3. Examples | Write `#eval` checks with `-- expected` comments; once `#eval` is familiar, strengthen to `example : f x = v := rfl`. |
 | 4. Template | Write the function body shape from the input types. |
 | 5. Code | Fill in the body. |
 | 6. Check | Verify the compiler accepts both the definition and the specification. |
@@ -99,9 +99,13 @@ function, so the `def` must exist before the `theorem` can be stated.
 -- Step 1 — Signature + Steps 4/5 Template and code:
 def double'' (n : Nat) : Nat := n + n
 
--- Step 3 — Examples:
+-- Step 3 — Examples (two forms):
+-- Form 1: #eval with expected value in comment (explore interactively)
 #eval double'' 0    -- 0
 #eval double'' 5    -- 10
+-- Form 2: rfl-based test (machine-verified; both sides evaluate to the same normal form)
+example : double'' 0 = 0  := rfl
+example : double'' 5 = 10 := rfl
 
 -- Step 2 — Specification (stated after the def, since it names double''):
 --   ∀ n : Nat, double'' n = n + n
