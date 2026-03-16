@@ -1,4 +1,4 @@
--- FPCourse.lean — library root; imports all 15 weekly modules
+-- FPCourse.lean — library root; imports all 14 weekly modules
 
 import FPCourse.Unit1.Week00_AlgebraicTypes
 import FPCourse.Unit1.Week01_ExpressionsTypesValues
@@ -18,5 +18,4 @@ import FPCourse.Unit4.Week10_SetsRelations
 import FPCourse.Unit5.Week11_AbstractTypes
 import FPCourse.Unit5.Week12_TypeClassesDecidable
 
-import FPCourse.Unit6.Week13_Streams
 import FPCourse.Unit6.Week14_CurryHoward

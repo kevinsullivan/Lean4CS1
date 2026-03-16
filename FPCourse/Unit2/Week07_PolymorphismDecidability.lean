@@ -11,10 +11,10 @@ A *polymorphic* function works uniformly for any type.  Type variables
 (written with lowercase letters like `α`, `β`) stand for any type.
 
 A function is *parametrically polymorphic* if its behavior does not
-depend on which type the variable is instantiated to.  This constraint
-— being unable to inspect the type — gives rise to *free theorems*:
-propositions that are true of any polymorphic function purely by virtue
-of its type.
+depend on which type the variable is instantiated to.  The type alone
+constrains what the function can do — a polymorphic `f : List α → List α`
+cannot inspect element values, so it can only permute, drop, or
+duplicate them.
 @@@ -/
 
 namespace Week07
@@ -35,31 +35,7 @@ def myFlip (f : α → β → γ) : β → α → γ := fun b a => f a b
 #check @myFlip    -- (α β γ : Type u) → (α → β → γ) → β → α → γ
 
 /-! @@@
-## 7.2  Free theorems
-
-A *free theorem* is a proposition that holds for every polymorphic
-function of a given type, without any proof — by parametricity alone.
-
-The classic example: any function `f : List α → List α` that is
-polymorphic must either preserve the length of every list, or drop
-elements, or duplicate them — but it cannot inspect the element values.
-In particular, `map id = id` is a free theorem for `List.map`.
-@@@ -/
-
--- Free theorem: map distributes over function composition
--- This holds for ANY functions f, g — a universal claim.
-theorem map_comp_free (f : β → γ) (g : α → β) (xs : List α) :
-    xs.map (f ∘ g) = (xs.map g).map f := by
-  simp [← List.map_map]
-
--- Free theorem: for any f : α → α, mapping f twice equals
--- mapping (f ∘ f) once.
-theorem map_twice (f : α → α) (xs : List α) :
-    (xs.map f).map f = xs.map (f ∘ f) := by
-  simp [← List.map_map]
-
-/-! @@@
-## 7.3  Bounded polymorphism: type class constraints
+## 7.2  Bounded polymorphism: type class constraints
 
 Sometimes a polymorphic function needs *some* knowledge about the type.
 Type classes express this: `[DecidableEq α]` says "α must have a
@@ -98,7 +74,7 @@ theorem contains_spec [DecidableEq α] (x : α) (xs : List α) :
         exact ih.mpr ht
 
 /-! @@@
-## 7.4  The DecidableEq type class
+## 7.3  The DecidableEq type class
 
 `DecidableEq α` is a type class that provides, for every pair `a b : α`,
 a decision: either a proof that `a = b` or a proof that `a ≠ b`.
@@ -139,7 +115,7 @@ example : DecidableEq (List Nat) := inferInstance
 example : ([1, 2, 3] : List Nat) = [1, 2, 3] := by decide
 
 /-! @@@
-## 7.5  Float and the absence of DecidableEq
+## 7.4  Float and the absence of DecidableEq
 
 `Float` represents IEEE 754 double-precision floating-point numbers.
 IEEE 754 specifies that `NaN ≠ NaN` — the special "not a number" value
@@ -182,7 +158,7 @@ The practical consequence:
 -- methodology (floating-point error analysis).
 
 /-! @@@
-## 7.6  Summary: the decidability boundary
+## 7.5  Summary: the decidability boundary
 
 | Proposition form | Decidable? | Proof term |
 |-----------------|-----------|------------|
@@ -212,9 +188,12 @@ This table is one of the most important things in the course.
 4. Give an example of a type you define yourself, add `deriving DecidableEq`,
    and use `decide` to check an equality proposition about it.
 
-5. State the free theorem for a function of type
-   `f : {α : Type} → [DecidableEq α] → List α → List α`.
-   What can you say about `f` purely from its type?
+5. Define a type `Color` with constructors `Red`, `Green`, `Blue` and
+   add `deriving DecidableEq`.  Use `decide` to prove:
+   (a) `Color.Red ≠ Color.Blue`
+   (b) `∀ c ∈ [Color.Red, Color.Green, Color.Blue], c = Color.Red ∨ c ≠ Color.Red`
+   Explain why `decide` can handle this but could not handle the same
+   claim over all `Nat` values.
 @@@ -/
 
 end Week07

@@ -32,7 +32,6 @@
 - [Week 11: Abstract Types](./FPCourse/Unit5/Week11_AbstractTypes.md)
 - [Week 12: Type Classes and Decidability](./FPCourse/Unit5/Week12_TypeClassesDecidable.md)
 
-## Unit 6: Streams, Curry-Howard
+## Unit 6: Curry-Howard
 
-- [Week 13: Streams and Coinduction](./FPCourse/Unit6/Week13_Streams.md)
 - [Week 14: The Curry-Howard Correspondence](./FPCourse/Unit6/Week14_CurryHoward.md)
