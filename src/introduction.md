@@ -10,8 +10,9 @@ Draft For Comment
 
 CS1: Programming, Certified
 
-A 14-week literate Lean 4 curriculum for a first course in typed functional programming.
-Every file in this course compiles cleanly against Lean 4 / Mathlib v4.28.0.
+A 14-week course in functional programming to establish foundations for proof construction
+in predicate logic, set theory and the theory of relations, and beyond. This web page is
+mirrored, modulo updates, by the Lean 4 project at [kevinsullivan/Lean4CS1](https://github.com/kevinsullivan/Lean4CS1).
 
 ## Design Commitments
 
@@ -75,3 +76,7 @@ lake build        # compile the Lean sources
 make convert      # convert .lean → .md
 mdbook serve      # serve locally at http://localhost:3000
 ```
+
+---
+
+Copyright &copy; Kevin Sullivan. 2026.
