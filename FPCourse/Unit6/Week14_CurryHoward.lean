@@ -21,6 +21,23 @@ They are the same thing, viewed from two angles.
 Lean does not *implement* this correspondence.  Lean *is* a system in
 which the correspondence is the foundational design principle.  You
 have not been using an analogy; you have been using the real thing.
+
+Look back at every type introduced in this course:
+`→` is implication.  `×` is conjunction.  `⊕` is disjunction.
+`Unit` is truth.  `Empty` is falsehood.  `Option α` pairs a value
+with the possibility of absence — `α ∨ Unit`.  `∀` is the dependent
+function type; `∃` is the dependent pair type.  The induction
+principle for `Nat` and `List` is the logical induction schema for
+the corresponding type.  You have been working inside the
+Curry-Howard correspondence since Week 0.  This week names it.
+
+That is also why this course is the direct prerequisite for
+**CS2: Certified Proofs**.  CS2 does not introduce a new subject.
+It flips the orientation: from `Type` to `Prop`, from *computing*
+a value to *proving* a proposition.  Every concept covered here —
+data definitions, specifications, recursion, higher-order functions,
+sets, relations, type classes — ports intact to that setting.
+The entire structure of this course is the foundation.
 @@@ -/
 
 namespace Week14

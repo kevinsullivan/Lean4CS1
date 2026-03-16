@@ -27,6 +27,19 @@ Accordingly, except in particular cases, proof constructions are automated.
   is distributed across all 14 weeks.
 - The `Float`/`DecidableEq` lesson appears in Week 7 as a central topic.
 
+The data types introduced across the first thirteen weeks — function types,
+product types, sum types, `Option`, `List`, `BTree`, and the quantifier types
+`∀` and `∃` — are not an arbitrary selection.  They constitute, collectively,
+the full domain of the Curry-Howard correspondence.  Week 14 does not introduce
+new material; it reveals what the types have meant all along.
+
+This design has a direct consequence for sequencing: it establishes the complete
+basis for a second course, **CS2: Certified Proofs**, which simply flips the
+orientation from `Type` to `Prop`.  Every concept in this course — data
+definitions, specifications, recursion, higher-order functions, sets, relations,
+type classes — ports directly to that setting, because computation and proof
+are the same thing viewed from two angles.
+
 ## Course Structure
 
 | Unit | Weeks | Theme                                            |
