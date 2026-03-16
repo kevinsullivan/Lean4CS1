@@ -23,7 +23,7 @@ stating their *specifications* as propositions, and having the machine
 either verify or reject them as correct implementations or not. Except
 in particular cases, all proof constructions are automated.
 
-- Propositions are types from Week 1.
+- Propositions are types from Week 0.
 - `decide` produces proofs for decidable propositions.
 - The logic progression (Bool/Prop → propositional → predicate → set/relation)
   is distributed across all 14 weeks.
@@ -48,7 +48,7 @@ proof construction.
 
 | Unit | Weeks | Theme                                           |
 | ---- | ----- | ----------------------------------------------- |
-| 1    | 1–3   | Expressions, Functions, Recursion               |
+| 1    | 0–3   | Expressions, Functions, Recursion               |
 | 2    | 4–7   | Algebraic Datatypes, Lists, Trees, Decidability |
 | 3    | 8–9   | Higher-Order Functions, Specifications          |
 | 4    | 10    | Sets and Relations                              |
