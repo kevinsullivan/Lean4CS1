@@ -55,7 +55,7 @@ jobs:
       # Python 3 is pre-installed on ubuntu-latest — no install needed
       - name: Convert Lean sources to Markdown
         run: |
-          find FPCourse -name '*.lean' | while read f; do
+          find FPCourse Distillate -name '*.lean' | while read f; do
             out="src/${f%.lean}.md"
             mkdir -p "$(dirname "$out")"
             python3 scripts/convert.py "$f" "$out"
