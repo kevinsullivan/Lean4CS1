@@ -6,6 +6,34 @@
 
 ---
 
+# CS1 Distillate
+
+*A focused 9-week introduction for first-semester undergraduates.*
+
+## Unit 1: The Six Type Constructors
+
+- [Week 0: Types and Expressions](./Distillate/Unit1/Week00_TypesExpressions.md)
+- [Week 1: Functions and Implication](./Distillate/Unit1/Week01_FunctionsImplication.md)
+- [Week 2: Product Types and Conjunction](./Distillate/Unit1/Week02_ProductTypesConjunction.md)
+- [Week 3: Sum Types and Disjunction](./Distillate/Unit1/Week03_SumTypesDisjunction.md)
+- [Week 4: Empty Types and Negation](./Distillate/Unit1/Week04_EmptyTypesNegation.md)
+
+## Unit 2: Recursive Types and Functions
+
+- [Week 5: Recursion](./Distillate/Unit2/Week05_Recursion.md)
+- [Week 6: Higher-Order Functions](./Distillate/Unit2/Week06_HigherOrderFunctions.md)
+
+## Unit 3: Specification and Certification
+
+- [Week 7: Formal Specification](./Distillate/Unit3/Week07_FormalSpecification.md)
+- [Week 8: The Curry-Howard Correspondence](./Distillate/Unit3/Week08_CurryHoward.md)
+
+---
+
+# CS1 Full Course
+
+*The complete 14-week curriculum.*
+
 ## Unit 1: Expressions, Functions, Recursion
 
 - [Week 0: Algebraic Types — Computation and Logic](./FPCourse/Unit1/Week00_AlgebraicTypes.md)

@@ -1,19 +1,17 @@
 # Source and target directories
-SRC_DIR := FPCourse
-BUILD_DIR := src/FPCourse
+SRC_DIRS := FPCourse Distillate
 
-# Find all source files recursively
-SRC_FILES := $(shell find $(SRC_DIR) -type f -name '*.lean')
-# Derive corresponding output files with .md extension
-BUILD_FILES := $(patsubst $(SRC_DIR)/%.lean,$(BUILD_DIR)/%.md,$(SRC_FILES))
+# Find all source files recursively across all source directories
+SRC_FILES := $(shell find $(SRC_DIRS) -type f -name '*.lean')
+# Derive corresponding output files with .md extension under src/
+BUILD_FILES := $(patsubst %.lean,src/%.md,$(SRC_FILES))
 
 # Default target: convert all .lean files to .md, then build the book
 all: $(BUILD_FILES)
 	mdbook build
 
-# Rule: .lean → .md
-# Uses convert.hs (Haskell) if runhaskell is available, else convert.py (Python)
-$(BUILD_DIR)/%.md: $(SRC_DIR)/%.lean
+# Rule: .lean → src/%.md
+$(BUILD_FILES): src/%.md: %.lean
 	@mkdir -p $(dir $@)
 	echo "Converting $< into $@"
 	@if command -v runhaskell >/dev/null 2>&1; then \
@@ -35,10 +33,10 @@ serve:
 
 # Clean generated markdown (but keep src/SUMMARY.md and src/introduction.md)
 clean-md:
-	rm -rf $(BUILD_DIR)
+	rm -rf src/FPCourse src/Distillate
 
 # Clean everything including the built book
 clean:
-	rm -rf $(BUILD_DIR) book/
+	rm -rf src/FPCourse src/Distillate book/
 
 .PHONY: all convert build serve clean-md clean
