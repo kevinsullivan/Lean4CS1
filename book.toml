@@ -2,7 +2,6 @@
 title = "CS1: Programming, Certified"
 authors = ["Kevin Sullivan"]
 language = "en"
-multilingual = false
 description = "CS1: Programming, Certified"
 src = "src"
 
@@ -12,9 +11,7 @@ build-dir = "book"
 [output.html]
 mathjax-support = true
 git-repository-url = "https://github.com/kevinsullivan/Lean4CS1"
-
-[output.html.playground]
-boring-prefixes = ["# "]
+additional-js = ["mermaid.min.js", "mermaid-init.js"]
 
 [output.html.print]
 enable = true
@@ -25,8 +22,4 @@ renderer = ["html"]
 
 [preprocessor.mermaid]
 command = "mdbook-mermaid"
-renderer = ["html"]
-
-[preprocessor.image-size]
-command = "mdbook-image-size"
 renderer = ["html"]

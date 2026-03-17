@@ -13,7 +13,7 @@ The book has two faces:
 
 - Propositions are types from Week 1.
 - `decide` is the primary proof producer for decidable propositions.
-- All provided proofs are in term mode — `by` never appears.
+- Proofs other than decision procedures are in term mode, not tactic mode, so the logical structure is explicit.
 - `sorry` never appears.
 - Full Mathlib notations are used throughout.
 
@@ -29,7 +29,7 @@ The book has two faces:
 
 |Unit|Weeks|Theme|
 |----|-----|-----|
-|1|1–3|Expressions, Functions, Recursion|
+|1|0–3|Expressions, Functions, Recursion|
 |2|4–7|Algebraic Datatypes, Lists, Trees, Decidability|
 |3|8–9|Higher-Order Functions, Specifications|
 |4|10|Sets and Relations|
@@ -44,7 +44,7 @@ Distillate/        Lean 4 source files for the 9-week Distillate
   Unit2/           Weeks 5–6
   Unit3/           Weeks 7–8
 FPCourse/          Lean 4 source files for the 14-week Full Course
-  Unit1/           Weeks 1–3
+  Unit1/           Weeks 0–3
   Unit2/           Weeks 4–7
   Unit3/           Weeks 8–9
   Unit4/           Week 10

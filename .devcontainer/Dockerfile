@@ -6,6 +6,9 @@ ARG DEBIAN_FRONTEND=noninteractive
 ARG NODE_VERSION=22.14.0
 ARG YQ_VERSION=4.2.0
 ARG GH_VERSION=2.87.2
+ARG MDBOOK_VERSION=0.5.2
+ARG MDBOOK_TOC_VERSION=0.15.1
+ARG MDBOOK_MERMAID_VERSION=0.17.0
 ARG SAM_VERSION=1.133.0
 ARG OPENAPI_GENERATOR_VERSION=7.11.0
 
@@ -127,6 +130,24 @@ RUN ARCH=$(dpkg --print-architecture) && \
     ln -sf /opt/node/bin/npm  /usr/local/bin/npm && \
     ln -sf /opt/node/bin/npx  /usr/local/bin/npx && \
     rm -f /tmp/node.tar.xz
+
+# ----- mdBook + preprocessors (system-wide, architecture-aware) -----
+# mdbook has pre-built arm64+amd64 Linux binaries; preprocessors are compiled
+# from source via cargo because their releases lack arm64 Linux assets.
+RUN ARCH=$(dpkg --print-architecture) && \
+    case "$ARCH" in \
+      amd64) GNU_ARCH=x86_64-unknown-linux-gnu ;; \
+      arm64) GNU_ARCH=aarch64-unknown-linux-musl ;; \
+      *) echo "Unsupported arch: $ARCH" && exit 1 ;; \
+    esac && \
+    curl -fsSLo /tmp/mdbook.tar.gz "https://github.com/rust-lang/mdBook/releases/download/v${MDBOOK_VERSION}/mdbook-v${MDBOOK_VERSION}-${GNU_ARCH}.tar.gz" && \
+    tar -xzf /tmp/mdbook.tar.gz -C /usr/local/bin && chmod +x /usr/local/bin/mdbook && rm -f /tmp/mdbook.tar.gz && \
+    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --no-modify-path && \
+    /root/.cargo/bin/cargo install mdbook-toc --version ${MDBOOK_TOC_VERSION} && \
+    /root/.cargo/bin/cargo install mdbook-mermaid --version ${MDBOOK_MERMAID_VERSION} && \
+    cp /root/.cargo/bin/mdbook-toc /usr/local/bin/ && \
+    cp /root/.cargo/bin/mdbook-mermaid /usr/local/bin/ && \
+    rm -rf /root/.cargo /root/.rustup
 
 # ----- Create non-root user and workspace -----
 RUN useradd -m -s /bin/bash dev && \
