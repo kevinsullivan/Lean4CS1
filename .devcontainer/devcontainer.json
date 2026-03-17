@@ -1,5 +1,5 @@
 {
-	"name": "concept_exploration",
+	"name": "CS1",
 	"build": {
 		"dockerfile": "Dockerfile"
 	},
@@ -26,18 +26,8 @@
 		"seccomp=unconfined"
 	],
 	"forwardPorts": [
-		3000,
-		4170,
 		5432
 	],
-	// Install editor deps and build Lezer parser on container create (no Lean dependency).
-	// Full CSL build (csl-check) is done via: ./build.sh editor
-	// To fetch mathlib caches after Lean is installed: ./build.sh cache
-	"postCreateCommand": "cd editor && npm install && npm run grammar",
-	// Start the Vite dev server (port 3000) and CSL check proxy (port 4170) on every container start.
-	// These run in the background; logs go to editor/vite.log and editor/server.log.
-	"postStartCommand": ".devcontainer/start-servers.sh",
-	// Forward editor dev server and check proxy ports
 	"customizations": {
 		"vscode": {
 			"settings": {
