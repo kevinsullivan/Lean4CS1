@@ -1,6 +1,8 @@
 # CS1
 
-**Author:** Kevin Sullivan
+**Author:** Kevin Sullivan (<sullivan@virginia.edu>)
+
+**Affiliation:** University of Virginia
 
 **Date:** April 15, 2026
 
