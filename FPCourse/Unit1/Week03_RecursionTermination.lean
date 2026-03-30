@@ -328,3 +328,31 @@ def myTree : BinTreeNat :=
 @@@ -/
 
 end Week03
+
+-- uncomment to see error
+-- def collatz : Nat → Nat
+--   | 0 => 0
+--   | 1 => 1
+--   | n => if n % 2 == 0 then collatz (n / 2) else collatz (3 * n + 1)
+
+/-
+```lean
+fail to show termination for
+  collatz
+with errors
+failed to infer structural recursion:
+Cannot use parameter #1:
+  failed to eliminate recursive application
+    collatz (n / 2)
+
+
+failed to prove termination, possible solutions:
+  - Use `have`-expressions to prove the remaining goals
+  - Use `termination_by` to specify a different well-founded relation
+  - Use `decreasing_by` to specify your own tactic for discharging this kind of goal
+n : ℕ
+h✝ : (n % 2 == 0) = true
+⊢ n / 2 < nLean 4
+collatz : ℕ → ℕ
+```
+-/
