@@ -68,6 +68,7 @@ inductive Direction
   | South
   | East
   | West
+  deriving DecidableEq
 
 -- Pattern matching must cover all constructors
 def opposite (d : Direction) : Direction :=
@@ -151,7 +152,7 @@ inductive Result (α : Type) : Type
 def safeSqrt (n : Int) : Result Float :=
   if n < 0
   then Result.error "cannot take square root of a negative number"
-  else Result.ok (Float.sqrt n.toFloat)
+  else Result.ok (Float.sqrt n.toNat.toFloat)
 
 -- Pattern-match to use the result
 def showResult (r : Result Float) : String :=
@@ -225,7 +226,7 @@ inductive Shape
 
 def area (s : Shape) : Float :=
   match s with
-  | Shape.Circle r       => Float.pi * r * r
+  | Shape.Circle r       => 3.14159265 * r * r
   | Shape.Rectangle w h  => w * h
 
 #eval area (Shape.Circle 1.0)           -- ≈ 3.14159

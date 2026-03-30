@@ -120,11 +120,11 @@ covers every case.  The resulting function is total — it just never runs.
 -- Pattern matching on Empty: zero cases needed, so it type-checks
 -- (This function is total even though it seems to have no body)
 def absurdFun (e : Empty) : Nat :=
-  match e with   -- no cases needed: Empty has no constructors
+  nomatch e   -- no cases needed: Empty has no constructors
 
 -- The same for False in Prop
 theorem exFalso (h : False) : 2 + 2 = 5 :=
-  match h with   -- no cases needed
+  nomatch h   -- no cases needed
 
 /-! @@@
 This is not a trick.  It is a theorem-prover's version of the

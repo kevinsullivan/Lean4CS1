@@ -99,11 +99,11 @@ def double (n : Nat) : Nat := n * 2
 -- double's specification as a THEOREM
 -- This is also a function: given n, produce a proof that double n = n + n
 theorem double_spec : ∀ n : Nat, double n = n + n := by
-  intro n; simp [double]; ring
+  intro n; simp [double]; omega
 
 -- A function that DIRECTLY returns a proof (proof-carrying computation)
 def doubleWithProof (n : Nat) : { m : Nat // m = n + n } :=
-  ⟨n * 2, by ring⟩
+  ⟨n * 2, by omega⟩
 
 -- The proof component is always available alongside the value
 example : (doubleWithProof 5).val = 10 := rfl
@@ -219,7 +219,10 @@ that is both.
 -- Return type bundles the value with a proof of the specification
 def safeDivide (n d : Nat) (hd : d ≠ 0) :
     { q : Nat // n = q * d + n % d ∧ n % d < d } :=
-  ⟨n / d, by constructor <;> omega⟩
+  ⟨n / d, by
+    constructor
+    · have h := Nat.div_add_mod n d; rw [Nat.mul_comm] at h; omega
+    · exact Nat.mod_lt n (Nat.pos_of_ne_zero hd)⟩
 
 -- The definition:
 --   - Computes the quotient (n / d)

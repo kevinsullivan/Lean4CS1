@@ -26,6 +26,7 @@ The sixth constructor follows directly: `α → Empty` is the type of
 functions that, given an inhabitant of `α`, produce an inhabitant of
 `Empty`.  Since `Empty` has no inhabitants, such a function could only
 exist if `α` also had no inhabitants.  This is negation.
+
 ```lean
 namespace Week04
 ```
@@ -41,6 +42,7 @@ inductive Empty : Type
 
 There is no way to produce a value of type `Empty`.
 But there IS a function `Empty.rec` with a remarkable type:
+
 ```lean
 -- Empty.rec : ∀ {α : Sort u}, Empty → α
 -- Given an Empty, produce ANYTHING.
@@ -65,6 +67,7 @@ with a genuine argument — because no genuine argument can exist.
 Their value is precisely in *case analysis*: when you match on a value
 of an inductive type and one constructor is `Empty` (impossible), Lean
 knows that branch is unreachable, and closes it automatically.
+
 ## 4.2  Negation: functions to Empty
 
 The sixth constructor is `α → Empty`.
@@ -82,6 +85,7 @@ function can only exist when `P` is itself unprovable — i.e., when
 `P` is false.
 
 This is the correct, constructive account of negation.
+
 ```lean
 -- ¬P is definitionally P → False
 #check @Not   -- Not : Prop → Prop
@@ -110,20 +114,22 @@ whatever type you need.
 In a program, this corresponds to matching on `Empty` with zero cases:
 the match exhausts all constructors (there are none), so it trivially
 covers every case.  The resulting function is total — it just never runs.
+
 ```lean
 -- Pattern matching on Empty: zero cases needed, so it type-checks
 -- (This function is total even though it seems to have no body)
 def absurdFun (e : Empty) : Nat :=
-  match e with   -- no cases needed: Empty has no constructors
+  nomatch e   -- no cases needed: Empty has no constructors
 
 -- The same for False in Prop
 theorem exFalso (h : False) : 2 + 2 = 5 :=
-  match h with   -- no cases needed
+  nomatch h   -- no cases needed
 ```
 
 This is not a trick.  It is a theorem-prover's version of the
 classical principle: a false hypothesis makes any implication vacuously
 valid.  In formal logic, `False → P` holds for ALL `P`.
+
 ## 4.4  Negation in practice: contradictions and `absurd`
 
 A common proof pattern is to derive a contradiction: you have `h₁ : P`
@@ -131,6 +137,7 @@ and `h₂ : ¬P`, which together let you conclude anything.
 
 Lean provides `absurd : ∀ {a : Prop} {b : Prop}, a → ¬a → b` for exactly
 this pattern.
+
 ```lean
 -- absurd: given a proof of P and a proof of ¬P, conclude anything
 theorem contradiction_example (h : 1 = 2) : 0 = 1 :=
@@ -150,6 +157,7 @@ Lean sometimes allows you to assert that a constructor cannot appear.
 If a constructor can only be inhabited by providing a proof of
 a false proposition, then that branch is unreachable, and Lean accepts
 a match expression with that branch omitted (or filled with `nomatch`).
+
 ```lean
 -- An indexed type where some constructors are provably impossible
 -- (A taste of dependent types — more in future courses)
@@ -179,6 +187,7 @@ Specifications that include negations (`¬P`) often look like:
 
 All of these can be proved by `decide` when the types are finite and
 decidable.
+
 ```lean
 -- Specifications involving negation
 def negate (b : Bool) : Bool := !b
@@ -208,7 +217,7 @@ def negate (b : Bool) : Bool := !b
 - **`decide`** proves negations when the proposition is decidable.
 - **Specifications use negation** to express constraints: "this cannot
   happen," "these are always distinct," "this function is injective."
+
 ```lean
 end Week04
 ```
-

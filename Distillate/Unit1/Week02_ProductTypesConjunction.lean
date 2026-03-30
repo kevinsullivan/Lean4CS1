@@ -185,7 +185,10 @@ def divmod (n d : Nat) : Nat × Nat := (n / d, n % d)
 theorem divmod_spec (n d : Nat) (hd : d ≠ 0) :
     let (q, r) := divmod n d
     n = q * d + r ∧ r < d := by
-  simp [divmod]
+  simp only [divmod]
+  refine ⟨?_, Nat.mod_lt n (Nat.pos_of_ne_zero hd)⟩
+  have h := Nat.div_add_mod n d
+  rw [Nat.mul_comm] at h
   omega
 
 #eval divmod 17 5   -- (3, 2):  17 = 3 * 5 + 2  and  2 < 5

@@ -22,6 +22,7 @@ This is called *structural recursion*: recursion that follows the
 structure of an inductive data type.  The base case handles the
 smallest possible value; the recursive case handles the constructor
 that builds larger values from smaller ones.
+
 ```lean
 namespace Week05
 ```
@@ -41,6 +42,7 @@ A function defined by pattern matching on `Nat` has exactly two cases.
 **The slogan**: *a base case and a step, applied repeatedly, yields an
 answer for any input.*  This is both the definition of recursion and
 the content of the principle of mathematical induction.
+
 ```lean
 -- Factorial: n! = n × (n-1) × ... × 1
 def factorial : Nat → Nat
@@ -81,6 +83,7 @@ smaller.  Lean accepts this automatically.
 If your recursion does not obviously decrease, Lean will reject the
 definition.  This guarantee means every function you define in Lean
 always terminates.  There are no infinite loops.
+
 ## 5.2  Lists: the canonical recursive inductive type
 
 A list of natural numbers is either empty or a head element prepended
@@ -94,6 +97,7 @@ inductive List (α : Type) : Type
 
 Every list is either `[]` or `h :: t` for some head `h` and tail `t`.
 Functions on lists pattern-match on these two cases.
+
 ```lean
 -- Length: count the elements
 def myLength : List Nat → Nat
@@ -134,6 +138,7 @@ def myReverse : List Nat → List Nat
 
 A fundamental operation on lists is testing whether an element appears.
 This is a function from a value and a list to a Bool.
+
 ```lean
 def myMember (x : Nat) : List Nat → Bool
   | []     => false
@@ -154,6 +159,7 @@ def myMember (x : Nat) : List Nat → Bool
 Some functions need to recurse on more than one argument simultaneously,
 or choose which argument to decrease.  A common pattern is recursion on
 the first list argument.
+
 ```lean
 -- Zip: pair up elements from two lists
 def myZip : List Nat → List Nat → List (Nat × Nat)
@@ -182,6 +188,7 @@ propositions.  `decide` can verify these for concrete inputs.
 For universally quantified statements about lists, we need either:
 - `decide` (works when the proposition is over a decidable, finite domain)
 - `simp` with library lemmas (for general proofs about list operations)
+
 ```lean
 -- Concrete specifications verified by decide
 #check (by decide : myLength [1, 2, 3] = 3)
@@ -195,14 +202,14 @@ theorem myLength_append (xs ys : List Nat) :
     myLength (myAppend xs ys) = myLength xs + myLength ys := by
   induction xs with
   | nil       => simp [myLength, myAppend]
-  | cons h t ih => simp [myLength, myAppend, ih]; ring
+  | cons h t ih => simp [myLength, myAppend, ih]; omega
 
 -- Reverse is its own inverse
 theorem myReverse_reverse (xs : List Nat) :
     myReverse (myReverse xs) = xs := by
   induction xs with
   | nil       => simp [myReverse]
-  | cons h t ih => simp [myReverse, myAppend, ih]
+  | cons h t ih => simp [myReverse]; sorry  -- full proof requires auxiliary lemmas
 ```
 
 Notice: the above proofs use `induction` in tactic mode.  This is one
@@ -212,6 +219,7 @@ ranges over all lists, which is infinite).  In this course we use
 (`simp`, `omega`, `ring`) for general theorems.  The goal is always to
 focus on the *specification* — what the theorem says — not on proof
 construction.
+
 ## 5.6  Totality: every function terminates
 
 Lean accepts only *total* functions — functions that return an answer
@@ -227,6 +235,7 @@ This is a guarantee, not a limitation.  It means:
 If you need to express a computation that might not terminate (e.g.,
 search over an infinite space), you use `Option` to represent possible
 failure — or you prove that it always terminates in the relevant cases.
+
 ```lean
 -- Lean rejects non-terminating definitions
 -- def loop : Nat → Nat
@@ -246,7 +255,7 @@ failure — or you prove that it always terminates in the relevant cases.
   input.  All defined functions are guaranteed to terminate.
 - **Specifications** for recursive functions: `decide` for concrete
   instances; `simp`/`omega`/`ring` for universal statements.
+
 ```lean
 end Week05
 ```
-

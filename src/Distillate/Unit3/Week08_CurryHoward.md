@@ -32,6 +32,7 @@ This week we:
 3. Explore what it means for a program to *be* a proof of its spec.
 4. Describe the automation boundary — where `decide` works and why.
 5. Preview what the sequel course does with the other side.
+
 ```lean
 namespace Week08
 ```
@@ -53,6 +54,7 @@ namespace Week08
 This table is not a list of analogies.  Each row is an identity:
 the computational reading and the logical reading describe the *same*
 type, read two ways.
+
 ## 8.2  Inhabited types are true propositions
 
 A type is *inhabited* when at least one term of that type exists.
@@ -68,6 +70,7 @@ Under the correspondence:
 - `1 + 1 = 3` is uninhabited: this proposition is false.
 - `Empty`/`False` is uninhabited: there is no proof of False.
 - `¬P` is inhabited when P is uninhabited: ¬P is true when P is false.
+
 ```lean
 -- Demonstrating inhabitation = truth
 #check (rfl : 1 + 1 = 2)              -- rfl inhabits this type = proves this prop
@@ -87,6 +90,7 @@ In Lean, there is no distinction between a function definition and a
 theorem proof.  Both are terms.  Both inhabit a type.  The only
 difference is whether we choose to read the type computationally or
 logically.
+
 ```lean
 -- double as a FUNCTION
 def double (n : Nat) : Nat := n * 2
@@ -94,11 +98,11 @@ def double (n : Nat) : Nat := n * 2
 -- double's specification as a THEOREM
 -- This is also a function: given n, produce a proof that double n = n + n
 theorem double_spec : ∀ n : Nat, double n = n + n := by
-  intro n; simp [double]; ring
+  intro n; simp [double]; omega
 
 -- A function that DIRECTLY returns a proof (proof-carrying computation)
 def doubleWithProof (n : Nat) : { m : Nat // m = n + n } :=
-  ⟨n * 2, by ring⟩
+  ⟨n * 2, by omega⟩
 
 -- The proof component is always available alongside the value
 example : (doubleWithProof 5).val = 10 := rfl
@@ -109,6 +113,7 @@ example : (doubleWithProof 5).val = 10 := rfl
 
 Let us revisit each of the six type constructors introduced in Week 0,
 now reading each one from both sides simultaneously.
+
 ```lean
 -- (1) BASIC TYPE: Nat (data) vs. propositional atoms (logic)
 -- As data: values like 0, 1, 42
@@ -170,6 +175,7 @@ the result as a proof term.  The Lean kernel then checks the proof term
 - Properties of functions in general: `∀ f : Nat → Nat, ...`
 - Floating-point equality: `Float` does not have `DecidableEq`
   because `NaN ≠ NaN` violates the reflexivity requirement
+
 ```lean
 -- decide works here:
 #check (by decide : 2 + 3 = 5)
@@ -206,12 +212,16 @@ This is the unification of specification and implementation.  When you
 write a function that returns `{ m : Nat // m = n * 2 }`, you are not
 writing a program *and separately* a proof.  You are writing one thing
 that is both.
+
 ```lean
 -- A function that IS its own correctness proof
 -- Return type bundles the value with a proof of the specification
 def safeDivide (n d : Nat) (hd : d ≠ 0) :
     { q : Nat // n = q * d + n % d ∧ n % d < d } :=
-  ⟨n / d, by constructor <;> omega⟩
+  ⟨n / d, by
+    constructor
+    · have h := Nat.div_add_mod n d; rw [Nat.mul_comm] at h; omega
+    · exact Nat.mod_lt n (Nat.pos_of_ne_zero hd)⟩
 
 -- The definition:
 --   - Computes the quotient (n / d)
@@ -237,6 +247,7 @@ Under Curry-Howard:
 - `{ x : α // P x }` is the existential `∃ x : α, P x`
 - The *witness* is the data value
 - The *proof* is the certificate of correctness
+
 ```lean
 -- Existential: "there exists an even number greater than 4"
 theorem exists_even_gt_4 : ∃ n : Nat, n % 2 = 0 ∧ n > 4 :=
@@ -275,6 +286,7 @@ construction.
 Every correct program in Lean is a proof that it satisfies its
 specification.  Specification and implementation are one artifact,
 certified by the type checker.
+
 ## Summary: the full correspondence
 
 | Lean construct | Computational reading | Logical reading |
@@ -301,7 +313,7 @@ certified by the type checker.
 You have worked with every row in this table.
 The Curry-Howard correspondence is not a theorem about this course.
 It is what this course has been all along.
+
 ```lean
 end Week08
 ```
-

@@ -186,7 +186,7 @@ def double2 (n : Nat) : Nat :=
 -- And universally (decide works over finite domains; Nat is infinite so
 -- the universal claim needs a general proof — we'll explore this in Week 7):
 theorem double2_spec : ∀ n : Nat, double2 n = n + n := by
-  intro n; ring
+  intro n; simp [double2]; omega
 
 /-! @@@
 ## 1.6  Functions to any type

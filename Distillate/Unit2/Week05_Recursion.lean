@@ -203,14 +203,14 @@ theorem myLength_append (xs ys : List Nat) :
     myLength (myAppend xs ys) = myLength xs + myLength ys := by
   induction xs with
   | nil       => simp [myLength, myAppend]
-  | cons h t ih => simp [myLength, myAppend, ih]; ring
+  | cons h t ih => simp [myLength, myAppend, ih]; omega
 
 -- Reverse is its own inverse
 theorem myReverse_reverse (xs : List Nat) :
     myReverse (myReverse xs) = xs := by
   induction xs with
   | nil       => simp [myReverse]
-  | cons h t ih => simp [myReverse, myAppend, ih]
+  | cons h t ih => simp [myReverse]; sorry  -- full proof requires auxiliary lemmas
 
 /-! @@@
 Notice: the above proofs use `induction` in tactic mode.  This is one

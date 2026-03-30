@@ -24,6 +24,7 @@ especially important: the function argument is part of the specification.
 refers to `f` as a parameter.  This is *parametric specification*:
 propositions that say something about the behavior of a function in
 terms of the functions passed to it.
+
 ```lean
 namespace Week06
 ```
@@ -32,6 +33,7 @@ namespace Week06
 
 `map f xs` applies `f` to every element of `xs` and collects the results.
 The structure of the list is preserved; only the elements change.
+
 ```lean
 -- map: apply f to every element
 def myMap (f : Nat → Nat) : List Nat → List Nat
@@ -55,6 +57,7 @@ A correct `map` satisfies two laws:
    (mapping a composition is the same as two passes)
 
 These are not optional; they define what it means to be a correct `map`.
+
 ```lean
 -- Functor identity law: verified by decide for a concrete list
 #check (by decide : myMap id [1, 2, 3] = [1, 2, 3])
@@ -77,6 +80,7 @@ theorem myMap_comp (f g : Nat → Nat) (xs : List Nat) :
 
 `filter p xs` returns the sublist of `xs` containing only the elements
 for which the predicate `p` returns `true`.
+
 ```lean
 def myFilter (p : Nat → Bool) : List Nat → List Nat
   | []     => []
@@ -96,6 +100,7 @@ A correct `filter p` satisfies:
 - Every element `x` in the output satisfies `p x = true`.
 - Every element `x` that satisfies `p x = true` appears in the output
   (if it was in the input).
+
 ```lean
 -- Concrete specification: filter only keeps even numbers
 #check (by decide :
@@ -108,10 +113,11 @@ theorem myFilter_subset (p : Nat → Bool) (xs : List Nat) :
   | nil       => simp [myFilter]
   | cons h t ih =>
     intro x hx
-    simp [myFilter] at hx
+    simp only [myFilter] at hx
     split at hx
-    · cases hx with
-      | inl heq => simp [← heq, *]
+    · simp only [List.mem_cons] at hx
+      cases hx with
+      | inl heq => rw [heq]; assumption
       | inr hmem => exact ih x hmem
     · exact ih x hx
 ```
@@ -127,6 +133,7 @@ There are two variants:
 
 For associative operations the result is the same; for non-associative
 ones it differs.
+
 ```lean
 -- foldr: right fold
 def myFoldr (f : Nat → Nat → Nat) (init : Nat) : List Nat → Nat
@@ -151,7 +158,7 @@ def myFoldl (f : Nat → Nat → Nat) (acc : Nat) : List Nat → Nat
 
 -- Map derived from foldr: map is a special fold
 def mapViaFoldr (f : Nat → Nat) (xs : List Nat) : List Nat :=
-  myFoldr (fun h acc => f h :: acc) [] xs
+  List.foldr (fun h acc => f h :: acc) [] xs
 
 #eval mapViaFoldr (· * 2) [1, 2, 3]   -- [2, 4, 6]
 ```
@@ -162,11 +169,13 @@ of the three: `map` and `filter` are abbreviations.
 
 In practice, use `map` when you are transforming elements, `filter`
 when you are selecting elements, and `fold` when you are accumulating.
+
 ## 6.4  Function composition and anonymous functions
 
 Anonymous functions (`fun x => ...`) and function composition (`∘`)
 let you build complex transformations inline, without naming every
 intermediate step.
+
 ```lean
 -- Composition: (f ∘ g) x = f (g x)
 def doubleAndSquare : Nat → Nat := (fun n => n * n) ∘ (fun n => n * 2)
@@ -195,6 +204,7 @@ The key ingredients:
 - The function argument `f : α → β` transforms elements of type `α`
   into elements of type `β`.
 - The predicate `p : α → Bool` tests elements of any type `α`.
+
 ```lean
 -- Polymorphic map: List α → List β
 -- (using the standard library version)
@@ -207,7 +217,7 @@ The key ingredients:
 -- ["hello", "world"]
 
 -- Polymorphic fold
-#eval List.foldl (· ++ " ") "" ["hello", "world", "!"]
+#eval List.foldl (fun acc s => acc ++ s ++ " ") "" ["hello", "world", "!"]
 -- "hello world ! "
 ```
 
@@ -219,9 +229,10 @@ For polymorphic `map`, the Functor laws hold at every type:
 
 `decide` cannot directly check universal polymorphic statements, but
 concrete instances for any specific type can be verified.
+
 ```lean
 #check (by decide : List.map id [1, 2, 3] = [1, 2, 3])
-#check (by decide : List.map (· * 2 ∘ · + 1) [1, 2, 3] =
+#check (by decide : List.map ((· * 2) ∘ (· + 1)) [1, 2, 3] =
                     List.map (· * 2) (List.map (· + 1) [1, 2, 3]))
 ```
 
@@ -241,7 +252,7 @@ concrete instances for any specific type can be verified.
   work on lists of any element type.
 - Specifications of higher-order functions are *parametric*:
   they describe behavior in terms of the function argument.
+
 ```lean
 end Week06
 ```
-

@@ -23,6 +23,7 @@ An implication proof *is* a function.
 
 This identity is the heart of the Curry-Howard correspondence.
 We will name it explicitly in Week 8.  For now, we live it.
+
 ```lean
 namespace Week01
 ```
@@ -31,6 +32,7 @@ namespace Week01
 
 A function definition names the function, lists its parameters with their
 types, states the return type, and gives the body expression.
+
 ```lean
 -- Basic function definitions
 def double (n : Nat) : Nat := n * 2
@@ -63,6 +65,7 @@ for the parameter throughout the body.  This is called *β-reduction*.
 ```
 
 Every `#eval` on a function application is exactly this chain of steps.
+
 ```lean
 -- Multi-argument functions are curried: each argument consumed one at a time
 def add (a b : Nat) : Nat := a + b
@@ -78,6 +81,7 @@ def add (a b : Nat) : Nat := a + b
 Currying means: `Nat → Nat → Nat` is really `Nat → (Nat → Nat)`.
 `add 3` is a perfectly valid expression of type `Nat → Nat`.
 Supplying the second argument finishes the computation.
+
 ## 1.3  Type signatures as specifications
 
 A function's *type signature* is more than bookkeeping.  It is a
@@ -96,6 +100,7 @@ For a stronger specification, we move from the *type* of the function to
 a *proposition* about it.  We will explore this fully in Week 7.
 For now, notice that `#check` surfaces the type, and `#eval` checks the
 output on concrete inputs.
+
 ```lean
 -- The type says what; the body says how
 def max2 (a b : Nat) : Nat := if a ≥ b then a else b
@@ -113,6 +118,7 @@ any proof of `P` and returns a proof of `Q`.
 
 The syntax is identical to a function definition — because it IS a
 function definition.
+
 ```lean
 -- Logical implication: if 1 + 1 = 2 then 2 + 2 = 4
 -- A proof of this is a function from proofs of (1+1=2) to proofs of (2+2=4)
@@ -137,6 +143,7 @@ theorem add_zero_all : ∀ n : Nat, n + 0 = n :=
 **Unpacking the universal quantifier.**  The notation `∀ n : Nat, P n`
 is definitionally equal to `(n : Nat) → P n`.  A proof is a function.
 You have been writing proofs since the first example in this section.
+
 ## 1.5  The design recipe
 
 Every function in this course follows the same design steps.
@@ -151,6 +158,7 @@ The recipe makes specification explicit at each stage.
 The specification step is where Lean distinguishes this course from
 ordinary programming.  We do not merely test; we state a logical claim
 and (using `decide` for decidable propositions) verify it.
+
 ```lean
 -- Example: applying the design recipe to `double`
 
@@ -175,7 +183,7 @@ def double2 (n : Nat) : Nat :=
 -- And universally (decide works over finite domains; Nat is infinite so
 -- the universal claim needs a general proof — we'll explore this in Week 7):
 theorem double2_spec : ∀ n : Nat, double2 n = n + n := by
-  intro n; ring
+  intro n; simp [double2]; omega
 ```
 
 ## 1.6  Functions to any type
@@ -183,6 +191,7 @@ theorem double2_spec : ∀ n : Nat, double2 n = n + n := by
 Functions can map between any two types, not just `Nat → Nat`.
 They can take propositions as inputs or produce propositions as outputs.
 They can take types as inputs (polymorphism — more in Week 3).
+
 ```lean
 -- Bool → Bool
 def boolNot (b : Bool) : Bool := !b
@@ -214,7 +223,7 @@ def showNat (n : Nat) : String := toString n
   A proof of ∀ is a function.
 - **The design recipe**: description → signature → specification → examples
   → implementation.  Specification is a proposition, enforced by Lean.
+
 ```lean
 end Week01
 ```
-

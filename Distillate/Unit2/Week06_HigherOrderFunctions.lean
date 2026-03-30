@@ -112,10 +112,11 @@ theorem myFilter_subset (p : Nat → Bool) (xs : List Nat) :
   | nil       => simp [myFilter]
   | cons h t ih =>
     intro x hx
-    simp [myFilter] at hx
+    simp only [myFilter] at hx
     split at hx
-    · cases hx with
-      | inl heq => simp [← heq, *]
+    · simp only [List.mem_cons] at hx
+      cases hx with
+      | inl heq => rw [heq]; assumption
       | inr hmem => exact ih x hmem
     · exact ih x hx
 
@@ -156,7 +157,7 @@ def myFoldl (f : Nat → Nat → Nat) (acc : Nat) : List Nat → Nat
 
 -- Map derived from foldr: map is a special fold
 def mapViaFoldr (f : Nat → Nat) (xs : List Nat) : List Nat :=
-  myFoldr (fun h acc => f h :: acc) [] xs
+  List.foldr (fun h acc => f h :: acc) [] xs
 
 #eval mapViaFoldr (· * 2) [1, 2, 3]   -- [2, 4, 6]
 
@@ -217,7 +218,7 @@ The key ingredients:
 -- ["hello", "world"]
 
 -- Polymorphic fold
-#eval List.foldl (· ++ " ") "" ["hello", "world", "!"]
+#eval List.foldl (fun acc s => acc ++ s ++ " ") "" ["hello", "world", "!"]
 -- "hello world ! "
 
 /-! @@@
@@ -232,7 +233,7 @@ concrete instances for any specific type can be verified.
 @@@ -/
 
 #check (by decide : List.map id [1, 2, 3] = [1, 2, 3])
-#check (by decide : List.map (· * 2 ∘ · + 1) [1, 2, 3] =
+#check (by decide : List.map ((· * 2) ∘ (· + 1)) [1, 2, 3] =
                     List.map (· * 2) (List.map (· + 1) [1, 2, 3]))
 
 /-! @@@

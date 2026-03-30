@@ -23,6 +23,7 @@ Same constructor.  Two readings.  One type system.
 
 In Lean, sum types are written using the `inductive` keyword.
 `Bool` and `Option` are the canonical examples you will meet first.
+
 ```lean
 namespace Week03
 ```
@@ -31,6 +32,7 @@ namespace Week03
 
 `Bool` is an inductive type with exactly two constructors, `true` and
 `false`.  It is the sum type `Unit ⊕ Unit` with better names.
+
 ```lean
 -- Bool is defined in the standard library as:
 --   inductive Bool : Type
@@ -59,6 +61,7 @@ multiple fields.
 
 Each constructor is a disjoint alternative.  Together, they cover
 every possible value.
+
 ```lean
 -- A simple enumeration: four compass directions
 inductive Direction
@@ -66,6 +69,7 @@ inductive Direction
   | South
   | East
   | West
+  deriving DecidableEq
 
 -- Pattern matching must cover all constructors
 def opposite (d : Direction) : Direction :=
@@ -101,6 +105,7 @@ inductive Option (α : Type) : Type
 ```
 
 `none` means "no value."  `some v` means "the value `v`."
+
 ```lean
 -- Safe list head: returns none if the list is empty
 def head? (xs : List Nat) : Option Nat :=
@@ -131,10 +136,12 @@ def divOrZero (n d : Nat) : Nat :=
 `Option` is a disciplined way of expressing "might fail."
 The type tells you that you MUST handle the `none` case.
 There is no way to access the value without writing the pattern match.
+
 ## 3.4  Constructors with data
 
 Constructors can carry payloads.  A sum type constructor is either a tag
 (nullary, like `North`) or a tag together with stored data (like `some`).
+
 ```lean
 -- A result type: either an error message or a computed value
 inductive Result (α : Type) : Type
@@ -144,7 +151,7 @@ inductive Result (α : Type) : Type
 def safeSqrt (n : Int) : Result Float :=
   if n < 0
   then Result.error "cannot take square root of a negative number"
-  else Result.ok (Float.sqrt n.toFloat)
+  else Result.ok (Float.sqrt n.toNat.toFloat)
 
 -- Pattern-match to use the result
 def showResult (r : Result Float) : String :=
@@ -167,6 +174,7 @@ A proof of `P ∨ Q` is either:
 - `Or.inr hq` — a proof that the right disjunct Q holds.
 
 You commit to which side you are proving.  The type enforces this.
+
 ```lean
 -- Proving a disjunction: commit to the true side
 theorem one_lt_two_or_one_gt_two : 1 < 2 ∨ 1 > 2 :=
@@ -196,6 +204,7 @@ The table of correspondences so far:
 
 Exhaustive pattern matching in code IS the completeness condition for
 disjunctive proofs.  The compiler ensures you handle every case.
+
 ## 3.6  Pattern matching: the elimination form for sums
 
 Every time you use a sum-type value, you must pattern-match.
@@ -205,6 +214,7 @@ a sum value by handling each possible constructor.
 This is not optional.  You cannot reach inside a sum value without
 declaring what you will do with both alternatives.  This exhaustiveness
 requirement is enforced at compile time.
+
 ```lean
 -- Pattern matching on a custom inductive type
 inductive Shape
@@ -213,7 +223,7 @@ inductive Shape
 
 def area (s : Shape) : Float :=
   match s with
-  | Shape.Circle r       => Float.pi * r * r
+  | Shape.Circle r       => 3.14159265 * r * r
   | Shape.Rectangle w h  => w * h
 
 #eval area (Shape.Circle 1.0)           -- ≈ 3.14159
@@ -239,7 +249,7 @@ def area (s : Shape) : Float :=
 - **`decide`** produces proofs of decidable disjunctions automatically.
 - Exhaustive case coverage in programs mirrors completeness in disjunctive
   proofs — one and the same requirement enforced by Lean.
+
 ```lean
 end Week03
 ```
-
