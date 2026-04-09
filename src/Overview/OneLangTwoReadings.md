@@ -199,12 +199,12 @@ exhaustiveness.
 theorem six_big : 6 = 2 ∨ 6 > 2 :=
   Or.inr (by decide)    -- we pick the right side: 6 > 2
 
--- To USE a disjunction, handle both cases
+-- To USE a disjunction, do case analysis: handle both alternatives
 theorem even_pos_classify (n : Nat)
-    (h : n = 2 ∨ n > 2) : n ≥ 2 := by
-  cases h with
-  | inl heq => omega
-  | inr hgt => omega
+    (h : n = 2 ∨ n > 2) : n ≥ 2 :=
+  match h with
+  | Or.inl heq => by omega   -- left case: n = 2, so n ≥ 2
+  | Or.inr hgt => by omega   -- right case: n > 2, so n ≥ 2
 
 -- ============================================================
 ```
