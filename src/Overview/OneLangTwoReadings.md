@@ -6,7 +6,7 @@ import Mathlib.Data.Nat.Basic
 
 # One Language, Two Readings
 
-## Functional Programming through the Curry-Howard Correspondence
+## Reasoning and Computation
 
 The same six type constructors build all data structures in computing
 AND express all of propositional logic.
