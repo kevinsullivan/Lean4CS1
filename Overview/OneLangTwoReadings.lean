@@ -139,7 +139,7 @@ def evenAndPositive (n : Nat) : Bool × Bool :=
 
 | Data | Logic |
 |------|-------|
-| `(a, b) : α × β` | proof of `P ∧ Q` |
+| `(a, b) : α × β` | `pf : P ∧ Q` |
 | `.1` / `.2` | `.left` / `.right` |
 
 Same constructor.  Two readings.
