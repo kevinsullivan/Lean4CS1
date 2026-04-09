@@ -152,10 +152,10 @@ Same constructor.  Two readings.
 
 -- Extract each half
 theorem six_even : 6 % 2 = 0 ∧ 6 > 0 → 6 % 2 = 0 :=
-  fun h => h.left
+  fun pq => pq.left
 
 theorem six_pos : 6 % 2 = 0 ∧ 6 > 0 → 6 > 0 :=
-  fun h => h.right
+  fun pq => pq.right
 
 -- ============================================================
 ```
@@ -190,8 +190,8 @@ exhaustiveness.
 
 | Data | Logic |
 |------|-------|
-| `Sum.inl a` | `Or.inl hp : P ∨ Q` |
-| `Sum.inr b` | `Or.inr hq : P ∨ Q` |
+| `Sum.inl a` | `Or.inl p : P ∨ Q` |
+| `Sum.inr b` | `Or.inr q : P ∨ Q` |
 | Exhaustive `match` | Case analysis on a proof |
 
 ```lean
@@ -201,10 +201,10 @@ theorem six_big : 6 = 2 ∨ 6 > 2 :=
 
 -- To USE a disjunction, do case analysis: handle both alternatives
 theorem even_pos_classify (n : Nat)
-    (h : n = 2 ∨ n > 2) : n ≥ 2 :=
-  match h with
-  | Or.inl heq => by omega   -- left case: n = 2, so n ≥ 2
-  | Or.inr hgt => by omega   -- right case: n > 2, so n ≥ 2
+    (pq : n = 2 ∨ n > 2) : n ≥ 2 :=
+  match pq with
+  | Or.inl p => by omega   -- left case: n = 2, so n ≥ 2
+  | Or.inr q => by omega   -- right case: n > 2, so n ≥ 2
 
 -- ============================================================
 ```
@@ -217,10 +217,37 @@ theorem even_pos_classify (n : Nat)
 -- Computation: Empty has no constructors — no value can be produced
 -- A function from Empty can promise any return type (it is never called)
 def fromVoid : Empty → Nat := fun e => nomatch e
+```
 
+Define your own empty type and prove it is uninhabited by writing
+a function to `Empty`.  The function type-checks because there are
+zero cases to handle — `nomatch` covers them all.
+
+```lean
+-- There are no unicorns
+inductive Unicorn : Type where   -- no constructors!
+
+def unicornIsEmpty : Unicorn → Empty := fun u => nomatch u
+```
+
+Now try the same trick on a type that IS inhabited:
+
+```lean
+inductive One : Type where
+  | only : One
+
+def oneIsEmpty : One → Empty := fun o => nomatch o   -- ERROR
+```
+
+This fails.  `nomatch` requires zero cases, but `One` has the
+constructor `only` — Lean demands you handle it, and you cannot
+produce an `Empty` from it.  The definition is blocked: you cannot
+prove a nonempty type is empty.
+
+```lean
 -- Logic: False has no proofs
 -- From a proof of False you can derive anything
-theorem explosion : False → 6 = 7 := fun h => nomatch h
+theorem explosion : False → 6 = 7 := fun f => nomatch f
 ```
 
 Zero-case pattern match = "there are no cases to consider."  This is
@@ -229,9 +256,6 @@ Zero-case pattern match = "there are no cases to consider."  This is
 ### `¬P` is `P → False` — negation is a function type
 
 ```lean
--- Computation: "is n a unicorn?" — there are no unicorns
-inductive Unicorn : Type where   -- no constructors!
-
 def notAUnicorn (_ : Nat) : Unicorn → False :=
   fun u => nomatch u
 
@@ -274,9 +298,6 @@ def sum : List Nat → Nat
 |---|---|
 | Base: `f [] = ...` | Prove `P []` |
 | Step: `f (h :: t)` uses `f t` | From `P t`, prove `P (h :: t)` |
-
-Same structure.  You do not write induction proofs in this course —
-but every recursive function you write IS one.
 
 ### Higher-order functions = higher-order proof combinators
 
