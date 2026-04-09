@@ -164,20 +164,22 @@ theorem six_pos : 6 % 2 = 0 ∧ 6 > 0 → 6 > 0 :=
 ### `α ⊕ β` — one or the other
 @@@ -/
 
--- Computation: a value is one of two alternatives
+-- Computation: a value of α ⊕ β is either a left α or a right β
 -- "Is 6 small (≤ 2) or big (> 2)?"
-def classify (n : Nat) : String :=
-  if n ≤ 2 then "small" else "big"
+def classify (n : Nat) : String ⊕ Nat :=
+  if n ≤ 2 then Sum.inl "small" else Sum.inr n
 
-#eval classify 2   -- "small"
-#eval classify 6   -- "big"
+#eval classify 2   -- Sum.inl "small"
+#eval classify 6   -- Sum.inr 6
 
--- Option: the canonical "might fail" type
-def safeDiv (a b : Nat) : Option Nat :=
-  if b == 0 then none else some (a / b)
+-- To use a sum, you must do case analysis: handle both alternatives
+def describeSize (v : String ⊕ Nat) : String :=
+  match v with
+  | Sum.inl s => s              -- left case: got a String
+  | Sum.inr n => s!"big: {n}"   -- right case: got a Nat
 
-#eval safeDiv 10 3   -- some 3
-#eval safeDiv 10 0   -- none
+#eval describeSize (classify 2)   -- "small"
+#eval describeSize (classify 6)   -- "big: 6"
 
 /-! @@@
 To use a sum, you must handle both cases — the compiler enforces
@@ -349,7 +351,7 @@ Return to the master table — now every row has been lived:
 | Basic | `Nat`, `Bool` | `P`, `Q` | `isEven`, `isPositive` |
 | `α → β` | `double` | `Raining → GroundWet`; `∀ n, ...` | Function = implication |
 | `α × β` | `evenAndPositive` | `6 % 2 = 0 ∧ 6 > 0` | Pair = conjunction |
-| `α ⊕ β` | `safeDiv` | `6 = 2 ∨ 6 > 2` | Case analysis = disjunction |
+| `α ⊕ β` | `classify` | `6 = 2 ∨ 6 > 2` | Case analysis = disjunction |
 | `Empty` | `fromVoid` | `False` | Zero cases = explosion |
 | `α → Empty` | `notAUnicorn` | `¬(6 % 2 = 1)` | Arrow to void = negation |
 
