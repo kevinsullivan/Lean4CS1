@@ -26,6 +26,10 @@ correspondence, which we will name explicitly in Week 14.
 namespace Week02
 ```
 
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
+
 ## 2.1  Defining functions
 ```lean
 -- Named function definition
@@ -49,6 +53,10 @@ def add3 (a b c : Nat) : Nat := a + b + c
 #eval (add3 1) 2 3  -- same: (add3 1) is a Nat → Nat → Nat waiting for two more args
 ```
 
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
+
 ## 2.2  → as implication: logical reading
 
 When `P` and `Q` are propositions, `P → Q` is the claim that P implies Q.
@@ -70,6 +78,10 @@ theorem add_zero_all : ∀ n : Nat, n + 0 = n :=
 -- The ∀ and → are the same thing: ∀ n, P n is (n : Nat) → P n
 -- when P does not mention types not in scope.
 ```
+
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
 
 ## 2.3  The design recipe
 
@@ -115,6 +127,10 @@ theorem double''_spec : ∀ n : Nat, double'' n = n + n :=
   fun n => rfl
 ```
 
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
+
 ## 2.4  Function composition
 ```lean
 -- ∘ is function composition: (f ∘ g) x = f (g x)
@@ -129,6 +145,10 @@ theorem id_comp (f : α → β) : id ∘ f = f := rfl
 theorem comp_assoc (f : γ → δ) (g : β → γ) (h : α → β) :
     (f ∘ g) ∘ h = f ∘ (g ∘ h) := rfl
 ```
+
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
 
 ## 2.5  Connectives as types
 
@@ -160,6 +180,10 @@ example : (1 + 1 = 2) ↔ (2 = 1 + 1) :=
   Iff.intro (fun h => h.symm) (fun h => h.symm)
 ```
 
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
+
 ## 2.6  Reading function specifications
 
 When a function's type contains propositions, the type IS the specification.
@@ -175,6 +199,10 @@ The examples below show how to read proof-carrying function types.
 #check List.get    -- (l : List α) → Fin l.length → α
 -- Fin n is the type of natural numbers < n.  It IS the bounds proof.
 ```
+
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
 
 ## Exercises
 
@@ -203,4 +231,7 @@ The examples below show how to read proof-carrying function types.
 ```lean
 end Week02
 ```
+
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
 

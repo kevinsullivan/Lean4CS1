@@ -23,16 +23,18 @@ true simultaneously*.  A term of this type packages a proof of P
 together with a proof of Q.
 
 Same constructor.  Two readings.  One type system.
-
 ```lean
 namespace Week02
 ```
+
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
 
 ## 2.1  Pairs: the anonymous product
 
 The simplest product is an anonymous pair `(a, b)`.
 The type is written `α × β`.
-
 ```lean
 -- Constructing pairs
 def myPair : Nat × Bool := (7, true)
@@ -53,12 +55,15 @@ def minMax (a b : Nat) : Nat × Nat :=
 #eval minMax 2 9    -- (2, 9)
 ```
 
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
+
 ## 2.2  Named products: structures
 
 Lean's `structure` keyword gives names to the fields of a product.
 This is more readable than anonymous pairs for anything but small,
 transient bundles.
-
 ```lean
 -- A named product: a 2D point
 structure Point where
@@ -88,6 +93,9 @@ instead of `.1` and `.2`.
 The key idea: a structure value holds ALL its fields simultaneously.
 To have a `Point`, you must supply BOTH `x` AND `y`.
 
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
+
 ## 2.3  Product types and conjunction: the logical reading
 
 When `P` and `Q` are propositions, `P ∧ Q` (read "P and Q") is the
@@ -98,7 +106,6 @@ A proof of `P ∧ Q` is a pair: a proof of P bundled with a proof of Q.
 
 The connective `∧` is the logical reading of the same product constructor
 that gives you pairs and structures on the computational side.
-
 ```lean
 -- A conjunction: both claims are true
 #check (by decide : 1 + 1 = 2 ∧ 2 + 2 = 4)
@@ -128,6 +135,9 @@ The table of correspondences so far:
 
 The names differ but the structure is identical.  This is not coincidence.
 
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
+
 ## 2.4  Proof-carrying types
 
 One of the most powerful ideas in this course is *proof-carrying types*:
@@ -135,7 +145,6 @@ embedding a logical condition directly into a data type.
 
 Instead of a raw `Nat`, you can demand a `Nat` bundled together with a
 proof that it satisfies some property.
-
 ```lean
 -- A type that packages a Nat together with a proof that it is even
 def EvenNat : Type := { n : Nat // n % 2 = 0 }
@@ -156,7 +165,6 @@ the proof depends on which number you chose.
 This is precisely the connection between programs and specifications.
 When a function returns `{ n : Nat // n % 2 = 0 }`, its return type
 itself guarantees the postcondition.  The type IS the specification.
-
 ```lean
 -- A function whose return type guarantees the postcondition
 def double_with_proof (n : Nat) : { m : Nat // m = n * 2 } :=
@@ -166,6 +174,10 @@ def double_with_proof (n : Nat) : { m : Nat // m = n * 2 } :=
 -- (double_with_proof 5).property : 10 = 5 * 2  (guaranteed by the type)
 ```
 
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
+
 ## 2.5  Products in specifications
 
 Product types appear naturally in function specifications whenever a
@@ -173,7 +185,6 @@ function must satisfy multiple independent conditions at once.
 
 If a function `f : α → β × γ` must return both a `β` and a `γ`, then
 you can specify each component independently using `∧`.
-
 ```lean
 -- A function that splits a number into quotient and remainder
 def divmod (n d : Nat) : Nat × Nat := (n / d, n % d)
@@ -191,6 +202,10 @@ theorem divmod_spec (n d : Nat) (hd : d ≠ 0) :
 #eval divmod 17 5   -- (3, 2):  17 = 3 * 5 + 2  and  2 < 5
 ```
 
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
+
 ## Summary
 
 - `α × β` is the **product type**: holds a value of type `α` AND a value of type `β`.
@@ -202,7 +217,10 @@ theorem divmod_spec (n d : Nat) (hd : d ≠ 0) :
 - **`decide`** produces proofs of decidable conjunctions automatically.
 - **Proof-carrying types** embed guarantees directly into the type:
   `{ n : Nat // P n }` requires supplying the value AND its proof.
-
 ```lean
 end Week02
 ```
+
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+

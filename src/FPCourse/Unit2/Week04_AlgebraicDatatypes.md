@@ -19,6 +19,10 @@ of type A and `m` values of type B as alternatives has `n + m` values.
 namespace Week04
 ```
 
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
+
 ## 4.1  Enumeration types (pure sums)
 ```lean
 inductive Direction where
@@ -29,6 +33,10 @@ deriving Repr, DecidableEq
 example : Direction.North ≠ Direction.South := by decide
 ```
 
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
+
 ## 4.2  Record types (pure products)
 ```lean
 structure Point where
@@ -38,6 +46,10 @@ deriving Repr
 
 def origin : Point := { x := 0.0, y := 0.0 }
 ```
+
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
 
 ## 4.3  Option: the prototypical proof-carrying type
 
@@ -69,6 +81,10 @@ theorem option_map_isSome (f : α → β) :
   fun o => Option.recOn o rfl (fun _ => rfl)
 ```
 
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
+
 ## 4.4  ∀ and ∃ in datatype specifications
 
 When we define a new type, its specifications typically quantify over
@@ -95,6 +111,10 @@ private def factorial' : Nat → Nat
 example : ∃ n : Nat, factorial' n > 1000 :=
   ⟨7, by decide⟩
 ```
+
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
 
 ## 4.5  Recursive types: expressions
 
@@ -134,6 +154,10 @@ theorem eval_add (e₁ e₂ : Expr) :
   rfl
 ```
 
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
+
 ## 4.6  The template principle
 
 Every inductive type `T` has a corresponding *elimination principle*:
@@ -149,6 +173,10 @@ For `Expr`:
 
 This is the *template principle*: the type tells you the shape of the
 function.
+
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
 
 ## Exercises
 
@@ -171,4 +199,7 @@ function.
 ```lean
 end Week04
 ```
+
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
 

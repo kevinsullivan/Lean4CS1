@@ -20,6 +20,10 @@ picture of how `decide` works as a term-mode proof producer.
 namespace Week12
 ```
 
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
+
 ## 12.1  Decidable: an inductive type carrying proofs
 
 `Decidable` is defined in Lean's core library as:
@@ -73,6 +77,10 @@ def toProofOrRefutation (p : Prop) [d : Decidable p] : p ∨ ¬p :=
   | Decidable.isFalse h => Or.inr h
 ```
 
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
+
 ## 12.2  DecidableEq as a type class instance
 
 `DecidableEq α` is a type class (an alias for `(a b : α) → Decidable (a = b)`).
@@ -90,6 +98,10 @@ def eqTest [DecidableEq α] (a b : α) : String :=
 #eval eqTest (3 : Nat) 3    -- "equal"
 #eval eqTest (3 : Nat) 4    -- "not equal"
 ```
+
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
 
 ## 12.3  Functor as a type class
 
@@ -115,6 +127,10 @@ instance : MyFunctor Option where
   map_id   := fun o => congr_fun Option.map_id o
   map_comp := fun f g o => (Option.map_map f g o).symm
 ```
+
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
 
 ## 12.4  Foldable as a type class
 ```lean
@@ -142,6 +158,10 @@ theorem option_fold_some (f : α → β → β) (z : β) (x : α) :
   rfl
 ```
 
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
+
 ## 12.5  Monoid: an algebraic structure with laws
 ```lean
 class MyMonoid (α : Type) where
@@ -168,6 +188,10 @@ instance : MyMonoid (List α) where
   mul_assoc := List.append_assoc
 ```
 
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
+
 ## 12.6  The boundary, revisited
 
 After twelve weeks, we can state the decidability boundary precisely.
@@ -190,6 +214,10 @@ The boundary is not arbitrary:
 
 Understanding what is and is not decidable — and WHY — is one of the
 foundational concepts of computer science.
+
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
 
 ## Exercises
 
@@ -217,4 +245,7 @@ foundational concepts of computer science.
 ```lean
 end Week12
 ```
+
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
 

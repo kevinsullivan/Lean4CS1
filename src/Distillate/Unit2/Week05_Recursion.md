@@ -22,10 +22,13 @@ This is called *structural recursion*: recursion that follows the
 structure of an inductive data type.  The base case handles the
 smallest possible value; the recursive case handles the constructor
 that builds larger values from smaller ones.
-
 ```lean
 namespace Week05
 ```
+
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
 
 ## 5.1  Natural number recursion
 
@@ -42,7 +45,6 @@ A function defined by pattern matching on `Nat` has exactly two cases.
 **The slogan**: *a base case and a step, applied repeatedly, yields an
 answer for any input.*  This is both the definition of recursion and
 the content of the principle of mathematical induction.
-
 ```lean
 -- Factorial: n! = n × (n-1) × ... × 1
 def factorial : Nat → Nat
@@ -84,6 +86,9 @@ If your recursion does not obviously decrease, Lean will reject the
 definition.  This guarantee means every function you define in Lean
 always terminates.  There are no infinite loops.
 
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
+
 ## 5.1a  The logical reading: recursion IS induction
 
 Every recursive definition has a logical twin.
@@ -109,13 +114,16 @@ You do not need to write induction proofs.  But recognize the pattern:
 every time you write a recursive function with a base case and a step,
 you are writing the same structure a mathematician uses to prove
 "for all n, ...".  This is Curry-Howard at work.
-
 ```lean
 -- Computational reading: factorial computes n!
 -- Logical reading: this same structure could prove "for all n, P n"
 --   base case: P 0 holds              ↔  factorial 0 = 1
 --   step: P n implies P (n+1)         ↔  factorial (n+1) = (n+1) * factorial n
 ```
+
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
 
 ## 5.2  Lists: the canonical recursive inductive type
 
@@ -142,7 +150,6 @@ The same duality applies to lists:
 The `decide`-verified specifications in §5.5 are the logical reading
 made concrete: each `#check (by decide : ...)` is Lean confirming that
 a proposition about the function is true.
-
 ```lean
 -- Length: count the elements
 def myLength : List Nat → Nat
@@ -179,11 +186,14 @@ def myReverse : List Nat → List Nat
 #eval myReverse [1, 2, 3, 4]   -- [4, 3, 2, 1]
 ```
 
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
+
 ## 5.3  Member test and search
 
 A fundamental operation on lists is testing whether an element appears.
 This is a function from a value and a list to a Bool.
-
 ```lean
 def myMember (x : Nat) : List Nat → Bool
   | []     => false
@@ -199,12 +209,15 @@ def myMember (x : Nat) : List Nat → Bool
 #check (by decide : 3 ∈ [1, 2, 3, 4])
 ```
 
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
+
 ## 5.4  Recursion on multiple arguments
 
 Some functions need to recurse on more than one argument simultaneously,
 or choose which argument to decrease.  A common pattern is recursion on
 the first list argument.
-
 ```lean
 -- Zip: pair up elements from two lists
 def myZip : List Nat → List Nat → List (Nat × Nat)
@@ -225,6 +238,10 @@ def myTake : Nat → List Nat → List Nat
 #eval myTake 10 [1, 2, 3]         -- [1, 2, 3]  (fewer than 10 elements)
 ```
 
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
+
 ## 5.5  Specifications for recursive functions
 
 Recursive functions can be given precise specifications using
@@ -233,7 +250,6 @@ propositions.  `decide` can verify these for concrete inputs.
 For universally quantified statements about lists, we need either:
 - `decide` (works when the proposition is over a decidable, finite domain)
 - `simp` with library lemmas (for general proofs about list operations)
-
 ```lean
 -- Concrete specifications verified by decide
 #check (by decide : myLength [1, 2, 3] = 3)
@@ -265,6 +281,9 @@ ranges over all lists, which is infinite).  In this course we use
 focus on the *specification* — what the theorem says — not on proof
 construction.
 
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
+
 ## 5.6  Totality: every function terminates
 
 Lean accepts only *total* functions — functions that return an answer
@@ -280,13 +299,16 @@ This is a guarantee, not a limitation.  It means:
 If you need to express a computation that might not terminate (e.g.,
 search over an infinite space), you use `Option` to represent possible
 failure — or you prove that it always terminates in the relevant cases.
-
 ```lean
 -- Lean rejects non-terminating definitions
 -- def loop : Nat → Nat
 --   | n => loop n   -- ERROR: failed to prove termination
 -- This is a feature, not a bug.
 ```
+
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
 
 ## Summary
 
@@ -304,7 +326,10 @@ failure — or you prove that it always terminates in the relevant cases.
   have the same structure as proofs by induction.  Base case and step
   in computation = base case and step in logic.  This is Curry-Howard
   applied to recursion.
-
 ```lean
 end Week05
 ```
+
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+

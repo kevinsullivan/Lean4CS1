@@ -23,6 +23,10 @@ type has `DecidableEq` and the list is finite, we can check them with
 namespace Week05
 ```
 
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
+
 ## 5.1  Standard list functions and their specifications
 
 The specifications below are ALL provided as term-mode proofs.
@@ -56,6 +60,10 @@ theorem mem_append_iff (a : α) (xs ys : List α) :
   List.mem_append
 ```
 
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
+
 ## 5.2  Decide on finite lists
 
 When the element type has `DecidableEq`, propositions of the form
@@ -76,6 +84,10 @@ example : ¬ (5 ∈ ([1, 2, 3, 4] : List Nat)) := by decide
 -- Equality of concrete lists:
 example : ([1, 2] ++ [3, 4] : List Nat) = [1, 2, 3, 4] := by decide
 ```
+
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
 
 ## 5.3  Reverse and the auxiliary lemma pattern
 
@@ -99,6 +111,10 @@ theorem reverse_reverse (xs : List α) : xs.reverse.reverse = xs :=
 -- which in turn requires nil_append and append_assoc.
 -- Each lemma is proved by structural recursion on the first list.
 ```
+
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
 
 ## 5.4  Map and its specification
 
@@ -124,6 +140,10 @@ theorem map_comp (f : β → γ) (g : α → β) (xs : List α) :
   simp [← List.map_map]
 ```
 
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
+
 ## 5.5  Specifications students should practice writing
 
 Reading a specification is easier than writing one.  The following are
@@ -142,6 +162,10 @@ theorem filter_length_le (p : α → Bool) (xs : List α) :
     (xs.filter p).length ≤ xs.length :=
   List.length_filter_le p xs
 ```
+
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
 
 ## Exercises
 
@@ -162,4 +186,7 @@ theorem filter_length_le (p : α → Bool) (xs : List α) :
 ```lean
 end Week05
 ```
+
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
 

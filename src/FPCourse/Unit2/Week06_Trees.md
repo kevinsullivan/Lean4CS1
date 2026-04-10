@@ -21,6 +21,10 @@ a specification.
 namespace Week06
 ```
 
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
+
 ## 6.1  The BTree type
 ```lean
 inductive BTree (α : Type) where
@@ -28,6 +32,10 @@ inductive BTree (α : Type) where
   | node : BTree α → α → BTree α → BTree α
 deriving Repr
 ```
+
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
 
 ## 6.2  Basic tree functions
 ```lean
@@ -58,6 +66,10 @@ theorem toList_length_eq_size (t : BTree α) :
                List.length_nil]
     omega
 ```
+
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
 
 ## 6.3  The BST predicate
 
@@ -99,6 +111,10 @@ instance decForAll (p : Nat → Prop) [DecidablePred p] :
       Decidable.isFalse (fun ⟨h, _, _⟩ => hv h)
 ```
 
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
+
 ## 6.4  BST insertion
 
 Insert `x` into a BST, maintaining the invariant:
@@ -113,6 +129,10 @@ def bstInsert (x : Nat) : BTree Nat → BTree Nat
     else if v < x then .node l v (bstInsert x r)
     else .node l v r   -- x = v: already present
 ```
+
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
 
 ## 6.5  Preservation of ForAll
 
@@ -133,6 +153,10 @@ theorem forAll_bstInsert (p : Nat → Prop) (x : Nat) (hx : p x) :
     · exact ⟨hv, hfl, forAll_bstInsert p x hx r hfr⟩
     · exact ⟨hv, hfl, hfr⟩
 ```
+
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
 
 ## 6.6  Preservation of IsBST
 
@@ -158,6 +182,10 @@ theorem bstInsert_isBST (x : Nat) :
     · exact IsBST.node hl hr hfl hfr
 ```
 
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
+
 ## 6.7  Mutual recursion: Rose trees
 
 A *rose tree* has nodes with arbitrarily many children (stored as a list).
@@ -182,6 +210,10 @@ mutual
     | .cons t f => roseSize t + forestSize f
 end
 ```
+
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
 
 ## Exercises
 
@@ -209,4 +241,7 @@ end
 ```lean
 end Week06
 ```
+
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
 

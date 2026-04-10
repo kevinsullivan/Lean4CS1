@@ -14,11 +14,7 @@ all: $(BUILD_FILES)
 $(BUILD_FILES): src/%.md: %.lean
 	@mkdir -p $(dir $@)
 	echo "Converting $< into $@"
-	@if command -v runhaskell >/dev/null 2>&1; then \
-		scripts/convert.hs $< $@; \
-	else \
-		python3 scripts/convert.py $< $@; \
-	fi
+	python3 scripts/convert.py $< $@
 
 # Convert only (no mdbook build)
 convert: $(BUILD_FILES)

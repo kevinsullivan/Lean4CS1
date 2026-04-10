@@ -25,6 +25,10 @@ elements as needed.
 namespace Week13
 ```
 
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
+
 ## 13.1  Thunk: explicit laziness
 ```lean
 -- Thunk is defined in Lean's core library:
@@ -41,6 +45,10 @@ namespace Week13
 def lazyFive : Thunk Nat := Thunk.mk (fun _ => 2 + 3)
 #eval lazyFive.get   -- 5  (computed only when forced)
 ```
+
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
 
 ## 13.2  Lazy lists (streams)
 
@@ -63,6 +71,10 @@ def LList.drop : Nat → LList α → LList α
   | _,     .nil         => .nil
   | n + 1, .cons _ t    => LList.drop n t.get
 ```
+
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
 
 ## 13.3  Canonical infinite streams
 ```lean
@@ -90,6 +102,10 @@ def fibs : LList Nat := fibsFrom 0 1
 #eval LList.take 10 fibs    -- [0,1,1,2,3,5,8,13,21,34]
 ```
 
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
+
 ## 13.4  Map on streams
 ```lean
 def LList.map (f : α → β) : LList α → LList β
@@ -111,6 +127,10 @@ theorem map_take (f : α → β) (n : Nat) :
         simp only [LList.map, LList.take]
         exact congrArg (f h :: ·) (ih t.get)
 ```
+
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
 
 ## 13.5  Filter on streams
 
@@ -134,6 +154,10 @@ def LList.takeWhile (p : α → Bool) : LList α → List α
 #eval LList.takeWhile (· < 5) nats    -- [0,1,2,3,4]
 ```
 
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
+
 ## 13.6  Coinduction: specifications about infinite streams
 
 For finite data, we use induction to prove properties: "for all finite
@@ -155,6 +179,10 @@ theorem nats_take_eq : ∀ n : Nat, LList.take n nats = List.range n := by
     sorry
 ```
 
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
+
 ## 13.7  Non-termination and the Thunk boundary
 
 The `Thunk` type makes explicit what is delayed.  Every time you see
@@ -172,6 +200,10 @@ actually exist as an infinite object in memory.
 
 This is computationally honest: real programs do not hold infinite
 structures; they hold descriptions and lazily demand pieces.
+
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
 
 ## Exercises
 
@@ -199,4 +231,7 @@ structures; they hold descriptions and lazily demand pieces.
 ```lean
 end Week13
 ```
+
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
 

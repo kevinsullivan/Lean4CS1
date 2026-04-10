@@ -37,16 +37,18 @@ You do not need to construct such proofs.  But the pattern is the same
 one you saw in Weeks 1–4: the arrow `→` is both computation and
 implication.  Higher-order functions correspond to proofs of propositions
 that take and return proofs of implications as arguments.
-
 ```lean
 namespace Week06
 ```
+
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
 
 ## 6.1  Map: transforming every element
 
 `map f xs` applies `f` to every element of `xs` and collects the results.
 The structure of the list is preserved; only the elements change.
-
 ```lean
 -- map: apply f to every element
 def myMap (f : Nat → Nat) : List Nat → List Nat
@@ -82,7 +84,6 @@ These laws hold for the same reason in both readings: the structure
 of `map` does not inspect the elements, only passes them through the
 function argument.  This is parametricity — the deep reason that
 computation and logic stay in sync.
-
 ```lean
 -- Functor identity law: verified by decide for a concrete list
 #check (by decide : myMap id [1, 2, 3] = [1, 2, 3])
@@ -101,11 +102,14 @@ theorem myMap_comp (f g : Nat → Nat) (xs : List Nat) :
   | cons h t ih => simp [myMap, Function.comp, ih]
 ```
 
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
+
 ## 6.2  Filter: keeping elements that satisfy a predicate
 
 `filter p xs` returns the sublist of `xs` containing only the elements
 for which the predicate `p` returns `true`.
-
 ```lean
 def myFilter (p : Nat → Bool) : List Nat → List Nat
   | []     => []
@@ -125,7 +129,6 @@ A correct `filter p` satisfies:
 - Every element `x` in the output satisfies `p x = true`.
 - Every element `x` that satisfies `p x = true` appears in the output
   (if it was in the input).
-
 ```lean
 -- Concrete specification: filter only keeps even numbers
 #check (by decide :
@@ -147,6 +150,10 @@ theorem myFilter_subset (p : Nat → Bool) (xs : List Nat) :
     · exact ih x hx
 ```
 
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
+
 ## 6.3  Fold: collapsing a list to a single value
 
 `fold` (also called `reduce`) combines all elements of a list into a
@@ -158,7 +165,6 @@ There are two variants:
 
 For associative operations the result is the same; for non-associative
 ones it differs.
-
 ```lean
 -- foldr: right fold
 def myFoldr (f : Nat → Nat → Nat) (init : Nat) : List Nat → Nat
@@ -211,12 +217,14 @@ and a rule that derives the next proposition from the current one,
 This is why `fold` is the most powerful of the three: it captures the
 general pattern of building an answer (or a proof) one step at a time.
 
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
+
 ## 6.4  Function composition and anonymous functions
 
 Anonymous functions (`fun x => ...`) and function composition (`∘`)
 let you build complex transformations inline, without naming every
 intermediate step.
-
 ```lean
 -- Composition: (f ∘ g) x = f (g x)
 def doubleAndSquare : Nat → Nat := (fun n => n * n) ∘ (fun n => n * 2)
@@ -234,6 +242,10 @@ def processNats : List Nat → List Nat :=
   |> List.map (· * 2)               -- [4, 8, 12]
 ```
 
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
+
 ## 6.5  Polymorphic higher-order functions
 
 The versions of `map`, `filter`, and `fold` above work only on
@@ -245,7 +257,6 @@ The key ingredients:
 - The function argument `f : α → β` transforms elements of type `α`
   into elements of type `β`.
 - The predicate `p : α → Bool` tests elements of any type `α`.
-
 ```lean
 -- Polymorphic map: List α → List β
 -- (using the standard library version)
@@ -270,12 +281,15 @@ For polymorphic `map`, the Functor laws hold at every type:
 
 `decide` cannot directly check universal polymorphic statements, but
 concrete instances for any specific type can be verified.
-
 ```lean
 #check (by decide : List.map id [1, 2, 3] = [1, 2, 3])
 #check (by decide : List.map ((· * 2) ∘ (· + 1)) [1, 2, 3] =
                     List.map (· * 2) (List.map (· + 1) [1, 2, 3]))
 ```
+
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
 
 ## Summary
 
@@ -296,7 +310,10 @@ concrete instances for any specific type can be verified.
 - **The dual reading**: higher-order functions on data are higher-order
   functions on propositions.  `map` applies an implication uniformly;
   `fold` chains inference steps.  The Functor laws hold in both readings.
-
 ```lean
 end Week06
 ```
+
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+

@@ -25,6 +25,10 @@ at most one value.  The laws of `Dict` are laws of partial functions.
 namespace Week11
 ```
 
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
+
 ## 11.1  The Dict interface
 
 A dictionary maps keys to values.  Operations: empty dict, insert,
@@ -36,6 +40,10 @@ class Dict (d : Type → Type → Type) where
   lookup : [DecidableEq k] → k → d k v → Option v
   delete : [DecidableEq k] → k → d k v → d k v
 ```
+
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
 
 ## 11.2  Laws: the specification for Dict
 
@@ -57,6 +65,10 @@ class LawfulDict (d : Type → Type → Type) [DecidableEq k] extends Dict d whe
   lookup_delete_diff : ∀ (k1 k2 : k) (m : d k v),
       k1 ≠ k2 → lookup k1 (delete k2 m) = lookup k1 m
 ```
+
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
 
 ## 11.3  Association list implementation
 
@@ -99,6 +111,10 @@ theorem alist_lookup_insert_diff [DecidableEq k] {k1 k2 : k} (val : v)
   simp [AList.lookup, AList.insert, hne]
 ```
 
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
+
 ## 11.4  Opaque types: hiding implementation details
 
 The `opaque` keyword makes an identifier's definition irreducible to
@@ -126,6 +142,10 @@ axiom Counter.value_incr : ∀ c, Counter.value (Counter.incr c) =
 -- using the concrete implementation.  The opaque/axiom pattern separates
 -- the interface (what callers see) from the implementation.
 ```
+
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
 
 ## 11.5  Stack: another abstract type
 
@@ -162,6 +182,10 @@ instance : LawfulStack List where
   size_push  := fun _ _ => rfl
 ```
 
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
+
 ## 11.6  Representation independence
 
 The key property of abstract types: any two implementations satisfying
@@ -174,6 +198,10 @@ the same `lookup` results in both.
 This can be stated as a theorem schema — for each sequence of operations,
 the `lookup` results agree.  We will not prove this in full generality;
 stating it precisely is the skill being practiced.
+
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
 
 ## Exercises
 
@@ -203,4 +231,7 @@ stating it precisely is the skill being practiced.
 ```lean
 end Week11
 ```
+
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
 

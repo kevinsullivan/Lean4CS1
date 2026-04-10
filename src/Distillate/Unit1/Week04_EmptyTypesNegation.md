@@ -26,10 +26,13 @@ The sixth constructor follows directly: `α → Empty` is the type of
 functions that, given an inhabitant of `α`, produce an inhabitant of
 `Empty`.  Since `Empty` has no inhabitants, such a function could only
 exist if `α` also had no inhabitants.  This is negation.
-
 ```lean
 namespace Week04
 ```
+
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
 
 ## 4.1  The Empty type
 
@@ -42,7 +45,6 @@ inductive Empty : Type
 
 There is no way to produce a value of type `Empty`.
 But there IS a function `Empty.rec` with a remarkable type:
-
 ```lean
 -- Empty.rec : ∀ {α : Sort u}, Empty → α
 -- Given an Empty, produce ANYTHING.
@@ -68,6 +70,9 @@ Their value is precisely in *case analysis*: when you match on a value
 of an inductive type and one constructor is `Empty` (impossible), Lean
 knows that branch is unreachable, and closes it automatically.
 
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
+
 ## 4.2  Negation: functions to Empty
 
 The sixth constructor is `α → Empty`.
@@ -85,7 +90,6 @@ function can only exist when `P` is itself unprovable — i.e., when
 `P` is false.
 
 This is the correct, constructive account of negation.
-
 ```lean
 -- ¬P is definitionally P → False
 #check @Not   -- Not : Prop → Prop
@@ -103,6 +107,10 @@ theorem one_ne_two : ¬ (1 = 2) := by decide
 #check (by decide : ¬ (1 + 1 = 3))
 ```
 
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
+
 ## 4.3  The explosion principle (ex falso quodlibet)
 
 "From false, anything follows."
@@ -114,7 +122,6 @@ whatever type you need.
 In a program, this corresponds to matching on `Empty` with zero cases:
 the match exhausts all constructors (there are none), so it trivially
 covers every case.  The resulting function is total — it just never runs.
-
 ```lean
 -- Pattern matching on Empty: zero cases needed, so it type-checks
 -- (This function is total even though it seems to have no body)
@@ -130,6 +137,9 @@ This is not a trick.  It is a theorem-prover's version of the
 classical principle: a false hypothesis makes any implication vacuously
 valid.  In formal logic, `False → P` holds for ALL `P`.
 
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
+
 ## 4.4  Negation in practice: contradictions and `absurd`
 
 A common proof pattern is to derive a contradiction: you have `h₁ : P`
@@ -137,7 +147,6 @@ and `h₂ : ¬P`, which together let you conclude anything.
 
 Lean provides `absurd : ∀ {a : Prop} {b : Prop}, a → ¬a → b` for exactly
 this pattern.
-
 ```lean
 -- absurd: given a proof of P and a proof of ¬P, conclude anything
 theorem contradiction_example (h : 1 = 2) : 0 = 1 :=
@@ -148,6 +157,10 @@ theorem contradiction_example (h : 1 = 2) : 0 = 1 :=
 #check (by decide : ¬ (true && false = true))
 ```
 
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
+
 ## 4.5  Impossible branches in pattern matching
 
 One of the most elegant uses of Empty/False in Lean is *ruling out
@@ -157,7 +170,6 @@ Lean sometimes allows you to assert that a constructor cannot appear.
 If a constructor can only be inhabited by providing a proof of
 a false proposition, then that branch is unreachable, and Lean accepts
 a match expression with that branch omitted (or filled with `nomatch`).
-
 ```lean
 -- An indexed type where some constructors are provably impossible
 -- (A taste of dependent types — more in future courses)
@@ -173,6 +185,10 @@ a match expression with that branch omitted (or filled with `nomatch`).
 -- def absurdFin0 : Fin 0 → Nat := fun ⟨_, h⟩ => absurd h (Nat.not_lt_zero _)
 ```
 
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
+
 ## 4.6  Empty types in specifications
 
 Functions to empty types matter most in specifications, even if they
@@ -187,7 +203,6 @@ Specifications that include negations (`¬P`) often look like:
 
 All of these can be proved by `decide` when the types are finite and
 decidable.
-
 ```lean
 -- Specifications involving negation
 def negate (b : Bool) : Bool := !b
@@ -203,6 +218,10 @@ def negate (b : Bool) : Bool := !b
 #check (by decide : true ≠ false)
 ```
 
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
+
 ## Summary
 
 - **`Empty`**: an inductive type with no constructors; no inhabitants.
@@ -217,7 +236,10 @@ def negate (b : Bool) : Bool := !b
 - **`decide`** proves negations when the proposition is decidable.
 - **Specifications use negation** to express constraints: "this cannot
   happen," "these are always distinct," "this function is injective."
-
 ```lean
 end Week04
 ```
+
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+

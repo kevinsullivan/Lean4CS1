@@ -23,16 +23,18 @@ Same constructor.  Two readings.  One type system.
 
 In Lean, sum types are written using the `inductive` keyword.
 `Bool` and `Option` are the canonical examples you will meet first.
-
 ```lean
 namespace Week03
 ```
+
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
 
 ## 3.1  Bool: the simplest sum type
 
 `Bool` is an inductive type with exactly two constructors, `true` and
 `false`.  It is the sum type `Unit ⊕ Unit` with better names.
-
 ```lean
 -- Bool is defined in the standard library as:
 --   inductive Bool : Type
@@ -52,6 +54,10 @@ def boolToNat (b : Bool) : Nat :=
 def boolToNat' (b : Bool) : Nat := if b then 1 else 0
 ```
 
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
+
 ## 3.2  Defining your own sum types
 
 The `inductive` keyword introduces a new type by listing its
@@ -61,7 +67,6 @@ multiple fields.
 
 Each constructor is a disjoint alternative.  Together, they cover
 every possible value.
-
 ```lean
 -- A simple enumeration: four compass directions
 inductive Direction
@@ -93,6 +98,10 @@ def isNorthSouth (d : Direction) : Bool :=
 #check (by decide : opposite (opposite Direction.East) = Direction.East)
 ```
 
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
+
 ## 3.3  Option: the prototypical proof-carrying sum type
 
 `Option α` is one of the most important types in functional programming.
@@ -105,7 +114,6 @@ inductive Option (α : Type) : Type
 ```
 
 `none` means "no value."  `some v` means "the value `v`."
-
 ```lean
 -- Safe list head: returns none if the list is empty
 def head? (xs : List Nat) : Option Nat :=
@@ -137,11 +145,13 @@ def divOrZero (n d : Nat) : Nat :=
 The type tells you that you MUST handle the `none` case.
 There is no way to access the value without writing the pattern match.
 
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
+
 ## 3.4  Constructors with data
 
 Constructors can carry payloads.  A sum type constructor is either a tag
 (nullary, like `North`) or a tag together with stored data (like `some`).
-
 ```lean
 -- A result type: either an error message or a computed value
 inductive Result (α : Type) : Type
@@ -163,6 +173,10 @@ def showResult (r : Result Float) : String :=
 #eval showResult (safeSqrt (-1)) -- "Error: cannot take sqrt of a negative number"
 ```
 
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
+
 ## 3.5  Disjunction: the logical reading of sum types
 
 When `P` and `Q` are propositions, `P ∨ Q` (read "P or Q") is the
@@ -174,7 +188,6 @@ A proof of `P ∨ Q` is either:
 - `Or.inr hq` — a proof that the right disjunct Q holds.
 
 You commit to which side you are proving.  The type enforces this.
-
 ```lean
 -- Proving a disjunction: commit to the true side
 theorem one_lt_two_or_one_gt_two : 1 < 2 ∨ 1 > 2 :=
@@ -205,6 +218,9 @@ The table of correspondences so far:
 Exhaustive pattern matching in code IS the completeness condition for
 disjunctive proofs.  The compiler ensures you handle every case.
 
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
+
 ## 3.6  Pattern matching: the elimination form for sums
 
 Every time you use a sum-type value, you must pattern-match.
@@ -214,7 +230,6 @@ a sum value by handling each possible constructor.
 This is not optional.  You cannot reach inside a sum value without
 declaring what you will do with both alternatives.  This exhaustiveness
 requirement is enforced at compile time.
-
 ```lean
 -- Pattern matching on a custom inductive type
 inductive Shape
@@ -236,6 +251,10 @@ def area (s : Shape) : Float :=
 --   -- ERROR: missing case Shape.Rectangle
 ```
 
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
+
 ## Summary
 
 - `α ⊕ β` (sum) holds *either* an `α` *or* a `β`; never both; never neither.
@@ -249,7 +268,10 @@ def area (s : Shape) : Float :=
 - **`decide`** produces proofs of decidable disjunctions automatically.
 - Exhaustive case coverage in programs mirrors completeness in disjunctive
   proofs — one and the same requirement enforced by Lean.
-
 ```lean
 end Week03
 ```
+
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+

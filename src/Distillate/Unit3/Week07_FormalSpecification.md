@@ -23,10 +23,13 @@ both at once.
 
 We also study the *verification ladder*: a sequence of increasingly
 strong ways to check that a function behaves as intended.
-
 ```lean
 namespace Week07
 ```
+
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
 
 ## 7.1  The design recipe
 
@@ -42,7 +45,6 @@ We have used it informally throughout the course.  Here it is in full.
 The signature is a necessary condition; the specification is sufficient.
 Lean enforces the signature automatically.  The specification requires
 you to state and prove a theorem.
-
 ```lean
 -- A fully worked example: absolute difference of two natural numbers
 -- (Note: Nat subtraction floors at 0, so |a - b| needs care)
@@ -70,6 +72,10 @@ theorem absDiff_comm : ∀ a b : Nat, absDiff a b = absDiff b a := by
 #check (by decide : absDiff 5 5 = 0)
 ```
 
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
+
 ## 7.2  The verification ladder
 
 There are four rungs on the ladder, from weakest to strongest.
@@ -87,7 +93,6 @@ Each rung is strictly stronger than the one below it.
 - `rfl` proves equality by reduction to the same normal form.
 - `decide` proves any decidable proposition, but requires finite/concrete values.
 - `theorem` is the ultimate: Lean's kernel verifies the proof term itself.
-
 ```lean
 -- Rung 1: #eval — dynamic spot check
 #eval absDiff 7 3     -- 4  (we observe the output; nothing is proved)
@@ -107,6 +112,10 @@ theorem absDiff_nonneg : ∀ a b : Nat, 0 ≤ absDiff a b := by
 -- For this course: decide for decidable, theorem for universal.
 ```
 
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
+
 ## 7.3  Specifications as propositions
 
 A specification states the *relationship* between inputs and outputs.
@@ -117,7 +126,6 @@ It can involve:
 - **Universal quantification**: `∀ x, f x = g x`
 - **Implication**: `P x → Q (f x)` (conditional)
 - **Negation**: `¬ (f x = y)` (something never happens)
-
 ```lean
 -- Equality specification
 def triple (n : Nat) : Nat := n * 3
@@ -143,6 +151,10 @@ theorem sorted2_spec : ∀ a b : Nat,
 #check (by decide : let (lo, hi) := sorted2 2 9; lo ≤ hi ∧ (lo = 2 ∨ lo = 9))
 ```
 
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
+
 ## 7.4  Specifications for sorting: a worked case study
 
 What does it mean to sort a list correctly?  This question has a
@@ -160,7 +172,6 @@ Neither condition alone is sufficient:
   not (1).
 
 Both conditions together define correct sorting.
-
 ```lean
 -- Lean's standard library provides the right tools
 -- List.Pairwise r xs: every pair in xs satisfies relation r
@@ -200,6 +211,9 @@ of the follow-on course.  What matters for this course is:
 
 The statement is the essential intellectual contribution.
 
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
+
 ## 7.5  Reading specifications
 
 An equally important skill is reading a specification you did not write.
@@ -216,7 +230,6 @@ same result as Lean's built-in list append `++`."
 
 This is a correctness claim: it says our implementation agrees with
 the standard.
-
 ```lean
 -- Reading exercise: what does each specification say?
 
@@ -239,6 +252,10 @@ the standard.
 #check (by decide : (List.map (· * 2) [1, 2, 3]).length = [1, 2, 3].length)
 ```
 
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
+
 ## 7.6  The specification IS the documentation
 
 In traditional programming, documentation lives in comments that can
@@ -254,7 +271,6 @@ Specifications as propositions serve multiple roles simultaneously:
 
 This is why we always write the specification before the implementation.
 The design recipe forces this discipline.
-
 ```lean
 -- Complete design recipe example: minimum of a non-empty list
 
@@ -275,6 +291,10 @@ theorem listMin_spec (xs : List Nat) (h : xs ≠ []) :
 #check (by decide : listMin [7] (by decide) = 7)
 ```
 
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
+
 ## Summary
 
 - **A correct program is a proof of its specification.**
@@ -290,7 +310,10 @@ theorem listMin_spec (xs : List Nat) (h : xs ≠ []) :
 - **Reading specifications** is as important as writing them.
 - **Specifications are executable documentation**: if the code breaks,
   the proof fails immediately.
-
 ```lean
 end Week07
 ```
+
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+

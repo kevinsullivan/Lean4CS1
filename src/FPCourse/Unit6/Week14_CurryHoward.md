@@ -43,6 +43,10 @@ The entire structure of this course is the foundation.
 namespace Week14
 ```
 
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
+
 ## 14.1  The correspondence table
 
 Each row of the following table presents two views of the same concept.
@@ -88,6 +92,10 @@ example : ∀ n : Nat, n + 0 = n := Nat.add_zero  -- a dependent function
 example : ∃ n : Nat, n > 100 := ⟨101, by decide⟩  -- a dependent pair
 ```
 
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
+
 ## 14.2  Proofs ARE terms: a demonstration
 
 The following function and theorem look syntactically identical.
@@ -108,6 +116,10 @@ theorem makeConjunction (h1 : P) (h2 : Q) : P ∧ Q := And.intro h1 h2
 
 -- And.intro IS (essentially) Prod.mk, working on Props.
 ```
+
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
 
 ## 14.3  The capstone: a type-checker whose type is its proof
 
@@ -144,6 +156,10 @@ def ctxLookup : Context → String → Option Ty
   | (x, τ) :: ctx, y  => if x == y then some τ else ctxLookup ctx y
 ```
 
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
+
 ## 14.4  The typing relation
 
 The typing relation `Typed ctx e τ` is an inductive proposition:
@@ -162,6 +178,10 @@ inductive Typed : Context → Term → Ty → Prop where
   | lam     : Typed ((x, τ₁) :: ctx) body τ₂ →
               Typed ctx (.lam x τ₁ body) (.Arr τ₁ τ₂)
 ```
+
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
 
 ## 14.5  The type-checker
 
@@ -194,6 +214,10 @@ def typecheck : (ctx : Context) → (e : Term) →
     | none              => none
 ```
 
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
+
 ## 14.6  Soundness: every result is correct
 
 Soundness follows immediately from the return type: any time `typecheck`
@@ -225,6 +249,10 @@ theorem typecheck_sound (ctx : Context) (e : Term) (τ : Ty) (h : Typed ctx e τ
   | some p => exact ⟨p.1, p.2, rfl⟩
 ```
 
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
+
 ## 14.7  What you have learned
 
 You entered this course knowing that programs have types.  You leave it
@@ -250,6 +278,10 @@ knowing that:
    claim in every type has been verified by the elaborator.
 
 This is the Curry-Howard correspondence, lived from the inside.
+
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
 
 ## Exercises
 
@@ -277,4 +309,7 @@ This is the Curry-Howard correspondence, lived from the inside.
 ```lean
 end Week14
 ```
+
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
 

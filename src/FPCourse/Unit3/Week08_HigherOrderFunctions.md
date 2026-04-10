@@ -23,6 +23,10 @@ pattern*: a family of propositions that all instances must satisfy.
 namespace Week08
 ```
 
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
+
 ## 8.1  map, filter, fold: the canonical trio
 
 These three functions together cover an enormous range of list
@@ -53,6 +57,10 @@ computations.
 #eval [1,2,3,4,5].foldr (· :: ·) []        -- [1,2,3,4,5]
 ```
 
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
+
 ## 8.2  Deriving map from fold
 
 `map` can be expressed as a `foldr`:
@@ -71,6 +79,10 @@ theorem mapViaFoldr_eq_map (f : α → β) (xs : List α) :
 def filterViaFoldr (p : α → Bool) (xs : List α) : List α :=
   xs.foldr (fun x acc => if p x then x :: acc else acc) []
 ```
+
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
 
 ## 8.3  The functor laws
 
@@ -97,6 +109,10 @@ theorem map_comp_law : ∀ (f : β → γ) (g : α → β) (xs : List α),
   fun f g xs => by simp [← List.map_map]
 ```
 
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
+
 ## 8.4  Writing law statements for other types
 
 A key skill: given a new type with a map-like operation, state the
@@ -114,6 +130,10 @@ theorem option_map_comp : ∀ (f : β → γ) (g : α → β) (o : Option α),
     o.map (f ∘ g) = (o.map g).map f :=
   fun f g o => (Option.map_map f g o).symm
 ```
+
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
 
 ## 8.5  fold and its specification pattern
 
@@ -136,6 +156,10 @@ theorem foldr_append (f : α → β → β) (z : β) (xs ys : List α) :
   List.foldr_append
 ```
 
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
+
 ## 8.6  The fusion law
 
 When a `map` is followed immediately by a `fold`, they can be fused into
@@ -153,6 +177,10 @@ theorem map_foldr_fusion (f : β → γ → γ) (z : γ) (g : α → β) (xs : L
     rfl
     (fun h t ih => congrArg (f (g h) ·) ih)
 ```
+
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
 
 ## Exercises
 
@@ -191,4 +219,7 @@ theorem map_foldr_fusion (f : β → γ → γ) (z : γ) (g : α → β) (xs : L
 ```lean
 end Week08
 ```
+
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
 

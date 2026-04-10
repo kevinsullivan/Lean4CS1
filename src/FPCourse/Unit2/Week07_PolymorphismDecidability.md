@@ -20,6 +20,10 @@ duplicate them.
 namespace Week07
 ```
 
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
+
 ## 7.1  Polymorphic functions and their types
 ```lean
 -- id works for any type
@@ -33,6 +37,10 @@ def myConst (a : α) (_ : β) : α := a
 def myFlip (f : α → β → γ) : β → α → γ := fun b a => f a b
 #check @myFlip    -- (α β γ : Type u) → (α → β → γ) → β → α → γ
 ```
+
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
 
 ## 7.2  Bounded polymorphism: type class constraints
 
@@ -71,6 +79,10 @@ theorem contains_spec [DecidableEq α] (x : α) (xs : List α) :
         right
         exact ih.mpr ht
 ```
+
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
 
 ## 7.3  The DecidableEq type class
 
@@ -111,6 +123,10 @@ example : DecidableEq Bool := inferInstance
 example : DecidableEq (List Nat) := inferInstance
 example : ([1, 2, 3] : List Nat) = [1, 2, 3] := by decide
 ```
+
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
 
 ## 7.4  Float and the absence of DecidableEq
 
@@ -161,6 +177,10 @@ else.  Always compare floats with a tolerance: `|x - y| < ε`.
 -- methodology (floating-point error analysis).
 ```
 
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
+
 ## 7.5  Summary: the decidability boundary
 
 **Reading `∀` and `∃`.**  Two quantifiers appear throughout this table
@@ -187,6 +207,10 @@ that the claim holds for that value.
 
 This table is one of the most important things in the course.
 
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
+
 ## Exercises
 
 1. Define a polymorphic function `myNub [DecidableEq α] : List α → List α`
@@ -211,4 +235,7 @@ This table is one of the most important things in the course.
 ```lean
 end Week07
 ```
+
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
 

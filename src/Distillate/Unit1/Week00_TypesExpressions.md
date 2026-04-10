@@ -40,6 +40,10 @@ and you will use one vocabulary — *types and their inhabitants* — for both.
 namespace Week00
 ```
 
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
+
 ## 0.1  Basic types: atoms of computation and logic
 
 Basic types are not constructed from anything else.  They are given to you
@@ -64,6 +68,10 @@ by the language.  You encounter them by name.
 #eval "hello" ++ ", world"   -- "hello, world"
 #eval "hello".length          -- 5
 ```
+
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
 
 ## 0.2  The Lean notional machine
 
@@ -91,6 +99,10 @@ We write `e ↝ v` to mean "expression `e` reduces to value `v` in one step."
 `#check e` inspects the *type* of `e` without evaluating it.
 Types are checked statically; values are produced dynamically.
 Both happen before you see any output.
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
+
 ## 0.3  Propositions are types; proofs are terms
 
 Lean does something that at first looks surprising: it uses the *same*
@@ -143,6 +155,10 @@ For now, the key point: **when you can `#eval` an expression and get
 #check @BEq.beq   -- BEq.beq : α → α → Bool
 ```
 
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
+
 ## 0.4  The Bool / Prop distinction
 
 `Bool` and `Prop` both express "true or false" ideas, but they are
@@ -173,6 +189,10 @@ def isEven (n : Nat) : Bool := n % 2 == 0
 #check (by decide : isEven 4 = true)
 #check (by decide : isEven 7 = false)
 ```
+
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
 
 ## 0.5  The six constructors: a first pass
 
@@ -205,6 +225,10 @@ example : Bool ⊕ Nat := Sum.inr 42
 example : 1 = 2 → False := by decide  -- 1 ≠ 2, so this implication holds
 ```
 
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
+
 ## Summary
 
 - Every Lean expression has a **type**.  Types classify values.
@@ -219,4 +243,7 @@ example : 1 = 2 → False := by decide  -- 1 ≠ 2, so this implication holds
 ```lean
 end Week00
 ```
+
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
 

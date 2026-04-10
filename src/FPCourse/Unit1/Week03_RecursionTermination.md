@@ -42,13 +42,15 @@ way of writing down these two ingredients:
 Lean can verify termination automatically for structural recursion because
 it can see that the step clause only ever asks for the answer at `n`, not at
 any larger value.
-
 ```lean
 namespace Week03
 ```
 
-## 3.1  Factorial — direct recursive definition
 
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
+
+## 3.1  Factorial — direct recursive definition
 ```lean
 def factorial : Nat → Nat
   | 0     => 1
@@ -85,6 +87,10 @@ toward the base case and assembles the result on the way back up.  Either
 direction produces `6`.  The inductive framing explains *why* there is
 a well-defined answer for every input, not just how to compute it.
 
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
+
 ## 3.2  Tail recursion and accumulators
 
 The direct definition rebuilds the product on the way *back* from the
@@ -94,7 +100,6 @@ base case.  A tail-recursive version accumulates the product on the way
 Tail-recursive functions are important in practice because they run in
 constant stack space.  They can also have different proofs of correctness,
 which is why we need to state the relationship between the two versions.
-
 ```lean
 def factorialAcc : Nat → Nat → Nat
   | 0,     acc => acc
@@ -113,6 +118,10 @@ def factorialTR (n : Nat) : Nat := factorialAcc n 1
 example : factorialTR 5 = 120 := rfl
 ```
 
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
+
 ## 3.3  Specification: the two definitions agree
 
 The following theorem states that the accumulator version computes the
@@ -124,7 +133,6 @@ is a term — a recursive function on `n` whose type is the specification.
 
 Read the term as: "by induction on n; the base case is a calculation;
 the step uses the inductive hypothesis for n with a different accumulator."
-
 ```lean
 -- Provided term-mode proof.  Read it; do not reproduce it.
 theorem factorialAcc_spec : ∀ (n acc : Nat),
@@ -143,6 +151,10 @@ theorem factorialTR_spec (n : Nat) : factorialTR n = factorial n :=
   Eq.trans (factorialAcc_spec n 1) (Nat.one_mul (factorial n))
 ```
 
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
+
 ## 3.4  Non-structural termination
 
 When recursion does not follow the structure of an inductive type,
@@ -150,7 +162,6 @@ Lean requires an explicit *termination measure*: a quantity that strictly
 decreases at each recursive call with respect to some well-founded relation.
 
 The `termination_by` clause names the measure.
-
 ```lean
 -- Euclidean GCD — not structurally recursive on either argument,
 -- but decreases on the second argument at each step.
@@ -188,6 +199,10 @@ theorem gcd_eq_nat_gcd : ∀ a b : Nat, gcd a b = Nat.gcd a b := by
       rw [key, Nat.gcd_comm, ← Nat.gcd_rec, Nat.gcd_comm]
 ```
 
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
+
 ## 3.5  The termination / totality distinction
 
 A function in Lean must be *total*: it must return a value for every input.
@@ -206,13 +221,16 @@ This is not a limitation.  It is a *feature*: if a function has a type
 in Lean, it terminates on all inputs.  This means any specification you
 write about it is asking a question that always has an answer.
 
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
+
 ## 3.6  Reading specifications about recursive functions
 
 A specification for a recursive function is almost always a ∀ proposition:
 "for all inputs, the output satisfies this condition."
 
 Practice reading these:
-
 ```lean
 -- "For all n, factorial n is positive"
 -- You should be able to read and understand the proposition.
@@ -227,6 +245,10 @@ theorem factorial_mono : ∀ n : Nat, factorial n ≤ factorial (n + 1) :=
   fun n => Nat.le_mul_of_pos_left (factorial n) (Nat.succ_pos n)
 
 /-
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
+
 ## Worked out in class
 -/
 
@@ -244,13 +266,11 @@ Formatted more nicely:
   ((n : ℕ) → motive n → motive n.succ) →
   (t : ℕ) → motive t
 ```
-
 Problems worked out in class. Define some familar
 functions on ordinary data types by induction. Any
 recursive function is basically a *universal* built
 by applicaiton of the induction axiom for a given
 type to answer for base cases and step functions.
-
 ```lean
 def fac0 := 1
 def facStep (n facn : Nat) : Nat := (n+1) * facn
@@ -264,7 +284,6 @@ def facStep (n facn : Nat) : Nat := (n+1) * facn
   motive [] →
   ((head : α) → (tail : List α) → motive tail → motive (head :: tail)) →
   (t : List α) → motive t
-
 ```lean
 def listLenBase := 0
 def stepListLen (_ : String) (_ : List String) (ansL : Nat) := ansL + 1
@@ -274,14 +293,11 @@ def stepListLen (_ : String) (_ : List String) (ansL : Nat) := ansL + 1
 #check (@List.rec)
 ```
 
-
 @BinTreeNat.rec :
   {motive : BinTreeNat → Sort u_1} →
   motive BinTreeNat.empty →
   ((n : ℕ) → (l r : BinTreeNat) → motive l → motive r → motive (BinTreeNat.node n l r)) →
   (t : BinTreeNat) → motive t
-
-
 ```lean
 inductive BinTreeNat where
 | empty
@@ -299,6 +315,10 @@ def myTree : BinTreeNat :=
 
 #reduce (@BinTreeNat.rec (fun _ => Nat) 0 (fun n _ _ al ar => n + al + ar)) myTree
 ```
+
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
 
 ## Exercises
 
@@ -324,7 +344,6 @@ def myTree : BinTreeNat :=
 
 5. State the specification for `gcd` as two ∀ propositions expressing
    that it divides both arguments.
-
 ```lean
 end Week03
 
@@ -355,3 +374,8 @@ h✝ : (n % 2 == 0) = true
 collatz : ℕ → ℕ
 ```
 -/
+```
+
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+

@@ -32,10 +32,13 @@ This week we:
 3. Explore what it means for a program to *be* a proof of its spec.
 4. Describe the automation boundary — where `decide` works and why.
 5. Preview what the sequel course does with the other side.
-
 ```lean
 namespace Week08
 ```
+
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
 
 ## 8.1  The correspondence table
 
@@ -55,6 +58,9 @@ This table is not a list of analogies.  Each row is an identity:
 the computational reading and the logical reading describe the *same*
 type, read two ways.
 
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
+
 ## 8.2  Inhabited types are true propositions
 
 A type is *inhabited* when at least one term of that type exists.
@@ -70,7 +76,6 @@ Under the correspondence:
 - `1 + 1 = 3` is uninhabited: this proposition is false.
 - `Empty`/`False` is uninhabited: there is no proof of False.
 - `¬P` is inhabited when P is uninhabited: ¬P is true when P is false.
-
 ```lean
 -- Demonstrating inhabitation = truth
 #check (rfl : 1 + 1 = 2)              -- rfl inhabits this type = proves this prop
@@ -84,13 +89,16 @@ theorem one_ne_two : ¬ (1 = 2) := by decide
 -- Since no proof of (1=2) exists, this function is vacuously valid.
 ```
 
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
+
 ## 8.3  Every function is a proof
 
 In Lean, there is no distinction between a function definition and a
 theorem proof.  Both are terms.  Both inhabit a type.  The only
 difference is whether we choose to read the type computationally or
 logically.
-
 ```lean
 -- double as a FUNCTION
 def double (n : Nat) : Nat := n * 2
@@ -109,11 +117,14 @@ example : (doubleWithProof 5).val = 10 := rfl
 -- (doubleWithProof 5).property : 10 = 5 + 5   ← this is the proof
 ```
 
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
+
 ## 8.4  The six constructors, both sides at once
 
 Let us revisit each of the six type constructors introduced in Week 0,
 now reading each one from both sides simultaneously.
-
 ```lean
 -- (1) BASIC TYPE: Nat (data) vs. propositional atoms (logic)
 -- As data: values like 0, 1, 42
@@ -153,6 +164,10 @@ example : ¬ (1 = 2) := by decide                -- logical
 -- same as: (1 = 2) → False
 ```
 
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
+
 ## 8.5  Decidability: the automation boundary
 
 `decide` works when a proposition is *decidable*: there exists an
@@ -175,7 +190,6 @@ the result as a proof term.  The Lean kernel then checks the proof term
 - Properties of functions in general: `∀ f : Nat → Nat, ...`
 - Floating-point equality: `Float` does not have `DecidableEq`
   because `NaN ≠ NaN` violates the reflexivity requirement
-
 ```lean
 -- decide works here:
 #check (by decide : 2 + 3 = 5)
@@ -188,6 +202,10 @@ the result as a proof term.  The Lean kernel then checks the proof term
 -- For infinite types, use theorem + standard tactics:
 theorem add_zero_all : ∀ n : Nat, n + 0 = n := Nat.add_zero
 ```
+
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
 
 ## 8.6  Programs are proofs of their specifications
 
@@ -212,7 +230,6 @@ This is the unification of specification and implementation.  When you
 write a function that returns `{ m : Nat // m = n * 2 }`, you are not
 writing a program *and separately* a proof.  You are writing one thing
 that is both.
-
 ```lean
 -- A function that IS its own correctness proof
 -- Return type bundles the value with a proof of the specification
@@ -232,6 +249,10 @@ def safeDivide (n d : Nat) (hd : d ≠ 0) :
 -- (safeDivide 17 5 _).property : 17 = 3 * 5 + 2 ∧ 2 < 5  (always available)
 ```
 
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
+
 ## 8.7  Existential types: dependent pairs
 
 One entry in the correspondence table we have not yet examined closely
@@ -247,7 +268,6 @@ Under Curry-Howard:
 - `{ x : α // P x }` is the existential `∃ x : α, P x`
 - The *witness* is the data value
 - The *proof* is the certificate of correctness
-
 ```lean
 -- Existential: "there exists an even number greater than 4"
 theorem exists_even_gt_4 : ∃ n : Nat, n % 2 = 0 ∧ n > 4 :=
@@ -259,6 +279,10 @@ def evenGt4 : { n : Nat // n % 2 = 0 ∧ n > 4 } :=
 
 -- These are the same thing, one read computationally, one logically.
 ```
+
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
 
 ## 8.8  The two-course arc
 
@@ -287,6 +311,9 @@ Every correct program in Lean is a proof that it satisfies its
 specification.  Specification and implementation are one artifact,
 certified by the type checker.
 
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
+
 ## Summary: the full correspondence
 
 | Lean construct | Computational reading | Logical reading |
@@ -313,7 +340,10 @@ certified by the type checker.
 You have worked with every row in this table.
 The Curry-Howard correspondence is not a theorem about this course.
 It is what this course has been all along.
-
 ```lean
 end Week08
 ```
+
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+

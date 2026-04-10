@@ -28,7 +28,6 @@ Our running examples:
 - *"If it's raining, the ground is wet."*
 - *"If n is a positive even, then n = 2 or n > 2 — and n is
   definitely not a unicorn."*
-
 ```lean
 namespace Overview
 
@@ -41,7 +40,6 @@ namespace Overview
 
 In computation, basic types are your raw materials.  In logic, they are
 atomic claims — true or false, no internal structure.
-
 ```lean
 -- Computation: basic types hold data
 #eval 2 + 3              -- 5
@@ -56,8 +54,11 @@ atomic claims — true or false, no internal structure.
 `#eval` runs the reduction machine.  `by decide` runs the same machine
 and packages the result as a proof.
 
-### Setting up the running examples
 
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
+
+### Setting up the running examples
 ```lean
 -- Model "raining" and "ground is wet" as simple propositions
 def Raining : Prop := True    -- let's say it is raining today
@@ -73,15 +74,17 @@ def isPositive (n : Nat) : Bool := n > 0
 ```
 
 These are the atoms.  Now we connect them.
-
 ```lean
 -- ============================================================
 ```
 
 ## 2  The Arrow: Functions and Implication
 
-### `α → β` — computation is function, logic is implication
 
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
+
+### `α → β` — computation is function, logic is implication
 ```lean
 -- Computation: a function takes input, returns output
 def double : Nat → Nat := fun n => n * 2
@@ -96,8 +99,11 @@ theorem rain_means_wet : Raining → GroundWet :=
 The `→` is the same symbol in both.  A function IS an implication
 proof.  That is not a metaphor.
 
-### `∀` is also `→`
 
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
+
+### `∀` is also `→`
 ```lean
 -- "For all n, double n = n + n" is a function that takes any n
 -- and returns a proof for that specific n
@@ -113,15 +119,17 @@ theorem double_spec : ∀ n : Nat, double n = n + n := by
 
 `∀ n : Nat, P n` is definitionally `(n : Nat) → P n`.  A proof of a
 universal IS a function.
-
 ```lean
 -- ============================================================
 ```
 
 ## 3  Products: Pairs and Conjunction
 
-### `α × β` — bundling two things
 
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
+
+### `α × β` — bundling two things
 ```lean
 -- Computation: a pair carries two values at once
 def weather : String × Bool := ("rainy", true)
@@ -136,6 +144,10 @@ def evenAndPositive (n : Nat) : Bool × Bool :=
 #eval evenAndPositive 0   -- (true, false)
 ```
 
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
+
 ### `P ∧ Q` — proving two things at once
 
 | Data | Logic |
@@ -144,7 +156,6 @@ def evenAndPositive (n : Nat) : Bool × Bool :=
 | `.1` / `.2` | `.left` / `.right` |
 
 Same constructor.  Two readings.
-
 ```lean
 -- Logic: "6 is even AND 6 is positive"
 -- To prove P ∧ Q, supply a proof of P and a proof of Q
@@ -162,8 +173,11 @@ theorem six_pos : 6 % 2 = 0 ∧ 6 > 0 → 6 > 0 :=
 
 ## 4  Sums: Choice and Disjunction
 
-### `α ⊕ β` — one or the other
 
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
+
+### `α ⊕ β` — one or the other
 ```lean
 -- Computation: a value of α ⊕ β is either a left α or a right β
 -- "Is 6 small (≤ 2) or big (> 2)?"
@@ -186,6 +200,10 @@ def describeSize (v : String ⊕ Nat) : String :=
 To use a sum, you must handle both cases — the compiler enforces
 exhaustiveness.
 
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
+
 ### `P ∨ Q` — proving at least one
 
 | Data | Logic |
@@ -193,7 +211,6 @@ exhaustiveness.
 | `Sum.inl a` | `Or.inl p : P ∨ Q` |
 | `Sum.inr b` | `Or.inr q : P ∨ Q` |
 | Exhaustive `match` | Case analysis on a proof |
-
 ```lean
 -- Logic: "6 = 2 OR 6 > 2" — commit to the true side
 theorem six_big : 6 = 2 ∨ 6 > 2 :=
@@ -211,8 +228,11 @@ theorem even_pos_classify (n : Nat)
 
 ## 5  Empty and Negation: Falsity and Impossibility
 
-### `Empty` / `False` — the type with nothing inside
 
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
+
+### `Empty` / `False` — the type with nothing inside
 ```lean
 -- Computation: Empty has no constructors — no value can be produced
 -- A function from Empty can promise any return type (it is never called)
@@ -222,7 +242,6 @@ def fromVoid : Empty → Nat := fun e => nomatch e
 Define your own empty type and prove it is uninhabited by writing
 a function to `Empty`.  The function type-checks because there are
 zero cases to handle — `nomatch` covers them all.
-
 ```lean
 -- There are no unicorns
 inductive Unicorn : Type where   -- no constructors!
@@ -243,7 +262,6 @@ This fails.  `nomatch` requires zero cases, but `One` has the
 constructor `only` — Lean demands you handle it, and you cannot
 produce an `Empty` from it.  The definition is blocked: you cannot
 prove a nonempty type is empty.
-
 ```lean
 -- Logic: False has no proofs
 -- From a proof of False you can derive anything
@@ -253,8 +271,11 @@ theorem explosion : False → 6 = 7 := fun f => nomatch f
 Zero-case pattern match = "there are no cases to consider."  This is
 *ex falso quodlibet*: from impossibility, anything.
 
-### `¬P` is `P → False` — negation is a function type
 
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
+
+### `¬P` is `P → False` — negation is a function type
 ```lean
 def notAUnicorn (_ : Nat) : Unicorn → False :=
   fun u => nomatch u
@@ -266,13 +287,16 @@ def notAUnicorn (_ : Nat) : Unicorn → False :=
 Negation is not a primitive.  It is the arrow to the empty type.  The
 sixth constructor is just the first and fifth combined.
 
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
+
 ### The running example, completed
 
 "If 6 is a positive even, then (6 = 2 ∨ 6 > 2) ∧ ¬ Unicorn."
 
 That is: implication, conjunction, disjunction, negation — four rows
 of the master table in one proposition.
-
 ```lean
 theorem the_running_example
     (_ : 6 % 2 = 0 ∧ 6 > 0) : (6 = 2 ∨ 6 > 2) ∧ (Unicorn → False) :=
@@ -283,8 +307,11 @@ theorem the_running_example
 
 ## 6  Recursion and Higher-Order Functions
 
-### Recursion = Induction
 
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
+
+### Recursion = Induction
 ```lean
 -- Computation: structural recursion follows the inductive type
 def sum : List Nat → Nat
@@ -299,8 +326,11 @@ def sum : List Nat → Nat
 | Base: `f [] = ...` | Prove `P []` |
 | Step: `f (h :: t)` uses `f t` | From `P t`, prove `P (h :: t)` |
 
-### Higher-order functions = higher-order proof combinators
 
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
+
+### Higher-order functions = higher-order proof combinators
 ```lean
 -- map applies a function to every element
 #eval List.map (· * 2) [1, 2, 3]            -- [2, 4, 6]
@@ -319,7 +349,6 @@ def sum : List Nat → Nat
 
 Higher-order functions correspond to proofs of propositions that take
 and return proofs of implications as arguments.
-
 ```lean
 -- ============================================================
 ```
@@ -327,7 +356,6 @@ and return proofs of implications as arguments.
 ## 7  Specifications and the Verification Ladder
 
 The design recipe: write the spec BEFORE the implementation.
-
 ```lean
 def absDiff (a b : Nat) : Nat := if a ≥ b then a - b else b - a
 ```
@@ -340,7 +368,6 @@ The verification ladder — each rung is strictly stronger:
 | `rfl` | Exact definitional equality |
 | `decide` | Decision procedure over decidable domains |
 | `theorem` | Kernel-verified proof over ALL inputs |
-
 ```lean
 -- Rung 1: spot check
 #eval absDiff 5 3                                    -- 2
@@ -359,7 +386,6 @@ theorem absDiff_comm (a b : Nat) :
 
 A correct program is a proof of its specification.  The type checker
 verifies both at once.
-
 ```lean
 -- ============================================================
 ```
@@ -387,7 +413,10 @@ foundational design principle.
 *What comes next:* this course uses `by decide` to produce proofs
 automatically.  The sequel course crosses that boundary into tactic
 proofs, dependent types, and verified software.
-
 ```lean
 end Overview
 ```
+
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+

@@ -23,16 +23,18 @@ An implication proof *is* a function.
 
 This identity is the heart of the Curry-Howard correspondence.
 We will name it explicitly in Week 8.  For now, we live it.
-
 ```lean
 namespace Week01
 ```
+
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
 
 ## 1.1  Defining functions
 
 A function definition names the function, lists its parameters with their
 types, states the return type, and gives the body expression.
-
 ```lean
 -- Basic function definitions
 def double (n : Nat) : Nat := n * 2
@@ -52,6 +54,10 @@ def increment (n : Nat) : Nat := n + 1
 #check square    -- square : Nat → Nat
 ```
 
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
+
 ## 1.2  The reduction model for function application
 
 When you apply a function to an argument, Lean substitutes the argument
@@ -65,7 +71,6 @@ for the parameter throughout the body.  This is called *β-reduction*.
 ```
 
 Every `#eval` on a function application is exactly this chain of steps.
-
 ```lean
 -- Multi-argument functions are curried: each argument consumed one at a time
 def add (a b : Nat) : Nat := a + b
@@ -81,6 +86,9 @@ def add (a b : Nat) : Nat := a + b
 Currying means: `Nat → Nat → Nat` is really `Nat → (Nat → Nat)`.
 `add 3` is a perfectly valid expression of type `Nat → Nat`.
 Supplying the second argument finishes the computation.
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
 
 ## 1.3  Type signatures as specifications
 
@@ -100,7 +108,6 @@ For a stronger specification, we move from the *type* of the function to
 a *proposition* about it.  We will explore this fully in Week 7.
 For now, notice that `#check` surfaces the type, and `#eval` checks the
 output on concrete inputs.
-
 ```lean
 -- The type says what; the body says how
 def max2 (a b : Nat) : Nat := if a ≥ b then a else b
@@ -110,6 +117,10 @@ def max2 (a b : Nat) : Nat := if a ≥ b then a else b
 #eval max2 5 5    -- 5
 ```
 
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
+
 ## 1.4  → as implication: the logical reading
 
 When `P` and `Q` are propositions (terms of type `Prop`), `P → Q` is
@@ -118,7 +129,6 @@ any proof of `P` and returns a proof of `Q`.
 
 The syntax is identical to a function definition — because it IS a
 function definition.
-
 ```lean
 -- Logical implication: if 1 + 1 = 2 then 2 + 2 = 4
 -- A proof of this is a function from proofs of (1+1=2) to proofs of (2+2=4)
@@ -144,6 +154,9 @@ theorem add_zero_all : ∀ n : Nat, n + 0 = n :=
 is definitionally equal to `(n : Nat) → P n`.  A proof is a function.
 You have been writing proofs since the first example in this section.
 
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
+
 ## 1.5  The design recipe
 
 Every function in this course follows the same design steps.
@@ -158,7 +171,6 @@ The recipe makes specification explicit at each stage.
 The specification step is where Lean distinguishes this course from
 ordinary programming.  We do not merely test; we state a logical claim
 and (using `decide` for decidable propositions) verify it.
-
 ```lean
 -- Example: applying the design recipe to `double`
 
@@ -186,12 +198,15 @@ theorem double2_spec : ∀ n : Nat, double2 n = n + n := by
   intro n; simp [double2]; omega
 ```
 
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
+
 ## 1.6  Functions to any type
 
 Functions can map between any two types, not just `Nat → Nat`.
 They can take propositions as inputs or produce propositions as outputs.
 They can take types as inputs (polymorphism — more in Week 3).
-
 ```lean
 -- Bool → Bool
 def boolNot (b : Bool) : Bool := !b
@@ -211,6 +226,10 @@ def showNat (n : Nat) : String := toString n
 #eval showNat 42   -- "42"
 ```
 
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
+
 ## Summary
 
 - `→` is the **function/implication type constructor**.
@@ -223,7 +242,10 @@ def showNat (n : Nat) : String := toString n
   A proof of ∀ is a function.
 - **The design recipe**: description → signature → specification → examples
   → implementation.  Specification is a proposition, enforced by Lean.
-
 ```lean
 end Week01
 ```
+
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+

@@ -31,6 +31,10 @@ namespace Week09
 abbrev List.Sorted (r : α → α → Prop) (xs : List α) : Prop := List.Pairwise r xs
 ```
 
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
+
 ## 9.1  The Sorted predicate
 
 `List.Sorted r xs` holds iff every adjacent pair in `xs` satisfies `r`.
@@ -44,6 +48,10 @@ example : List.Sorted (· ≤ ·) ([1, 2, 3, 4] : List Nat) := by decide
 example : ¬ List.Sorted (· ≤ ·) ([1, 3, 2] : List Nat) := by decide
 example : List.Sorted (· ≤ ·) ([] : List Nat) := by decide   -- vacuously
 ```
+
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
 
 ## 9.2  The Perm predicate
 
@@ -63,6 +71,10 @@ theorem perm_symm (xs ys : List α) : xs ~ ys → ys ~ xs :=
   List.Perm.symm
 ```
 
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
+
 ## 9.3  The CorrectSort specification
 
 This is the heart of the week: a single type that captures what it means
@@ -77,6 +89,10 @@ def CorrectSort (sort : List Nat → List Nat) : Prop :=
     List.Sorted (· ≤ ·) (sort xs) ∧   -- output is sorted
     sort xs ~ xs                        -- output is a permutation of input
 ```
+
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
 
 ## 9.4  Insertion sort: implementation
 
@@ -94,6 +110,10 @@ def insertionSort : List Nat → List Nat
 #eval insertionSort [5, 3, 1, 4, 2]    -- [1, 2, 3, 4, 5]
 #eval insertionSort []                  -- []
 ```
+
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
 
 ## 9.5  Proving CorrectSort — provided term-mode proofs
 
@@ -182,6 +202,10 @@ theorem insertionSort_correct : CorrectSort insertionSort :=
   fun xs => ⟨insertionSort_sorted xs, insertionSort_perm xs⟩
 ```
 
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
+
 ## 9.6  Verifying on concrete instances
 
 Because `Sorted` and `Perm` are decidable on `List Nat`, we can check
@@ -190,6 +214,10 @@ correctness on concrete examples with `decide`.
 example : List.Sorted (· ≤ ·) (insertionSort [3, 1, 4, 1, 5, 9]) := by decide
 example : insertionSort [3, 1, 4, 1, 5] ~ [3, 1, 4, 1, 5] := by decide
 ```
+
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
 
 ## 9.7  Specifications with pre- and postconditions
 
@@ -209,6 +237,10 @@ def sortedMerge
    ⟨List.pairwise_mergeSort' (· ≤ ·) (xs ++ ys),
     List.mergeSort_perm (xs ++ ys) (· ≤ ·)⟩⟩
 ```
+
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
 
 ## Exercises
 
@@ -230,4 +262,7 @@ def sortedMerge
 ```lean
 end Week09
 ```
+
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
 

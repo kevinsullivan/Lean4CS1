@@ -28,6 +28,10 @@ their elements.  Every operation on sets is an operation on propositions.
 namespace Week10
 ```
 
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
+
 ## 10.1  Set membership and basic notation
 ```lean
 -- Set α is defined in Mathlib as α → Prop
@@ -51,6 +55,10 @@ theorem mem_univ (x : α) : x ∈ (Set.univ : Set α) :=
 theorem not_mem_empty (x : α) : x ∉ (∅ : Set α) :=
   False.elim
 ```
+
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
 
 ## 10.2  Set operations as proposition operations
 
@@ -86,6 +94,10 @@ theorem subset_def (s t : Set α) :
   Iff.intro (fun h x hx => h hx) (fun h x hx => h x hx)
 ```
 
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
+
 ## 10.3  Set algebraic laws as propositions
 
 These laws are propositions that hold for all sets.  The proofs are
@@ -111,6 +123,10 @@ theorem compl_union (s t : Set α) : (s ∪ t)ᶜ = sᶜ ∩ tᶜ :=
 theorem subset_trans {s t u : Set α} (h1 : s ⊆ t) (h2 : t ⊆ u) : s ⊆ u :=
   Set.Subset.trans h1 h2
 ```
+
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
 
 ## 10.4  Relations
 
@@ -138,6 +154,10 @@ def lePair : Rel Nat Nat := (· ≤ ·)
 example : divides 3 12 := ⟨4, rfl⟩
 example : divides 1 n := ⟨n, (Nat.one_mul n).symm⟩   -- for any n
 ```
+
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
 
 ## 10.5  Properties of relations
 
@@ -174,6 +194,10 @@ example : Equivalence' (· = · : Rel Nat Nat) :=
    fun _ _ _ h1 h2 => h1.trans h2⟩
 ```
 
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
+
 ## 10.6  Relational composition and image
 
 *Composition* of relations: `r` composed with `s` relates `a` to `c`
@@ -202,6 +226,10 @@ theorem image_univ (f : α → β) :
   Set.image_univ
 ```
 
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
+
 ## 10.7  Functions as total relations
 
 A function `f : α → β` determines a *functional relation*: the set of
@@ -212,6 +240,10 @@ Sets and relations are the language in which we write specifications for
 programs dealing with collections of data.  The Dict type class (Week 11)
 is a partial function — a relation where each key relates to at most one
 value.  Sorting is about relations between the input and output lists.
+
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
 
 ## Exercises
 
@@ -244,4 +276,7 @@ value.  Sorting is about relations between the input and output lists.
 ```lean
 end Week10
 ```
+
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
 
