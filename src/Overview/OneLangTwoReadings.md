@@ -30,8 +30,6 @@ Our running examples:
   definitely not a unicorn."*
 ```lean
 namespace Overview
-
--- ============================================================
 ```
 
 ## 1  Basic Types
@@ -74,10 +72,6 @@ def isPositive (n : Nat) : Bool := n > 0
 ```
 
 These are the atoms.  Now we connect them.
-```lean
--- ============================================================
-```
-
 ## 2  The Arrow: Functions and Implication
 
 
@@ -119,10 +113,6 @@ theorem double_spec : ∀ n : Nat, double n = n + n := by
 
 `∀ n : Nat, P n` is definitionally `(n : Nat) → P n`.  A proof of a
 universal IS a function.
-```lean
--- ============================================================
-```
-
 ## 3  Products: Pairs and Conjunction
 
 
@@ -167,8 +157,6 @@ theorem six_even : 6 % 2 = 0 ∧ 6 > 0 → 6 % 2 = 0 :=
 
 theorem six_pos : 6 % 2 = 0 ∧ 6 > 0 → 6 > 0 :=
   fun pq => pq.right
-
--- ============================================================
 ```
 
 ## 4  Sums: Choice and Disjunction
@@ -222,8 +210,6 @@ theorem even_pos_classify (n : Nat)
   match pq with
   | Or.inl p => by omega   -- left case: n = 2, so n ≥ 2
   | Or.inr q => by omega   -- right case: n > 2, so n ≥ 2
-
--- ============================================================
 ```
 
 ## 5  Empty and Negation: Falsity and Impossibility
@@ -301,8 +287,6 @@ of the master table in one proposition.
 theorem the_running_example
     (_ : 6 % 2 = 0 ∧ 6 > 0) : (6 = 2 ∨ 6 > 2) ∧ (Unicorn → False) :=
   ⟨Or.inr (by decide), fun u => nomatch u⟩
-
--- ============================================================
 ```
 
 ## 6  Recursion and Higher-Order Functions
@@ -349,10 +333,6 @@ def sum : List Nat → Nat
 
 Higher-order functions correspond to proofs of propositions that take
 and return proofs of implications as arguments.
-```lean
--- ============================================================
-```
-
 ## 7  Specifications and the Verification Ladder
 
 The design recipe: write the spec BEFORE the implementation.
@@ -386,10 +366,6 @@ theorem absDiff_comm (a b : Nat) :
 
 A correct program is a proof of its specification.  The type checker
 verifies both at once.
-```lean
--- ============================================================
-```
-
 ## 8  The Curry-Howard Correspondence
 
 Return to the master table — now every row has been lived:
