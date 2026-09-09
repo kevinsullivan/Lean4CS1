@@ -266,7 +266,7 @@ def b2 : MyBool := MyBool.false
 #eval !b1
 #eval myNot b1
 
--- How about a theorem? Same as def but usd for logic (vs computation)
+-- How about a theorem? Same as def but used for logic (vs computation)
 theorem trueIsIdentityForAnd : ∀ (b : MyBool), (b && MyBool.true) = b
 | MyBool.true => rfl
 | MyBool.false => rfl
