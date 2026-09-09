@@ -269,10 +269,10 @@ behaves like `×` and `∨` like `⊕`, so the *same* moves derive proofs of log
 ### How Lean shows you the goal
 
 A hole `_` in a term is Lean *printing the goal*: it reports the expected type and the
-local context — the "remaining goal" of your derivation.  The canonical demonstration
-is in `FPCourse/specsAndImpls.lean` (`def e : Empty := _` reports `⊢ Empty`).  In VS
-Code, type the hole and watch the **InfoView** shrink as you fill each step.  Use the
-compiler as a *confirmer* of a step you predicted, not as a blind search engine.
+local context — the "remaining goal" of your derivation.  Try it: `def e : Empty := _`
+reports `⊢ Empty`.  In VS Code, type the hole and watch the **InfoView** shrink as you
+fill each step.  Use the compiler as a *confirmer* of a step you predicted, not as a
+blind search engine.
 
 ### The derivation trace
 
