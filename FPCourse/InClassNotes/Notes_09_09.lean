@@ -184,13 +184,17 @@ match b with
 
 /- @@@
 ## Abstract Data/Proof Types
-- inductive definition
-- elimination functions
-- domain-specific notations
-- domain-soecific functions
-- domain-specific syntax
-- already proven theorems
-- proof automations
+
+In practice, a mere inductive definition does not get
+you to a comprehensiv library in support of programming
+with values of that type. A complete *abstract data type*
+package will also include:
+
+- elimination functions (e.g., Bool.elim below)
+- domain-specific notations (× for Prod, ⊕ for Sum)
+- domain-soecific functions (e.g., List.length for Lists)
+- already proven theorems (e.g., ∀ a b, len (a ++ b) = len a + len b )
+- proof automations (e.g., decision (proof- building) procedures)
 @@@ -/
 
 /- @@@
@@ -203,7 +207,7 @@ namespace hide
 Here's the standard definition of Bool.
 @@@ -/
 
-inductive Bool where
+inductive MyBool where
 | true
 | false
 
@@ -217,14 +221,55 @@ the actual value of the argument requires case analysis
 -- elimination function: provide result for each case
 def myBoolElim
   {α : Sort u}
-  (b : Bool)
-  (f : Bool → α)
-  (t: Bool → α) :=
+  (b : MyBool)
+  (f : MyBool → α)
+  (t: MyBool → α) :=
 match b with
-| Bool.true => t b
-| Bool.false => f b
+| MyBool.true => t b
+| MyBool.false => f b
 
+-- Elimination function: case analysis, computation per case
+#eval myBoolElim
+  MyBool.true
+  (fun b => "It's false!")    -- false branch (warns b unused)
+  (fun _ => "It's true!")     -- true case: _ silences warning
 
+-- The Boolean *and* function
+def myAnd : MyBool → MyBool → MyBool
+| MyBool.true, MyBool.true => MyBool.true   -- matching on two args
+| _, _ => MyBool.false                  -- wildcard any other combo
 
+-- The Boolean *or* function
+def myOr : MyBool → MyBool → MyBool
+| MyBool.false, MyBool.false => MyBool.false
+| _, _ => MyBool.true
 
+-- The MyBoolean *not* function
+def myNot : MyBool → MyBool
+| MyBool.true => MyBool.false
+| MyBool.false => MyBool.true
+
+-- Notations. Two infix operators and one prefix
+-- Each with an associated precedence level
+-- Each reducing to a function we just defined
+infixl:35 " && " => myAnd
+infixl:30 " || " => myOr
+notation:max "!" b:40 => myNot b
+
+-- Examples with and without notation
+def b1 : MyBool := MyBool.true
+def b2 : MyBool := MyBool.false
+#eval b1 && b2
+#eval myAnd b1 b2
+#eval b1 || b2
+#eval myOr b1 b2
+#eval !b1
+#eval myNot b1
+
+-- How about a theorem? Same as def but usd for logic (vs computation)
+theorem trueIsIdentityForAnd : ∀ (b : MyBool), (b && MyBool.true) = b
+| MyBool.true => rfl
+| MyBool.false => rfl
 end hide
+
+#check Bool
