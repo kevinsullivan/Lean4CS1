@@ -341,12 +341,30 @@ fun d => -- assume we get some dog
   | Dog.Sargent => sorry
 
 example : ¬(∀ d : Dog, Friendly d) :=
-fun allDogsFriendly =>
-let sf := allDogsFriendly Dog.Sargent -- we don't have a proof of Friendly Sargent
-nomatch sf
+fun allDogsFriendly => -- assume we have a function allDogsFriendly
+let sf := allDogsFriendly Dog.Sargent -- apply function to Sargent to get proof of Friendly Sargent
+nomatch sf -- but there is no proof of Friendly Sargent
+
+-- to prove ∃, we need a witness and a proof
 
 example : ∃ (d : Dog), Friendly d :=
-  ⟨Dog.Iris, Friendly.irisFriendly⟩ -- proof of ∃ is pair (witness and proof)
+  ⟨Dog.Iris, Friendly.irisFriendly⟩ -- make witness/proof pair using angled brackets
 
-example : ∃ (d : Dog), Friendly d :=
+example : ∃ (d : Dog), Friendly d := -- basically the same as above, but using
 Exists.intro Dog.Iris Friendly.irisFriendly -- intro rule for Exists
+-- this is a dependent pair
+-- type of proof (Friendly Iris) depends on witness (Iris)
+
+
+
+-- 10/7
+-- review: predicate is a function that takes some object and returns a Prop
+
+def simpf : Prop :=
+  (∃ d, Suitable d) → (∃ d, Friendly d)
+
+example : simpf :=
+fun h => -- assume we have proof of (∃ d, Suitable d)
+  let ⟨d, sd⟩ := h -- extract witness and proof from existential
+  ⟨d, _⟩ -- construct proof of ∃ d, Friendly d
+-- is this even possible
