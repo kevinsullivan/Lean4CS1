@@ -368,3 +368,26 @@ fun h => -- assume we have proof of (∃ d, Suitable d)
   let ⟨d, sd⟩ := h -- extract witness and proof from existential
   ⟨d, _⟩ -- construct proof of ∃ d, Friendly d
 -- is this even possible
+
+
+-- 10/12
+
+-- normal vs strong induction:
+-- normal induction: to prove ∀ n, P n, we assume P n and prove P (n+1)
+-- we only have direct previous case
+-- strong induction: to prove ∀ n, P n, we assume ∀ m < n, P m and prove P n
+-- we have all previous cases
+
+#check Empty.rec
+-- we can use Empty.rec to prove any proposition from an empty type
+-- every type has induction principle
+#check PUnit.rec
+#check Bool.rec
+
+-- how do we know we can recurse over the nat numbers:
+#check Nat.rec
+-- given base case and step case
+-- we can always prove any proposition about natural numbers
+-- using motive function to get answer
+
+-- try to understand exists elim ig
