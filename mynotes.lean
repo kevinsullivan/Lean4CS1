@@ -391,3 +391,48 @@ fun h => -- assume we have proof of (∃ d, Suitable d)
 -- using motive function to get answer
 
 -- try to understand exists elim ig
+
+
+-- 10/14
+
+-- function to sum up all natural numbers from 0 to n
+def sumUp: Nat → Nat
+| 0 => 0
+| n + 1 => (n + 1) + sumUp n
+-- can also write n + 1 as Nat.succ n, but n + 1 is more readable duh
+-- n => n + sumUp (n-1) does not work, it doesn't know if the function is terminating
+
+-- factorial function
+def fac : Nat → Nat
+| 0 => 1
+| n + 1 => (n + 1) * fac n
+
+#eval fac 3
+
+#check Nat.rec
+-- this is the recursor
+
+namespace Arith
+
+inductive ArithExpr where
+| lit (n : Nat) : ArithExpr
+| plus (a b : ArithExpr) : ArithExpr
+
+open ArithExpr
+
+-- these are expressions
+def a1 : ArithExpr := lit 1
+def a7 : ArithExpr := lit 7
+def a1plus7 : ArithExpr := plus a1 a7
+
+def arithEval : ArithExpr → Nat
+| lit n => n
+| plus a b => arithEval a + arithEval b
+
+#eval arithEval a1plus7
+
+-- anotha way
+def p1 : ArithExpr := plus (lit 1) (lit 7)
+#eval arithEval p1
+
+end Arith
