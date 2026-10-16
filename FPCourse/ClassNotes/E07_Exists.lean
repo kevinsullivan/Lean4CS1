@@ -262,8 +262,8 @@ works.
 @@@ -/
 
 example : ∃ (d : Dog), Friendly d :=
-  -- Exists.intro Iris irisIs
-  ⟨ Iris, irisIs ⟩
+  -- Exists.intro Iris irisFriendly
+  ⟨ Iris, irisFriendly ⟩
 
 def simpf : Prop :=
   (∃ d, Suitable d) →
@@ -272,6 +272,7 @@ def simpf : Prop :=
 -- example : simpf :=
 --   fun pfs =>
 --     _
+>>>>>>> 5d1e9129c366d339b0037fe302017becfe2ba92d
 
 /- @@@
 ### The Rule Behind That Proof
