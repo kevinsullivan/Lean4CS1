@@ -65,6 +65,8 @@
 - [More About Types](./FPCourse/ClassNotes/E08_MoreAboutTypes.md)
 - [Recursors](./FPCourse/ClassNotes/E09_induction.md)
 - [Arithmetic Expressions](./FPCourse/ClassNotes/E10_Arith.md)
+- [Map, Reduce, and Monoids](./FPCourse/ClassNotes/E11_abstractAlgebra.md)
+- [Foldable: Generalizing Fold Beyond List](./FPCourse/ClassNotes/E12_GeneralizedFold.md)
 
 ---
 
