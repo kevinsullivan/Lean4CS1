@@ -148,7 +148,29 @@ adding a number and its inverse gives you back the identity.
 @@@ -/
 
 /- @@@
-## Example 2: Integers Modulo N
+## Example 2: Integers Modulo 12 (Clock Hours)
+
+Clock hours form a group under addition modulo 12. The set is
+{0, 1, ..., 11}, representing the 12 hours, and adding any number of
+hours wraps around at 12. This will be useful later when we introduce
+torsors.
+@@@ -/
+
+instance : Group (Fin 12) where
+  op      := (· + ·)
+  id      := 0
+  assoc   := by intros; ext; simp [Fin.add_def, Nat.add_assoc]
+  idLeft  := by intros; ext; simp [Fin.add_def]
+  idRight := by intros; ext; simp [Fin.add_def]
+  inv     := fun a => -a
+  invLeft := by intros; ext; simp [Fin.add_def, Fin.neg_def]
+  invRight:= by intros; ext; simp [Fin.add_def, Fin.neg_def]
+
+#eval (3 : Fin 12) + (5 : Fin 12)  -- 8 (3 o'clock + 5 hours = 8 o'clock)
+#eval (10 : Fin 12) + (5 : Fin 12) -- 3 (10 o'clock + 5 hours = 3 o'clock, wrapping)
+
+/- @@@
+## Example 3: Integers Modulo N
 
 Now for something trickier. Fix some positive integer `N > 1`,
 and consider the integers *modulo* `N`: the numbers `{0, 1, ..., N-1}`,
@@ -227,6 +249,63 @@ For integers modulo 5:
 The group structure guarantees this works for *any* group, not just
 these specific examples. That's the abstraction paying off: we write
 one `solve` function, and it works everywhere the group laws hold.
+@@@ -/
+
+/- @@@
+## Group Actions: Groups Acting on Points
+
+So far we've studied groups as abstract algebraic objects. But groups
+are most interesting when they *act* on something: a rotation acts on
+the corners of a square, a permutation acts on a sequence of elements,
+a translation acts on the points of a plane.
+
+In this section, we'll see how the group (Fin 12, +) acts on the set
+of clock hours. The group elements are the shifts (0, 1, 2, ..., 11),
+and the action is: applying a shift `s` to an hour `h` gives the new
+hour `h + s (mod 12)`.
+
+Key properties of this action:
+  - *Identity acts trivially*: shifting by 0 leaves every hour unchanged.
+  - *Actions compose*: shifting by 3, then by 5, is the same as shifting by 8.
+  - *Free action*: if shifting by `s` leaves an hour unchanged, then `s = 0`.
+  - *Transitive action*: you can reach any hour from any other by shifting.
+
+When a group action is both free (no non-identity element fixes any point)
+and transitive (any two points are related by some group element), the
+set is called a *torsor* for that group. It's a set without an intrinsic
+identity element -- the identity comes only from the group.
+@@@ -/
+
+/- @@@
+## Example: Clock Hours as a Group Action
+
+Let's verify these properties for the group (Fin 12, +) acting on
+clock hours:
+@@@ -/
+
+#eval (3 : Fin 12) + (5 : Fin 12)  -- 8 (3 o'clock + 5 hours = 8 o'clock)
+#eval (10 : Fin 12) + (5 : Fin 12) -- 3 (10 o'clock + 5 hours = 3 o'clock, wrapping)
+#eval (0 : Fin 12) + (7 : Fin 12)  -- 7 (12 o'clock + 7 hours = 7 o'clock)
+
+/- @@@
+The action is just addition modulo 12. The first example shows a simple
+shift: 3 o'clock plus 5 hours = 8 o'clock. The second shows wraparound:
+10 o'clock plus 5 hours = 3 o'clock (passing midnight). The third
+confirms that the identity (0) acts trivially: adding 0 to any hour
+leaves it unchanged.
+
+Why is this useful? Because once you realize that clock hours form a
+torsor, you inherit all the properties of a group action automatically.
+You don't have to reprove that shifting is consistent, or that every
+hour can reach every other hour -- those facts come for free from the
+group structure.
+
+More abstractly, torsors model situations where you have a set of
+equivalent "positions" that a group can shift around: the points of
+a plane (shifted by translations), the directions in space (rotated),
+the dates on a calendar (shifted by number of days). Any time you have
+a set where all points look the same and a group acts transitively on
+them, you have a torsor.
 @@@ -/
 
 end Groups
