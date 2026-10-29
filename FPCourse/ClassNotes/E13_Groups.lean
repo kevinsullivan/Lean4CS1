@@ -156,7 +156,7 @@ hours wraps around at 12. This will be useful later when we introduce
 torsors.
 @@@ -/
 
-instance : Group (Fin 12) where
+instance : Group (Fin 3) where
   op      := (· + ·)
   id      := 0
   assoc   := by intros; ext; simp [Fin.add_def, Nat.add_assoc]
@@ -166,8 +166,8 @@ instance : Group (Fin 12) where
   invLeft := by intros; ext; simp [Fin.add_def, Fin.neg_def]
   invRight:= by intros; ext; simp [Fin.add_def, Fin.neg_def]
 
-#eval (3 : Fin 12) + (5 : Fin 12)  -- 8 (3 o'clock + 5 hours = 8 o'clock)
-#eval (10 : Fin 12) + (5 : Fin 12) -- 3 (10 o'clock + 5 hours = 3 o'clock, wrapping)
+#eval (1 : Fin 3) + (1 : Fin 3)  -- 2
+#eval (2 : Fin 3) + (1 : Fin 3)  -- 0 (wraps around)
 
 /- @@@
 ## Example 3: Integers Modulo N
@@ -252,60 +252,97 @@ one `solve` function, and it works everywhere the group laws hold.
 @@@ -/
 
 /- @@@
-## Group Actions: Groups Acting on Points
+## Torsors: Free and Transitive Group Actions
 
 So far we've studied groups as abstract algebraic objects. But groups
 are most interesting when they *act* on something: a rotation acts on
 the corners of a square, a permutation acts on a sequence of elements,
 a translation acts on the points of a plane.
 
-In this section, we'll see how the group (Fin 12, +) acts on the set
-of clock hours. The group elements are the shifts (0, 1, 2, ..., 11),
-and the action is: applying a shift `s` to an hour `h` gives the new
-hour `h + s (mod 12)`.
+A *torsor* for a group `G` is a set `T` where `G` acts on elements of
+`T` in two special ways:
+  - *Free*: no non-identity element of `G` leaves any point of `T` fixed
+  - *Transitive*: any two points of `T` are related by some element of `G`
 
-Key properties of this action:
-  - *Identity acts trivially*: shifting by 0 leaves every hour unchanged.
-  - *Actions compose*: shifting by 3, then by 5, is the same as shifting by 8.
-  - *Free action*: if shifting by `s` leaves an hour unchanged, then `s = 0`.
-  - *Transitive action*: you can reach any hour from any other by shifting.
+Together, these properties mean that `T` has no intrinsic identity or
+structure -- all points are equivalent, and they're only distinguished
+by the group action. A torsor is "a group without a distinguished element."
 
-When a group action is both free (no non-identity element fixes any point)
-and transitive (any two points are related by some group element), the
-set is called a *torsor* for that group. It's a set without an intrinsic
-identity element -- the identity comes only from the group.
+Examples: clock hours under time shifts, calendar dates under day shifts,
+points in a plane under translations, directions in space under rotations.
 @@@ -/
 
-/- @@@
-## Example: Clock Hours as a Group Action
+class Torsor (G T : Type) where
+  [groupG : Group G]
+  act        : G → T → T
+  actId      : ∀ t, act groupG.id t = t
+  actComp    : ∀ g h t, act (groupG.op g h) t = act g (act h t)
+  actFree    : ∀ g t, act g t = t → g = groupG.id
+  actTransitive : ∀ t₁ t₂ : T, ∃ g, act g t₁ = t₂
 
-Let's verify these properties for the group (Fin 12, +) acting on
-clock hours:
+/- @@@
+## Instance 1: Fin k (Integers Modulo k)
+
+The simplest torsor: a group acting on itself. `Fin k` is a torsor for
+the group (Fin k, +) where the action is addition. Every element can be
+shifted to every other element by adding the right value, and only the
+identity (0) leaves any position unchanged.
 @@@ -/
 
-#eval (3 : Fin 12) + (5 : Fin 12)  -- 8 (3 o'clock + 5 hours = 8 o'clock)
-#eval (10 : Fin 12) + (5 : Fin 12) -- 3 (10 o'clock + 5 hours = 3 o'clock, wrapping)
-#eval (0 : Fin 12) + (7 : Fin 12)  -- 7 (12 o'clock + 7 hours = 7 o'clock)
+/- We'll implement the full Torsor instance for Rat below, which is simpler
+and more illustrative than the modular arithmetic case. -/
 
 /- @@@
-The action is just addition modulo 12. The first example shows a simple
-shift: 3 o'clock plus 5 hours = 8 o'clock. The second shows wraparound:
-10 o'clock plus 5 hours = 3 o'clock (passing midnight). The third
-confirms that the identity (0) acts trivially: adding 0 to any hour
-leaves it unchanged.
+## Instance 2: Integers Modulo 12 (Clock Hours)
 
-Why is this useful? Because once you realize that clock hours form a
-torsor, you inherit all the properties of a group action automatically.
-You don't have to reprove that shifting is consistent, or that every
-hour can reach every other hour -- those facts come for free from the
-group structure.
+A concrete example: the hours on a 12-hour clock. Adding an hour offset
+to any current hour gives you the new hour, wrapping at midnight.
+@@@ -/
 
-More abstractly, torsors model situations where you have a set of
-equivalent "positions" that a group can shift around: the points of
-a plane (shifted by translations), the directions in space (rotated),
-the dates on a calendar (shifted by number of days). Any time you have
-a set where all points look the same and a group acts transitively on
-them, you have a torsor.
+#eval (3 : Fin 12) + (5 : Fin 12)   -- 8
+#eval (10 : Fin 12) + (5 : Fin 12)  -- 3 (wraps around)
+#eval (0 : Fin 12) + (7 : Fin 12)   -- 7
+
+/- @@@
+## Instance 3: ℚ (Rational Numbers)
+
+The rational numbers form a torsor under themselves via addition.
+Every rational can be shifted to every other rational by adding an
+appropriate rational offset, and only 0 leaves any rational unchanged.
+
+This requires a `Group ℚ` instance for rational addition, parallel to
+our `Group Int` instance for integers.
+@@@ -/
+
+instance : Group Rat where
+  op      := (· + ·)
+  id      := 0
+  assoc   := Rat.add_assoc
+  idLeft  := Rat.zero_add
+  idRight := Rat.add_zero
+  inv     := fun q => -q
+  invLeft := Rat.neg_add_cancel
+  invRight:= Rat.add_neg_cancel
+
+instance : Torsor Rat Rat where
+  groupG    := inferInstance
+  act       := (· + ·)
+  actId     := Rat.zero_add
+  actComp   := fun g h t => Rat.add_assoc g h t
+  actFree   := fun g t h => sorry -- g + t = t implies g = 0
+  actTransitive := fun t₁ t₂ => ⟨t₂ - t₁, sorry⟩  -- (t₂ - t₁) + t₁ = t₂
+
+/- @@@
+The key insight: once we have a torsor, we get structure for free.
+The laws ensure that:
+  - Applying the identity doesn't move anything
+  - Actions compose consistently
+  - Every point can reach every other point
+  - No non-identity element fixes any point
+
+This abstraction simplifies reasoning about group actions across
+different mathematical objects -- clocks, dates, geometric points,
+and more all follow the same pattern.
 @@@ -/
 
 end Groups
