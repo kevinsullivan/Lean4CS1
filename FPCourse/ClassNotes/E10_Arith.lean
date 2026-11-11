@@ -89,6 +89,7 @@ def kzero := KNat.zero
 def kone := KNat.succ kzero
 def ktwo := KNat.succ kone
 def kthree := KNat.succ ktwo
+def kfour := KNat.succ kthree
 
 
 /- @@@
@@ -211,6 +212,29 @@ arguments, the first being the `hyper-depth`,
 in which case `tet a b` is `hyperop 4 a b`.
 @@@ -/
 
+def tet : KNat → KNat → KNat
+| _, KNat.zero => kone
+| a, KNat.succ b' => exp a (tet a b')
+
+#eval tet (kone : KNat) (kzero : KNat)
+#eval tet (KNat.succ (KNat.succ (KNat.succ KNat.zero))) (KNat.succ (KNat.succ KNat.zero))
+
+-- def hyperop : KNat → KNat → KNat → KNat
+-- | KNat.zero, _, b => KNat.succ a -- increment
+-- | kone, a, KNat.zero => a -- add
+-- | ktwo, a, KNat.zero => kzero -- mul
+-- | kthree, a, KNat.zero => kone -- exp
+-- | kfour, a, KNat.zero => kone -- tet
+-- | KNat.succ n, a, KNat.succ b => hyperop n a (hyperop (KNat.succ n) a b)
+
+def hyperop : KNat → KNat → KNat → KNat
+| KNat.zero, _, b => KNat.succ b
+| KNat.succ KNat.zero, a, KNat.zero => a
+| KNat.succ (KNat.succ KNat.zero), _, KNat.zero => KNat.zero
+| KNat.succ (KNat.succ (KNat.succ _)), _, KNat.zero => kone
+| KNat.succ n, a, KNat.succ b => hyperop n a (hyperop (KNat.succ n) a b)
+
+
 /- @@@
 ### Classes
 @@@ -/
@@ -306,6 +330,47 @@ using subtraction, negation, and variables
 work with usual precedence and associativity.
 @@@ -/
 
+-- 2
+-- completed
+
+-- 3
+inductive Variable where
+| Xvar
+| Yvar
+| Zvar
+
+open Variable
+
+-- 1
+def sub : KNat → KNat → KNat
+  | KNat.zero, _ => 0                -- subtraction function
+  | a, KNat.zero   => a
+  | KNat.succ a, KNat.succ b => sub a b
+
+instance : Sub KNat where
+sub := sub
+
+#eval sub kone ktwo
+#eval ktwo - kone
+
+def KNat.eq : KNat → KNat → Bool
+| KNat.zero, KNat.zero => true
+| KNat.zero, _ => false
+| _, KNat.zero => false
+| succ n, succ m => KNat.eq n m
+
+def KNat.le : KNat → KNat → Bool
+| KNat.zero, KNat.zero => true
+| KNat.zero, _ => true
+| _, KNat.zero => false
+| succ n, succ m => KNat.le n m
+
+def KNat.gt : KNat → KNat → Bool :=
+  fun n m => !(le n m) && !(eq n m)
+
+def KNat.gte : KNat → KNat → Bool :=
+  fun n m => !(le n m)
+
 end KNat
 
 
@@ -317,37 +382,70 @@ open KNat
 @@@ -/
 
 inductive Expr where
-| lit (n : Nat) : Expr
+| lit (n : KNat) : Expr
 | add (e1 e2 : Expr) : Expr
+| sub (e1 e2 : Expr) : Expr
+| Var (e1 : Variable) : Expr
 open Expr
+
+def X : Expr := Expr.Var Variable.Xvar
+def Y : Expr := Expr.Var Variable.Yvar
+def Z : Expr := Expr.Var Variable.Zvar
+
+def varInterp : Type := Variable → KNat
+
+def i1 : varInterp :=
+  fun (v : Variable) =>
+    match v with
+    | Variable.Xvar => ktwo
+    | Variable.Yvar => kthree
+    | Variable.Zvar => kfour
 
 
 /-@@@
 ## Operational Semantics
 @@@ -/
 
-def arithEval : Expr → Nat
-| Expr.lit n => n
-| Expr.add e1 e2 => Nat.add (arithEval e1) (arithEval e2)  -- (arithEval e1) + (arithEval e2)
+def arithEval : Expr → varInterp → KNat
+| Expr.lit n, _ => n
+| Expr.add e1 e2, i => KNat.add (arithEval e1 i) (arithEval e2 i)  -- (arithEval e1) + (arithEval e2)
+| Expr.sub e1 e2, i => KNat.sub (arithEval e1 i) (arithEval e2 i)
+| Var v1, i => i v1
 
+def expr8 := (Expr.add (lit kfour) (lit kfour))
+def expr5 := (Expr.add (lit kthree) (lit ktwo))
+def expr8m5 := Expr.sub expr8 expr5
+#eval arithEval expr8m5 i1
+#eval arithEval (Expr.sub expr8m5 (Expr.Var Variable.Xvar)) i1
 
 /- @@@
 ## Examples
 @@@ -/
 -- examples expressions using our syntax
-def e1 : Expr := lit 1
-def e7 : Expr := lit 7
-def e3 : Expr := add e1 e7
-def e4 : Expr :=   -- 7 + (6 + 9)
-  add
-    (lit 7)
-    (add
-      (lit 6)
-      (lit 9)
-    )
+--def e1 : Expr := lit 1
+--def e7 : Expr := lit 7
+--def e3 : Expr := add e1 e7
+--def e4 : Expr :=   -- 7 + (6 + 9)
+  --add
+   -- (lit 7)
+ --   (add
+ --     (lit 6)
+ --     (lit 9)
+ --   )
 
-#eval arithEval e4
+--#eval arithEval e4
 
 
 
 end Arith
+
+
+-- monoid gives you the license
+-- to make a binary operator
+-- into an n-ary operator.
+-- multiplication on nats
+-- can take as many operators as you
+-- want, no matter the order.
+
+-- a monoid lets you overload
+--
