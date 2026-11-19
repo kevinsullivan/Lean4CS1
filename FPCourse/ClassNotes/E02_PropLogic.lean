@@ -254,6 +254,26 @@ decide on its associativity, and then write the *rfl* theorems
 that confirm your choices parse the way you expect.
 @@@ -/
 
+<<<<<<< HEAD
+
+--theorem DM1 : ∀ (P Q : Prop), ¬(P ∧ Q) → ¬P ∨ ¬Q :=
+---  fun P Q =>
+ --   fun h =>
+  --    Or.inl _ => _ -- we are stuck because though we know that P and Q is false, when don't know which one, whether P or Q, or both, are false.
+  -- if all we have is the value false, we can't construct without being able to look inside, but we can't.
+
+-- Question, it seems like you can deconstruct P and Q to its components everywhere else, but why not here?
+
+theorem DM2 : ∀ (P Q : Prop), ¬P ∨ ¬Q → ¬(P ∧ Q) :=
+  fun P Q =>
+    fun h =>
+      fun pandq =>
+        let p : P := And.left pandq
+        let q : Q := And.right pandq
+        match h with
+        | Or.inl np => np p
+        | Or.inr nq => nq q
+=======
 -- theorem DM1 : ∀ (P Q : Prop), ¬(P ∧ Q) → ¬P ∨ ¬Q :=
 --   fun P Q =>
 --     fun h =>
@@ -274,3 +294,4 @@ Mandatory homework: State and prove the two remaining
 variants of DeMorgan's laws, involving distribution of
 nation over disjunction (not over or).
 @@@ -/
+>>>>>>> 26866e7e0eb5e7a4f0d49a8db7b0c04f0d45bcdd
