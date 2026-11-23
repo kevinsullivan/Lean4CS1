@@ -50,19 +50,19 @@ def P : Nat → Prop := fun x => x = 1 ∨ x = 2
 
 example : P 2 := Or.inr rfl
 
-example : ¬ P 0 := fun h => h.elim nofun nofun
+example : ¬ P 0 := fun h => nomatch h
 ```
 
 ### The reduction, worked by hand
 
-Here is that reduction in miniature, with no library notation in the way.
-Define a set directly as its membership predicate — no `{...}` literal, no Mathlib lemma:
+Here is that reduction in miniature. Define a set directly as its
+membership predicate — no `{...}` literal, no Mathlib lemma:
 ```lean
 def Small : Set Nat := fun x => x = 3 ∨ x = 5
 ```
 
-By that `def`, `x ∈ Small` *is* `x = 3 ∨ x = 5` — definitionally, with no
-unfolding lemma needed. So the set-membership claim `3 ∈ Small` has exactly
+By that `def`, `x ∈ Small` *is* `Small x` *is* `x = 3 ∨ x = 5` — definitionally,
+with no unfolding lemma needed. So the set-membership claim `3 ∈ Small` has exactly
 the proof of the proposition `3 = 3 ∨ 3 = 5`: pick the left disjunct, and
 `rfl` settles the equation.
 ```lean
@@ -82,6 +82,11 @@ predicate. That is the reduction the rest of this chapter relies on.
 The brace notation `{1, 2, 3}` is built from two more primitive set operations,
 `insert` and the singleton `{·}` — `{1, 2, 3} = insert 1 (insert 2 {3})`. Both are
 still just membership predicates:
+
+The first proof below is `Iff.rfl`: the proof that *any* proposition implies
+itself, usable here only because `x ∈ insert a s` and `x = a ∨ x ∈ s` are the
+same proposition already — `insert a s`'s membership predicate is *defined*
+to be `fun x => x = a ∨ s x`, so there's nothing to prove, just unfold.
 ```lean
 -- insert a s : Set α  (= fun x => x = a ∨ s x) -- adds a to s
 theorem mem_insert_iff (x a : α) (s : Set α) :
@@ -289,21 +294,31 @@ sets, not itself a new set. `×ˢ` and `𝒫`, by contrast, each build a new mem
 predicate whose elements are pairs or sets, rather than elements of `α`.
 ```lean
 example (s t : Set α) : s ⊇ t ↔ t ⊆ s := Iff.rfl
+```
 
+`⊂` is not definitional the way the five above are — `⊆` alone gives no `≠`
+— so proving it needs two new primitives. `funext : (∀ x, f x = g x) → f = g`
+is *function extensionality*: two functions (sets, recall, are functions)
+are equal exactly when they agree on every input — the only way to prove an
+equality between two sets without already having one. `propext : (P ↔ Q) →
+P = Q` is *propositional extensionality*: two propositions are equal exactly
+when they're equivalent. And `h ▸ e`, for `h : a = b`, rewrites `a` to `b`
+in the type of `e` — the term-mode counterpart of the `rw` tactic.
+```lean
 -- ⊂, unlike the five above, is not definitional: ⊆ gives no `≠`, so this
--- needs real reasoning — both directions turn on antisymmetry of ⊆.
+-- needs real reasoning — both directions turn on antisymmetry of ⊆, proved
+-- inline by funext/propext: s ⊆ t and t ⊆ s together say s and t agree on
+-- every element, so they're the same membership predicate.
 example (s t : Set α) : s ⊂ t ↔ s ⊆ t ∧ s ≠ t :=
   Iff.intro
-    (fun h => ⟨h.1, fun heq => h.2 (heq ▸ Set.Subset.refl t)⟩)
-    (fun ⟨hsub, hne⟩ => ⟨hsub, fun hts => hne (Set.Subset.antisymm hsub hts)⟩)
+    (fun h => ⟨h.1, fun heq => h.2 (heq ▸ (fun _ hx => hx : s ⊆ s))⟩)
+    (fun ⟨hsub, hne⟩ => ⟨hsub, fun hts => hne (funext fun _ =>
+      propext (Iff.intro (fun hx => hsub hx) (fun hx => hts hx)))⟩)
 
 -- Lean's library has the same fact ready-made:
 example (s t : Set α) : s ⊂ t ↔ s ⊆ t ∧ s ≠ t :=
   Set.ssubset_iff_subset_ne
 
--- From scratch, via the general principles behind Set.ext: two functions
--- are equal iff they agree everywhere (funext), and two propositions are
--- equal iff they're equivalent (propext).
 example (s t : Set α) : s = t ↔ ∀ x, x ∈ s ↔ x ∈ t :=
   Iff.intro (fun h _x => h ▸ Iff.rfl) (fun h => funext fun x => propext (h x))
 
@@ -345,7 +360,9 @@ theorem inter_comm' (s t : Set α) : s ∩ t = t ∩ s :=
   Set.inter_comm s t
 
 theorem union_comm (s t : Set α) : s ∪ t = t ∪ s :=
-  funext fun _ => propext ⟨fun h => h.symm, fun h => h.symm⟩
+  funext fun _ => propext (Iff.intro
+    (fun h => match h with | Or.inl a => Or.inr a | Or.inr b => Or.inl b)
+    (fun h => match h with | Or.inl a => Or.inr a | Or.inr b => Or.inl b))
 
 -- Lean's library has the same fact ready-made:
 theorem union_comm' (s t : Set α) : s ∪ t = t ∪ s :=
@@ -363,8 +380,12 @@ theorem inter_union_distrib (r s t : Set α) :
     r ∩ (s ∪ t) = (r ∩ s) ∪ (r ∩ t) :=
   funext fun _ => propext
     (Iff.intro
-      (fun ⟨hr, hst⟩ => hst.elim (fun hs => Or.inl ⟨hr, hs⟩) (fun ht => Or.inr ⟨hr, ht⟩))
-      (fun h => h.elim (fun ⟨hr, hs⟩ => ⟨hr, Or.inl hs⟩) (fun ⟨hr, ht⟩ => ⟨hr, Or.inr ht⟩)))
+      (fun ⟨hr, hst⟩ => match hst with
+        | Or.inl hs => Or.inl ⟨hr, hs⟩
+        | Or.inr ht => Or.inr ⟨hr, ht⟩)
+      (fun h => match h with
+        | Or.inl ⟨hr, hs⟩ => ⟨hr, Or.inl hs⟩
+        | Or.inr ⟨hr, ht⟩ => ⟨hr, Or.inr ht⟩))
 
 -- Lean's library has the same fact ready-made:
 theorem inter_union_distrib' (r s t : Set α) :
@@ -382,7 +403,9 @@ theorem compl_union (s t : Set α) : (s ∪ t)ᶜ = sᶜ ∩ tᶜ :=
   funext fun _ => propext
     (Iff.intro
       (fun h => ⟨fun hs => h (Or.inl hs), fun ht => h (Or.inr ht)⟩)
-      (fun h hst => hst.elim h.1 h.2))
+      (fun h hst => match hst with
+        | Or.inl hs => h.1 hs
+        | Or.inr ht => h.2 ht))
 
 -- Lean's library has the same fact ready-made:
 theorem compl_union' (s t : Set α) : (s ∪ t)ᶜ = sᶜ ∩ tᶜ :=
