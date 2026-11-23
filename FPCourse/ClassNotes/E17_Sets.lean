@@ -94,10 +94,20 @@ still just membership predicates:
 -- insert a s : Set α  (= fun x => x = a ∨ s x) -- adds a to s
 theorem mem_insert_iff (x a : α) (s : Set α) :
     x ∈ insert a s ↔ x = a ∨ x ∈ s :=
+  Iff.rfl   -- from scratch: true by the very definition of insert
+
+-- Lean's library has the same fact ready-made:
+theorem mem_insert_iff' (x a : α) (s : Set α) :
+    x ∈ insert a s ↔ x = a ∨ x ∈ s :=
   Set.mem_insert_iff
 
 -- {a} : Set α  (= fun x => x = a) -- the set containing exactly a
 theorem mem_singleton_iff (x a : α) :
+    x ∈ ({a} : Set α) ↔ x = a :=
+  Iff.rfl   -- from scratch: true by the very definition of {a}
+
+-- Lean's library has the same fact ready-made:
+theorem mem_singleton_iff' (x a : α) :
     x ∈ ({a} : Set α) ↔ x = a :=
   Set.mem_singleton_iff
 
@@ -209,6 +219,11 @@ propositional logic with `∀` threading through.
 -- Intersection is ∧:
 theorem mem_inter_iff (x : α) (s t : Set α) :
     x ∈ s ∩ t ↔ x ∈ s ∧ x ∈ t :=
+  Iff.rfl   -- from scratch: true by the very definition of ∩
+
+-- Lean's library has the same fact ready-made:
+theorem mem_inter_iff' (x : α) (s t : Set α) :
+    x ∈ s ∩ t ↔ x ∈ s ∧ x ∈ t :=
   Set.mem_inter_iff x s t
 
 /-! @@@
@@ -220,6 +235,11 @@ theorem mem_inter_iff (x : α) (s t : Set α) :
 
 -- Union is ∨:
 theorem mem_union_iff (x : α) (s t : Set α) :
+    x ∈ s ∪ t ↔ x ∈ s ∨ x ∈ t :=
+  Iff.rfl   -- from scratch: true by the very definition of ∪
+
+-- Lean's library has the same fact ready-made:
+theorem mem_union_iff' (x : α) (s t : Set α) :
     x ∈ s ∪ t ↔ x ∈ s ∨ x ∈ t :=
   Set.mem_union x s t
 
@@ -247,6 +267,11 @@ theorem subset_def (s t : Set α) :
 -- Complement is ¬:
 theorem mem_compl_iff (x : α) (s : Set α) :
     x ∈ sᶜ ↔ ¬ x ∈ s :=
+  Iff.rfl   -- from scratch: true by the very definition of ᶜ
+
+-- Lean's library has the same fact ready-made:
+theorem mem_compl_iff' (x : α) (s : Set α) :
+    x ∈ sᶜ ↔ ¬ x ∈ s :=
   Set.mem_compl_iff s x
 
 /-! @@@
@@ -258,6 +283,11 @@ theorem mem_compl_iff (x : α) (s : Set α) :
 
 -- Difference is ∧ ¬:
 theorem mem_diff_iff (x : α) (s t : Set α) :
+    x ∈ s \ t ↔ x ∈ s ∧ ¬ x ∈ t :=
+  Iff.rfl   -- from scratch: true by the very definition of \
+
+-- Lean's library has the same fact ready-made:
+theorem mem_diff_iff' (x : α) (s t : Set α) :
     x ∈ s \ t ↔ x ∈ s ∧ ¬ x ∈ t :=
   Set.mem_sdiff x
 
@@ -279,18 +309,42 @@ predicate whose elements are pairs or sets, rather than elements of `α`.
 
 example (s t : Set α) : s ⊇ t ↔ t ⊆ s := Iff.rfl
 
+-- ⊂, unlike the five above, is not definitional: ⊆ gives no `≠`, so this
+-- needs real reasoning — both directions turn on antisymmetry of ⊆.
+example (s t : Set α) : s ⊂ t ↔ s ⊆ t ∧ s ≠ t :=
+  Iff.intro
+    (fun h => ⟨h.1, fun heq => h.2 (heq ▸ Set.Subset.refl t)⟩)
+    (fun ⟨hsub, hne⟩ => ⟨hsub, fun hts => hne (Set.Subset.antisymm hsub hts)⟩)
+
+-- Lean's library has the same fact ready-made:
 example (s t : Set α) : s ⊂ t ↔ s ⊆ t ∧ s ≠ t :=
   Set.ssubset_iff_subset_ne
 
+-- From scratch, via the general principles behind Set.ext: two functions
+-- are equal iff they agree everywhere (funext), and two propositions are
+-- equal iff they're equivalent (propext).
+example (s t : Set α) : s = t ↔ ∀ x, x ∈ s ↔ x ∈ t :=
+  Iff.intro (fun h _x => h ▸ Iff.rfl) (fun h => funext fun x => propext (h x))
+
+-- Lean's library has the same fact ready-made:
 example (s t : Set α) : s = t ↔ ∀ x, x ∈ s ↔ x ∈ t :=
   Set.ext_iff
 
 -- Product: pairs whose first component is in s and second is in t
 example (s : Set α) (t : Set β) (p : α × β) :
     p ∈ s ×ˢ t ↔ p.1 ∈ s ∧ p.2 ∈ t :=
+  Iff.rfl   -- from scratch: true by the very definition of ×ˢ
+
+-- Lean's library has the same fact ready-made:
+example (s : Set α) (t : Set β) (p : α × β) :
+    p ∈ s ×ˢ t ↔ p.1 ∈ s ∧ p.2 ∈ t :=
   Set.mem_prod
 
 -- Powerset: the set of all subsets of s — its elements are themselves sets
+example (s x : Set α) : x ∈ 𝒫 s ↔ x ⊆ s :=
+  Iff.rfl   -- from scratch: true by the very definition of 𝒫
+
+-- Lean's library has the same fact ready-made:
 example (s x : Set α) : x ∈ 𝒫 s ↔ x ⊆ s :=
   Set.mem_powerset_iff x s
 
@@ -301,11 +355,20 @@ These laws are propositions that hold for all sets.  The proofs are
 provided as term-mode proofs.
 @@@ -/
 
--- Commutativity:
+-- Commutativity: two sets are equal (funext) when their membership
+-- propositions are equal (propext) at every x — here, by swapping an ∧/∨.
 theorem inter_comm (s t : Set α) : s ∩ t = t ∩ s :=
+  funext fun _ => propext ⟨fun h => ⟨h.2, h.1⟩, fun h => ⟨h.2, h.1⟩⟩
+
+-- Lean's library has the same fact ready-made:
+theorem inter_comm' (s t : Set α) : s ∩ t = t ∩ s :=
   Set.inter_comm s t
 
 theorem union_comm (s t : Set α) : s ∪ t = t ∪ s :=
+  funext fun _ => propext ⟨fun h => h.symm, fun h => h.symm⟩
+
+-- Lean's library has the same fact ready-made:
+theorem union_comm' (s t : Set α) : s ∪ t = t ∪ s :=
   Set.union_comm s t
 
 /-! @@@
@@ -316,8 +379,16 @@ theorem union_comm (s t : Set α) : s ∪ t = t ∪ s :=
 
 #eval decide ((2 : Nat) ∈ (({1, 2, 3} ∩ {2, 3, 4}) : Set Nat) ↔ (2 : Nat) ∈ (({2, 3, 4} ∩ {1, 2, 3}) : Set Nat))   -- predict first
 
--- Distributivity:
+-- Distributivity: the ∧-over-∨ distributive law, pointwise.
 theorem inter_union_distrib (r s t : Set α) :
+    r ∩ (s ∪ t) = (r ∩ s) ∪ (r ∩ t) :=
+  funext fun _ => propext
+    (Iff.intro
+      (fun ⟨hr, hst⟩ => hst.elim (fun hs => Or.inl ⟨hr, hs⟩) (fun ht => Or.inr ⟨hr, ht⟩))
+      (fun h => h.elim (fun ⟨hr, hs⟩ => ⟨hr, Or.inl hs⟩) (fun ⟨hr, ht⟩ => ⟨hr, Or.inr ht⟩)))
+
+-- Lean's library has the same fact ready-made:
+theorem inter_union_distrib' (r s t : Set α) :
     r ∩ (s ∪ t) = (r ∩ s) ∪ (r ∩ t) :=
   Set.inter_union_distrib_left r s t
 
@@ -328,8 +399,15 @@ theorem inter_union_distrib (r s t : Set α) :
 
 #eval decide ((2 : Nat) ∈ (({1, 2} ∩ ({2, 3} ∪ {4, 5})) : Set Nat) ↔ (2 : Nat) ∈ ((({1, 2} ∩ {2, 3}) ∪ ({1, 2} ∩ {4, 5})) : Set Nat))   -- predict first
 
--- De Morgan:
+-- De Morgan: ¬(P ∨ Q) ↔ ¬P ∧ ¬Q, pointwise.
 theorem compl_union (s t : Set α) : (s ∪ t)ᶜ = sᶜ ∩ tᶜ :=
+  funext fun _ => propext
+    (Iff.intro
+      (fun h => ⟨fun hs => h (Or.inl hs), fun ht => h (Or.inr ht)⟩)
+      (fun h hst => hst.elim h.1 h.2))
+
+-- Lean's library has the same fact ready-made:
+theorem compl_union' (s t : Set α) : (s ∪ t)ᶜ = sᶜ ∩ tᶜ :=
   Set.compl_union s t
 
 /-! @@@
@@ -340,8 +418,12 @@ theorem compl_union (s t : Set α) : (s ∪ t)ᶜ = sᶜ ∩ tᶜ :=
 
 #eval decide ((5 : Nat) ∈ ((({1, 2} ∪ {3, 4}) : Set Nat)ᶜ) ↔ (5 : Nat) ∈ ((({1, 2} : Set Nat)ᶜ ∩ ({3, 4} : Set Nat)ᶜ)))   -- predict first
 
--- Subset is transitive:
+-- Subset is transitive: unfold ⊆ to ∀x, x∈_→x∈_ and compose the two implications.
 theorem subset_trans {s t u : Set α} (h1 : s ⊆ t) (h2 : t ⊆ u) : s ⊆ u :=
+  fun _x hx => h2 (h1 hx)
+
+-- Lean's library has the same fact ready-made:
+theorem subset_trans' {s t u : Set α} (h1 : s ⊆ t) (h2 : t ⊆ u) : s ⊆ u :=
   Set.Subset.trans h1 h2
 
 /-! @@@
