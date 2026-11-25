@@ -1,0 +1,6 @@
+-- monoid
+-- group : invertible +
+-- ring : + invertible, * non invertible.
+-- semiring : + and * but NEITHER HAS TO BE INVERTIBLE. polynomials for relational databases
+-- security levels for adding pieces of information together
+-- field : + and * invertible
